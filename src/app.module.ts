@@ -11,6 +11,8 @@ import { MissionModule } from './mission/mission.module';
 import { BoardModule } from './board/board.module';
 import { PlannerModule } from './planner/planner.module';
 import { CommentModule } from './comment/comment.module';
+import { Boards } from './board/entities/board.entity';
+import { User } from './user/entities/user.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -23,7 +25,7 @@ const typeOrmModuleOptions = {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
-    entities: [],
+    entities: [Boards, User],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
