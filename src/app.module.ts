@@ -1,7 +1,8 @@
-import Joi from 'joi'; 
+import Joi from 'joi';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +12,7 @@ import { MissionModule } from './mission/mission.module';
 import { BoardModule } from './board/board.module';
 import { PlannerModule } from './planner/planner.module';
 import { CommentModule } from './comment/comment.module';
+import { User } from './user/entities/user.entity';
 import { MainController } from './main/main.controller';
 import { MainService } from './main/main.service';
 import { MainModule } from './main/main.module';
@@ -28,7 +30,7 @@ const typeOrmModuleOptions = {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
-    entities: [Planner, Plan],
+    entities: [User, Planner, Plan],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -48,6 +50,12 @@ const typeOrmModuleOptions = {
         DB_NAME: Joi.string().required(),
         DB_SYNC: Joi.boolean().required(),
       }),
+    }),
+    CacheModule.register({
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     AuthModule,
