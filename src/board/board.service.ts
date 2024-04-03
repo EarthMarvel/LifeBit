@@ -1,14 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Boards } from './entities/board.entity';
 import { Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create_board.dto';
 import { UpdateBoardDto } from './dto/update_board.dto';
-import { User } from 'src/user/entities/user.entity';
+// import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class BoardService {
@@ -59,7 +55,7 @@ export class BoardService {
   }
 
   // 게시물 좋아요
-  async likeBoard(boardId: number, userId: number): Promise<void> {
+  async likeBoard(boardId: number): Promise<void> {
     const board = await this.boardRepository.findOne({
       where: { boardId: boardId },
     });
@@ -68,17 +64,17 @@ export class BoardService {
       throw new NotFoundException('해당 게시물을 찾을 수 없습니다.');
     }
 
-    // 이미 좋아요 한 유저인지 확인
-    const alreadyLiked = board.like.some((user) => user.userId === userId);
+    // // 이미 좋아요 한 유저인지 확인
+    // const alreadyLiked = board.like.some((user) => user.user_id === userId);
 
-    if (alreadyLiked) {
-      throw new BadRequestException('이미 좋아요를 누른 사용자입니다');
-    }
+    // if (alreadyLiked) {
+    //   throw new BadRequestException('이미 좋아요를 누른 사용자입니다');
+    // }
 
-    // 게시물에 좋아요 추가
-    const user = new User();
-    user.userId = userId;
-    board.like.push(user);
+    // // 게시물에 좋아요 추가
+    // const user = new User();
+    // user.user_id = userId;
+    // board.like.push(user);
 
     // 좋아요 수 증가
     board.likedCount++;
@@ -86,21 +82,22 @@ export class BoardService {
     await this.boardRepository.save(board);
   }
 
-  async unlikeBoard(boardId: number, userId: number) {
-    const board = await this.boardRepository.findOne({
-      where: { boardId: boardId },
-    });
+  //   // 게시물 좋아요 취소
+  //   async unlikeBoard(boardId: number, userId: number) {
+  //     const board = await this.boardRepository.findOne({
+  //       where: { boardId: boardId },
+  //     });
 
-    if (!board) {
-      throw new NotFoundException('해당 게시물을 찾을 수 없습니다.');
-    }
+  //     if (!board) {
+  //       throw new NotFoundException('해당 게시물을 찾을 수 없습니다.');
+  //     }
 
-    // 유저의 좋아요 찾고 삭제
-    board.like = board.like.filter((user) => user.userId !== userId);
+  //     // 유저의 좋아요 찾고 삭제
+  //     board.like = board.like.filter((user) => user.user_id !== userId);
 
-    // 좋아요 수 감소
-    board.likedCount--;
+  //     // 좋아요 수 감소
+  //     board.likedCount--;
 
-    await this.boardRepository.save(board);
-  }
+  //     await this.boardRepository.save(board);
+  //   }
 }

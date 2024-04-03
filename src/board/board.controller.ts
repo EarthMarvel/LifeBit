@@ -6,11 +6,13 @@ import {
   Param,
   Patch,
   Post,
-  Req,
+  //   Req,
+  //   UseGuards,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create_board.dto';
 import { UpdateBoardDto } from './dto/update_board.dto';
+// import { AuthGuard } from '@nestjs/passport';
 
 @Controller('boards')
 export class BoardController {
@@ -61,16 +63,18 @@ export class BoardController {
   }
 
   // 게시물 좋아요
+  //   @UseGuards(AuthGuard())
   @Post('/:boardId/like')
-  async likeBoard(@Param('boardId') boardId: number, @Req() req) {
-    const userId = req.user.userId;
-    await this.boardService.likeBoard(boardId, userId);
+  async likeBoard(@Param('boardId') boardId: number) {
+    // const userId = req.user.userId;
+    await this.boardService.likeBoard(boardId);
   }
 
-  // 좋아요 삭제
-  @Delete('/:boardId/unlike')
-  async unlikeBoard(@Param('boardId') boardId: number, @Req() req) {
-    const userId = req.user.userId;
-    await this.boardService.unlikeBoard(boardId, userId);
-  }
+  //   // 게시물 좋아요 취소
+  //   @UseGuards(AuthGuard())
+  //   @Delete('/:boardId/unlike')
+  //   async unlikeBoard(@Param('boardId') boardId: number, @Req() req) {
+  //     const userId = req.user.userId;
+  //     await this.boardService.unlikeBoard(boardId, userId);
+  //   }
 }

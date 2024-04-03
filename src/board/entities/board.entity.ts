@@ -30,9 +30,11 @@ export class Boards extends BaseEntity {
   @Column({ type: 'bigint' })
   likedCount: number;
 
+  // 생성 날짜
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
+  // 수정 날짜
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 

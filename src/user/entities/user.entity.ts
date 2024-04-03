@@ -12,7 +12,7 @@ import {
 })
 export class User {
   @PrimaryGeneratedColumn()
-  userId: number;
+  user_id: number;
 
   @Column({ type: 'varchar', nullable: false })
   email: string;
