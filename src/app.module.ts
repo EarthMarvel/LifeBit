@@ -12,12 +12,14 @@ import { MissionModule } from './mission/mission.module';
 import { BoardModule } from './board/board.module';
 import { PlannerModule } from './planner/planner.module';
 import { CommentModule } from './comment/comment.module';
+import { Boards } from './board/entities/board.entity';
 import { User } from './user/entities/user.entity';
 import { MainController } from './main/main.controller';
 import { MainService } from './main/main.service';
 import { MainModule } from './main/main.module';
 import { Plan } from './planner/entity/plan.entity';
 import { Planner } from './planner/entity/planner.entity';
+import { Point } from './point/entity/point.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -30,7 +32,9 @@ const typeOrmModuleOptions = {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
-    entities: [User, Planner, Plan],
+
+    entities: [User, Planner, Plan, Point, Boards],
+
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),

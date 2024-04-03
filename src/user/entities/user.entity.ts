@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Boards } from 'src/board/entities/board.entity';
+import { Point } from 'src/point/entity/point.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({
   name: 'users',
@@ -21,4 +30,11 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   image: string;
+
+  @ManyToMany(() => Boards, (boards) => boards.like)
+  @JoinTable()
+  likeBoards: Boards[];
+
+  @OneToMany(() => Point, (point) => point.user)
+  point: Point[];
 }
