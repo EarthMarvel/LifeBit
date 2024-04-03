@@ -16,8 +16,6 @@ export class PlannerService {
         private readonly plannerRepository : Repository<Planner>, //사용자가 회원가입 하면 자동으로 planner row 도 생성된다.
         @InjectRepository(Plan)
         private readonly planRepository : Repository<Plan>,
-        @InjectRepository(Point)
-        private readonly pointRepository : Repository<Point>,
         private readonly dataSouce : DataSource //커넥션 풀에서 커넥션(-> 트랜잭션) 가져오기
     ) {}
 
@@ -226,46 +224,8 @@ export class PlannerService {
         if (!updatedTodo) {
             throw new NotFoundException('존재하지 않는 일정입니다.');
         }
-
-        const updatedPoint = await this.pointRepository
-            .createQueryBuilder('point')
-            .select()
-            .where("point.user_id = :userId", {userId : user.user_id})
-            .orderBy("point.createdAt", "DESC")
-            .limit(1)
-            .getOne();
-
-        if (!updatedPoint) {
-            // 포인트 데이터가 없을 경우 새로 생성
-            const newPoint = this.pointRepository.create({
-                user,
-                point: 1
-            });
-            await this.pointRepository.save(newPoint);
-        }
-
-        const queryRunner = this.dataSouce.createQueryRunner();
-
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-
-        try {
-            updatedTodo.authYn = true;     
-            await this.planRepository.save(updatedTodo);
-
-            const point = updatedPoint.point += 1;
-            const newPoint = this.pointRepository.create({
-                user,
-                point
-            });
-            await this.pointRepository.save(newPoint);
-
-        } catch (err) {
-            await queryRunner.rollbackTransaction();
-            console.log("에러 메시지" + err);
-            throw new InternalServerErrorException('서버 에러가 발생했습니다.', err);
-        } finally {
-            await queryRunner.release();
-        }
+    
+        updatedTodo.authYn = true;     
+        await this.planRepository.save(updatedTodo);
     }
 }
