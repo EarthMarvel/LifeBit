@@ -1,5 +1,13 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Planner } from "./planner.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Planner } from './planner.entity';
 
 /**
  * {
@@ -13,46 +21,45 @@ import { Planner } from "./planner.entity";
 }
 */
 
-@Entity({name : 'plan'})
+@Entity({ name: 'plan' })
 export class Plan {
+  @PrimaryGeneratedColumn()
+  planId: number;
 
-    @PrimaryGeneratedColumn()
-    planId : number;
+  @ManyToOne(() => Planner, (planner) => planner.plan)
+  @JoinColumn({ name: 'plannerId' })
+  planner: Planner;
 
-    @ManyToOne(() => Planner, (planner) => planner.plan)
-    @JoinColumn({name : 'plannerId'})
-    planner : Planner
+  @Column({ type: 'varchar', nullable: false })
+  todo: string;
 
-    @Column({type : 'varchar', nullable : false})
-    todo : string
+  @Column({ type: 'date' })
+  startDate: Date;
 
-    @Column({ type: 'date' }) 
-    startDate: Date;
+  @Column({ type: 'date' })
+  endDate: Date;
 
-    @Column({ type: 'date' }) 
-    endDate: Date;
-    
-    @Column({ type: 'time', precision: 0 })
-    startTime: Date;
+  @Column({ type: 'time', precision: 0 })
+  startTime: Date;
 
-    @Column({ type: 'time', precision: 0 })
-    endTime: Date;
-    
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
-    
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+  @Column({ type: 'time', precision: 0 })
+  endTime: Date;
 
-    @Column({ type: 'boolean', default: false }) // 기본값은 false
-    authYn: boolean;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
-    @Column({ type: 'boolean', default: false }) // 기본값은 false
-    checkYn: boolean;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
-    @Column({ type: 'boolean', default: false }) // 기본값은 false
-    ifMission : boolean;
+  @Column({ type: 'boolean', default: false }) // 기본값은 false
+  authYn: boolean;
 
-    @Column()
-    thenMissionId : number;
+  @Column({ type: 'boolean', default: false }) // 기본값은 false
+  checkYn: boolean;
+
+  @Column({ type: 'boolean', default: false }) // 기본값은 false
+  ifMission: boolean;
+
+  @Column()
+  thenMissionId: number;
 }

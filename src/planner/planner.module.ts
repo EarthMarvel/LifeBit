@@ -7,8 +7,9 @@ import { Point } from 'src/point/entity/point.entity';
 import { PlannerService } from './planner.service';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Planner, Plan, Point])],
+  imports: [TypeOrmModule.forFeature([Planner, Plan, Point])],
+
   providers: [PlannerService],
-  controllers: [PlannerController]
+  controllers: [PlannerController],
 })
 export class PlannerModule {}
