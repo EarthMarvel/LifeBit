@@ -19,6 +19,7 @@ import { MainService } from './main/main.service';
 import { MainModule } from './main/main.module';
 import { Plan } from './planner/entity/plan.entity';
 import { Planner } from './planner/entity/planner.entity';
+import { Point } from './point/entity/point.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -32,7 +33,7 @@ const typeOrmModuleOptions = {
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
 
-    entities: [User, Planner, Plan, Boards],
+    entities: [User, Planner, Plan, Point, Boards],
 
     synchronize: configService.get('DB_SYNC'),
     logging: true,

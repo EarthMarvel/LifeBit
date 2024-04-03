@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { TodoDto } from './dto/todo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Planner } from './entity/planner.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Plan } from './entity/plan.entity';
 import { DateDto } from './dto/get.planner.dto';
 import { PlannerDto } from './dto/update.planner.dto';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class PlannerService {
@@ -14,14 +15,29 @@ export class PlannerService {
     private readonly plannerRepository: Repository<Planner>, //사용자가 회원가입 하면 자동으로 planner row 도 생성된다.
     @InjectRepository(Plan)
     private readonly planRepository: Repository<Plan>,
+    private readonly dataSouce: DataSource, //커넥션 풀에서 커넥션(-> 트랜잭션) 가져오기
   ) {}
 
-  async myPage(userId: number) {
-    const plans = await this.planRepository
+  /**
+   * 마이페이지 접근 (만약 user 가 없다면 빈 플래너 생성해서 보내기)
+   * @param userId
+   * @returns
+   */
+  async myPage(user: User) {
+    const exist = await this.plannerRepository.findOneBy({ user });
+
+    //플래너가 없을 경우 새로 생성
+    if (!exist) {
+      return await this.plannerRepository.save({
+        user,
+      });
+    }
+
+    const month_plans = await this.planRepository
       .createQueryBuilder('plan')
       .select(['plan.todo', 'plan.startDate', 'plan.endDate'])
       .innerJoin(Planner, 'planner', 'plan.plannerId = planner.planner_id')
-      .where('planner.user_id = :userId', { userId })
+      .where('planner.userId = :userId', { userId: user.user_id })
       .andWhere(
         'year(plan.start_date) * 12 + month(plan.start_date) <= year(now()) * 12 + month(now())',
       )
@@ -44,24 +60,30 @@ export class PlannerService {
         'plan.checkYn',
       ])
       .innerJoin(Planner, 'planner', 'plan.plannerId = planner.planner_id')
-      .where('planner.user_id = :userId', { userId })
+      .where('planner.userId = :userId', { userId: user.user_id })
       .andWhere('plan.start_date <= CURDATE()')
       .andWhere('plan.end_date >= CURDATE()')
       .getMany();
 
-    const planner = await this.plannerRepository
+    const planner_info = await this.plannerRepository
       .createQueryBuilder('planner')
       .select(['planner.name', 'planner.description', 'planner.plannerId']) //엔티티로 select
-      .where('planner.user_id = :userId', { userId }) //쿼리
+      .where('planner.userId = :userId', { userId: user.user_id }) //쿼리
       .getOne(); //쿼리 실행
 
     return {
-      plans,
+      month_plans,
       today,
-      planner,
+      planner_info,
     };
   }
 
+  /**
+   * 플래너 조회
+   * @param dateDto
+   * @param plannerId
+   * @returns
+   */
   async getPlanner(dateDto: DateDto, plannerId: number) {
     return await this.planRepository
       .createQueryBuilder('plan')
@@ -85,6 +107,12 @@ export class PlannerService {
       .getMany();
   }
 
+  /**
+   * 플래너 정보 수정
+   * @param plannerDto
+   * @param plannerId
+   * @returns
+   */
   async updatePlanner(plannerDto: PlannerDto, plannerId: number) {
     const updatedPlanner = await this.plannerRepository
       .createQueryBuilder()
@@ -96,6 +124,12 @@ export class PlannerService {
     return updatedPlanner;
   }
 
+  /**
+   * 일정 등록
+   * @param todoDto
+   * @param plannerId
+   * @returns
+   */
   async postTodo(todoDto: TodoDto, plannerId: number) {
     const planner = await this.plannerRepository.findOneBy({ plannerId });
 
@@ -122,6 +156,12 @@ export class PlannerService {
     return plan;
   }
 
+  /**
+   * 일정 수정
+   * @param planId
+   * @param todoDto
+   * @returns
+   */
   async updateTodo(planId: number, todoDto: TodoDto) {
     const updatedTodo = await this.planRepository.findOneBy({ planId: planId });
 
@@ -146,6 +186,10 @@ export class PlannerService {
     return plan;
   }
 
+  /**
+   * 일정 삭제
+   * @param planId
+   */
   async deleteTodo(planId: number) {
     const updatedTodo = await this.planRepository.findOneBy({ planId: planId });
 
@@ -156,11 +200,15 @@ export class PlannerService {
     await this.planRepository
       .createQueryBuilder()
       .delete()
-      .from(Plan) // Plan 엔티티에서 삭제합니다.
+      .from(Plan)
       .where('plan_id = :planId', { planId })
       .execute();
   }
 
+  /**
+   * 일정 체크 / 언체크
+   * @param planId
+   */
   async checkTodo(planId: number) {
     const updatedTodo = await this.planRepository.findOneBy({ planId: planId });
 
@@ -172,15 +220,18 @@ export class PlannerService {
     await this.planRepository.save(updatedTodo);
   }
 
+  /**
+   * 일정 인증
+   * @param planId
+   */
   async authTodo(planId: number) {
-    const updatedTodo = await this.planRepository.findOneBy({ planId: planId });
+    const updatedTodo = await this.planRepository.findOneBy({ planId });
 
-    //트랜잭션 - 포인트 엔티티 1 증가
     if (!updatedTodo) {
       throw new NotFoundException('존재하지 않는 일정입니다.');
     }
-    updatedTodo.authYn = true;
 
+    updatedTodo.authYn = true;
     await this.planRepository.save(updatedTodo);
   }
 }
