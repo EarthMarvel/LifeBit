@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Plan } from "./plan.entity";
+import { User } from "src/user/entities/user.entity";
 
 @Entity({name : 'planner'})
 export class Planner {
@@ -10,9 +11,9 @@ export class Planner {
     @OneToMany(() => Plan, (plan) => plan.planner)
     plan : Plan[]
 
-    //임의 userId
-    @Column({type : 'varchar', unique : true, nullable : false})
-    userId : number;
+    @OneToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User;
 
     @Column({type : 'varchar', nullable : true})
     name : string;

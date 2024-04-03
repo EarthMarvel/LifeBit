@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({name : 'point'})
 export class Point {
@@ -6,16 +7,13 @@ export class Point {
     @PrimaryGeneratedColumn()
     pointId : number;
 
-    //임의 userId 추후 user 와 연동
-    @Column({type : 'varchar', nullable : false})
-    userId : number;
-
-    @Column()
+    @Column({default : 0})
     point : number;
 
     @CreateDateColumn() 
     createdAt: Date;
     
-    @UpdateDateColumn() 
-    updatedAt: Date;
+    @ManyToOne(() => User, (user) => user.point)
+    @JoinColumn({name : 'user_id'})
+    user : User
 }

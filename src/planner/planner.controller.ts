@@ -1,10 +1,12 @@
 import { Body, Controller, Delete, Get, HttpStatus, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
-import { PlannerService } from './planner.service';
 import { Response } from 'express';
 import { TodoDto } from './dto/todo.dto';
 import { DateDto } from './dto/get.planner.dto';
 import { PlannerDto } from './dto/update.planner.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { UserInfo } from 'src/user/decorator/userInfo.decorator';
+import { User } from 'src/user/entities/user.entity';
+import { PlannerService } from './planner.service';
 
 @Controller('myPage')
 @UseGuards(AuthGuard('jwt'))
@@ -19,24 +21,27 @@ export class PlannerController {
      * @returns 
      */
     @Get('/')
-    async myPage(@Res() res : Response) {
-        const userId = 2; //가드 필요
+    async myPage(@UserInfo() user: User, @Res() res : Response) {
 
+        console.log("user : " + user.user_id); //1
         return res.status(HttpStatus.OK).json({
         message : "마이 페이지를 조회했습니다.",
-        data : await this.plannerService.myPage(userId)
+        data : await this.plannerService.myPage(user)
         })
     }
 
     /**
      * 플래너 조회
+     * @param plannerId 
+     * @param user 
      * @param dateDto 
      * @param res 
      * @returns 
      */
     @Get('/planner')
-    async getPlanner(@Body() dateDto : DateDto, @Res() res : Response) {
-        const plannerId = 1;
+    async getPlanner(@Query('plannerId') plannerId : number,  
+        @Body() dateDto : DateDto, 
+        @Res() res : Response) {
 
         return res.status(HttpStatus.OK).json({
         message : "플래너를 조회했습니다.",
@@ -51,8 +56,7 @@ export class PlannerController {
      * @returns 
      */
     @Put('/planner')
-    async updatePlanner(@Body() plannerDto : PlannerDto, @Res() res : Response) {
-        const plannerId = 1;
+    async updatePlanner(@Query('plannerId') plannerId : number, @Body() plannerDto : PlannerDto, @Res() res : Response) {
 
         return res.status(HttpStatus.OK).json({
         message : "플래너가 수정되었습니다.",
@@ -67,12 +71,11 @@ export class PlannerController {
      * @returns 
      */
     @Post('/todo')
-    async postTodo(@Body() todoDto : TodoDto, @Res() res : Response) {
-        const planId = 1;
-
+    async postTodo(@Query('plannerId') plannerId : number, @Body() todoDto : TodoDto, @Res() res : Response) {
+        
         return res.status(HttpStatus.CREATED).json({
         message : "일정을 등록했습니다.",
-        data : await this.plannerService.postTodo(todoDto, planId)
+        data : await this.plannerService.postTodo(todoDto, plannerId)
         })
     }
 
@@ -83,8 +86,7 @@ export class PlannerController {
      * @returns 
      */
     @Put('/todo')
-    async updateTodo(@Body() todoDto : TodoDto, @Res() res : Response) {
-        const planId = 1;
+    async updateTodo(@Query('planId') planId : number, @Body() todoDto : TodoDto, @Res() res : Response) {
 
         return res.status(HttpStatus.OK).json({
         message : "일정이 수정되었습니다.",
@@ -98,8 +100,7 @@ export class PlannerController {
      * @returns 
      */
     @Delete('/todo')
-    async deleteTodo(@Res() res : Response) {
-        const planId = 1;
+    async deleteTodo(@Query('planId') planId : number, @Res() res : Response) {
 
         return res.status(HttpStatus.OK).json({
         message : "일정이 삭제되었습니다.",
@@ -113,8 +114,7 @@ export class PlannerController {
      * @returns 
      */
     @Post('/todo/check')
-    async checkTodo(@Res() res : Response) {
-        const planId = 2;
+    async checkTodo(@Query('planId') planId : number, @Res() res : Response) {
 
         return res.status(HttpStatus.OK).json({
         message : "일정이 체크 / 언체크 되었습니다.",
@@ -128,13 +128,11 @@ export class PlannerController {
      * @returns 
      */
     @Post('/todo/auth')
-    async authTodo(@Res() res : Response) {
-        const planId = 2;
-        const userId = 1;
+    async authTodo(@UserInfo() user: User, @Query('planId') planId : number, @Res() res : Response) {
 
         return res.status(HttpStatus.OK).json({
         message : "일정이 인증되었습니다.",
-        data : await this.plannerService.authTodo(planId, userId)
+        data : await this.plannerService.authTodo(planId, user)
         })
     }
 

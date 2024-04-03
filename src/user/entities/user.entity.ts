@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Point } from 'src/point/entity/point.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
   name: 'users',
@@ -21,4 +22,7 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   image: string;
+
+  @OneToMany(() => Point, (point) => point.user)
+  point : Point[] 
 }

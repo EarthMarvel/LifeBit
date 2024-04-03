@@ -7,6 +7,7 @@ import { Plan } from './entity/plan.entity';
 import { DateDto } from './dto/get.planner.dto';
 import { PlannerDto } from './dto/update.planner.dto';
 import { Point } from '../point/entity/point.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class PlannerService {
@@ -25,22 +26,22 @@ export class PlannerService {
      * @param userId 
      * @returns 
      */
-    async myPage(userId: number) {
+    async myPage(user : User) {
 
-        const exist = await this.plannerRepository.findOneBy({userId});
+        const exist = await this.plannerRepository.findOneBy({user});
 
+        //플래너가 없을 경우 새로 생성
         if (!exist) {
             return await this.plannerRepository.save({
-                userId
-              });
-            
+                user
+            });
         }
 
         const month_plans = await this.planRepository
             .createQueryBuilder('plan')
             .select(['plan.todo', 'plan.startDate', 'plan.endDate'])
             .innerJoin(Planner, 'planner', 'plan.plannerId = planner.planner_id')
-            .where('planner.user_id = :userId', {userId})
+            .where('planner.userId = :userId', {userId : user.user_id})
             .andWhere('year(plan.start_date) * 12 + month(plan.start_date) <= year(now()) * 12 + month(now())')
             .andWhere('year(plan.end_date) * 12 + month(plan.end_date) >= year(now()) * 12 + month(now())')
             .orderBy('plan.start_date')
@@ -59,7 +60,7 @@ export class PlannerService {
                 'plan.checkYn'
               ])
             .innerJoin(Planner, 'planner', 'plan.plannerId = planner.planner_id')
-            .where('planner.user_id = :userId', {userId})
+            .where('planner.userId = :userId', {userId : user.user_id})
             .andWhere('plan.start_date <= CURDATE()')
             .andWhere('plan.end_date >= CURDATE()')
             .getMany();
@@ -67,7 +68,7 @@ export class PlannerService {
         const planner_info = await this.plannerRepository
               .createQueryBuilder('planner')
               .select(['planner.name', 'planner.description', 'planner.plannerId']) //엔티티로 select
-              .where('planner.user_id = :userId', {userId}) //쿼리
+              .where('planner.userId = :userId', {userId : user.user_id}) //쿼리
               .getOne(); //쿼리 실행
         
         return {
@@ -219,31 +220,46 @@ export class PlannerService {
      * 일정 인증
      * @param planId
      */
-    async authTodo(planId: number, userId : number) {
+    async authTodo(planId: number, user : User) {
         const updatedTodo = await this.planRepository.findOneBy({planId});
 
         if (!updatedTodo) {
             throw new NotFoundException('존재하지 않는 일정입니다.');
         }
 
-        const updatedPoint = await this.pointRepository.findOneBy({userId});
+        const updatedPoint = await this.pointRepository
+            .createQueryBuilder('point')
+            .select()
+            .where("point.user_id = :userId", {userId : user.user_id})
+            .orderBy("point.createdAt", "DESC")
+            .limit(1)
+            .getOne();
+
+        if (!updatedPoint) {
+            // 포인트 데이터가 없을 경우 새로 생성
+            const newPoint = this.pointRepository.create({
+                user,
+                point: 1
+            });
+            await this.pointRepository.save(newPoint);
+        }
+
         const queryRunner = this.dataSouce.createQueryRunner();
 
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
         try {
-            updatedTodo.authYn = true;
+            updatedTodo.authYn = true;     
             await this.planRepository.save(updatedTodo);
-            await this.pointRepository
-            .createQueryBuilder()
-            .insert()
-            .into('point')
-            .values({
-                userId : 1, //임의
-                point : updatedPoint.point + 1
-            })
-            .execute();
+
+            const point = updatedPoint.point += 1;
+            const newPoint = this.pointRepository.create({
+                user,
+                point
+            });
+            await this.pointRepository.save(newPoint);
+
         } catch (err) {
             await queryRunner.rollbackTransaction();
             console.log("에러 메시지" + err);
