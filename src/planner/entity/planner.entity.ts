@@ -14,11 +14,11 @@ export class Planner {
     @Column({type : 'varchar', unique : true, nullable : false})
     userId : number;
 
-    @Column({type : 'varchar'})
-    name? : string;
+    @Column({type : 'varchar', nullable : true})
+    name : string;
 
-    @Column({type : 'varchar'})
-    description? : string;
+    @Column({type : 'varchar', nullable : true})
+    description : string;
   
     @CreateDateColumn() 
     createdAt: Date;
