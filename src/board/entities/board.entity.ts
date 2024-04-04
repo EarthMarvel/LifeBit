@@ -30,11 +30,9 @@ export class Boards extends BaseEntity {
   @Column({ type: 'bigint' })
   likedCount: number;
 
-  // 생성 날짜
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  // 수정 날짜
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
@@ -44,6 +42,7 @@ export class Boards extends BaseEntity {
 
   // nestjs socket io 알람기능? 좋아요 알림기능?
   // 이미지는 S3 ?
+  // 카테고리, 제목으로 검색 기능
 
   @ManyToMany(() => User, (user) => user.likeBoards)
   @JoinTable()

@@ -1,14 +1,4 @@
-import {
-  IsBoolean,
-  IsDateString,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-  IsString,
-  Matches,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class DateDto {
   @IsNotEmpty()
