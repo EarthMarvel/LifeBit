@@ -4,6 +4,6 @@ import { MissionController } from './mission.controller';
 
 @Module({
   providers: [MissionService],
-  controllers: [MissionController]
+  controllers: [MissionController],
 })
 export class MissionModule {}
