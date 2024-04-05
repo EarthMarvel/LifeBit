@@ -5,19 +5,24 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToMany,
 } from 'typeorm';
 
 import { MissionType } from '../types/missionType';
 import { Category } from '../types/category';
+
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class Mission {
   @PrimaryGeneratedColumn()
   missionId: number;
 
-  // userId
-  @Column({ type: 'int', nullable: false })
-  userId: number;
+  @ManyToMany(() => User, (user) => user.missions)
+  user_ids: User[];
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  user_id: number;
 
   // category : ENUM
   @Column({ type: 'enum', enum: Category, nullable: false })

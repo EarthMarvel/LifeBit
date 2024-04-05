@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
 import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
@@ -17,10 +18,8 @@ export class MissionService {
     private dataSource: DataSource,
   ) {}
 
-  async create(createMissionDto: CreateMissionDto, userId: number) {
+  async create(createMissionDto: CreateMissionDto) {
     const mission = this.missionRepository.create(createMissionDto);
-
-    mission.userId = userId;
 
     await this.missionRepository.save(mission);
 
@@ -40,9 +39,11 @@ export class MissionService {
   async remove(id: number, userId: number) {
     const mission = await this.findOne(id);
 
-    if (mission.userId !== userId) {
+    /*
+    if (mission.user_id !== userId) {
       throw new UnauthorizedException('해당 미션을 삭제할 권한이 없습니다.');
     }
+    */
 
     const result = await this.missionRepository.delete(id);
     return { result, message: 'Mission 삭제 완료' };
@@ -51,9 +52,11 @@ export class MissionService {
   async update(userId: number, id: number, updateMissionDto: UpdateMissionDto) {
     const mission = await this.findOne(id);
 
-    if (mission.userId !== userId) {
+    /*
+    if (mission.user_id !== userId) {
       throw new UnauthorizedException('해당 미션을 수정할 권한이 없습니다.');
     }
+    */
 
     this.missionRepository.merge(mission, updateMissionDto);
     const updatedMission = await this.missionRepository.save(mission);

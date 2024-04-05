@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { Mission } from 'src/mission/entities/mission.entity';
 
 @Entity({
   name: 'users',
@@ -6,6 +13,10 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class User {
   @PrimaryGeneratedColumn()
   user_id: number;
+
+  @ManyToMany(() => Mission, (mission) => mission.user_id)
+  @JoinTable()
+  missions: Mission[];
 
   @Column({ type: 'varchar', nullable: false })
   email: string;

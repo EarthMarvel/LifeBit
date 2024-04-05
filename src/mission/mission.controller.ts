@@ -27,8 +27,7 @@ export class MissionController {
     @Body() createMissionDto: CreateMissionDto,
     @Req() req: any,
   ) {
-    const userId = req.user.id;
-    return await this.missionService.create(createMissionDto, userId);
+    return await this.missionService.create(createMissionDto);
   }
 
   // 일단 스킵
@@ -58,7 +57,7 @@ export class MissionController {
   ) {
     try {
       return await this.missionService.update(
-        req.user.id,
+        req.userId,
         +missionId,
         updateMissionDto,
       );
@@ -72,7 +71,7 @@ export class MissionController {
   @Delete('/:missionId')
   async delete(@Param('missionId') missionId: number, @Req() req: any) {
     try {
-      const userId = req.user.id;
+      const userId = req.user_id;
 
       return await this.missionService.remove(+missionId, userId);
     } catch (error) {
