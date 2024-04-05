@@ -19,6 +19,7 @@ import { MainService } from './main/main.service';
 import { MainModule } from './main/main.module';
 import { Plan } from './planner/entity/plan.entity';
 import { Planner } from './planner/entity/planner.entity';
+import { Mission } from './mission/entities/mission.entity';
 import { Point } from './point/entity/point.entity';
 
 const typeOrmModuleOptions = {
@@ -32,9 +33,7 @@ const typeOrmModuleOptions = {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
-
-    entities: [User, Planner, Plan, Point, Boards],
-
+    entities: [User, Planner, Plan, Point, Boards, Mission],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
