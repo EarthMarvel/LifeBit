@@ -17,6 +17,7 @@ import { User } from './user/entities/user.entity';
 import { MainController } from './main/main.controller';
 import { MainService } from './main/main.service';
 import { MainModule } from './main/main.module';
+import { Boards } from './board/entities/board.entity';
 import { Plan } from './planner/entity/plan.entity';
 import { Planner } from './planner/entity/planner.entity';
 import { Mission } from './mission/entities/mission.entity';
