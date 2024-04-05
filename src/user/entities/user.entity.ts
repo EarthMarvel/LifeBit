@@ -1,7 +1,6 @@
 import { Boards } from 'src/board/entities/board.entity';
 import { Point } from 'src/point/entity/point.entity';
 import { Mission } from 'src/mission/entities/mission.entity';
-
 import {
   Column,
   Entity,

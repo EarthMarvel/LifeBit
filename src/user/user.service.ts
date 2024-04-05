@@ -18,6 +18,9 @@ import { EmailService } from './email.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { EmailAuthDto } from './dto/emailAuth.dto';
+import { S3Service } from './s3.service';
+import { ProfileDto } from './dto/profile.dto';
+import { extname } from 'path';
 
 @Injectable()
 export class UserService {
@@ -28,6 +31,7 @@ export class UserService {
     private readonly emailService: EmailService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    private readonly s3Service: S3Service,
   ) {}
 
   // 이메일, 토큰 캐싱 부분
@@ -89,9 +93,37 @@ export class UserService {
     }
 
     const payload = { email, user_id: user.user_id };
-    console.log('-------->', payload);
 
     return { accessToken: this.jwtService.sign(payload) };
+  }
+
+  // 프로필 수정
+  async profile(
+    user_id: number,
+    profileDto: ProfileDto,
+    file: Express.Multer.File,
+  ) {
+    const user = await this.userRepository.findOne({ where: { user_id } });
+
+    const { nickName } = profileDto;
+
+    if (_.isNil(file)) {
+      throw new BadRequestException('파일이 존재하지 않습니다.');
+    }
+
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+    const fileExt = extname(file.originalname).toLowerCase();
+    if (!allowedExtensions.includes(fileExt)) {
+      throw new BadRequestException('올바른 JPEG, PNG, GIF 파일이 아닙니다.');
+    }
+
+    user.nickName = nickName;
+    user.image = file.filename;
+
+    await this.userRepository.save(user);
+
+    await this.s3Service.putObject(file);
   }
 
   // 이메일로 회원 정보 가져오기

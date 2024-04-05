@@ -12,6 +12,7 @@ import { MissionModule } from './mission/mission.module';
 import { BoardModule } from './board/board.module';
 import { PlannerModule } from './planner/planner.module';
 import { CommentModule } from './comment/comment.module';
+import { Boards } from './board/entities/board.entity';
 import { User } from './user/entities/user.entity';
 import { MainController } from './main/main.controller';
 import { MainService } from './main/main.service';

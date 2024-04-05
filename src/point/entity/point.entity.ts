@@ -1,26 +1,19 @@
-import { User } from 'src/user/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { User } from "src/user/entities/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity({ name: 'point' })
+@Entity({name : 'point'})
 export class Point {
-  @PrimaryGeneratedColumn()
-  pointId: number;
 
-  @Column({ default: 0 })
-  point: number;
+    @PrimaryGeneratedColumn()
+    pointId : number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @Column({default : 0})
+    point : number;
 
-  @ManyToOne(() => User, (user) => user.point)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+    @CreateDateColumn() 
+    createdAt: Date;
+    
+    @ManyToOne(() => User, (user) => user.point)
+    @JoinColumn({name : 'user_id'})
+    user : User
 }
