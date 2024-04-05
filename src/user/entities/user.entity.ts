@@ -1,11 +1,15 @@
+import { Boards } from 'src/board/entities/board.entity';
+import { Point } from 'src/point/entity/point.entity';
+import { Mission } from 'src/mission/entities/mission.entity';
+
 import {
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  ManyToMany,
   JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Mission } from 'src/mission/entities/mission.entity';
 
 @Entity({
   name: 'users',
@@ -32,4 +36,11 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   image: string;
+
+  @ManyToMany(() => Boards, (boards) => boards.like)
+  @JoinTable()
+  likeBoards: Boards[];
+
+  @OneToMany(() => Point, (point) => point.user)
+  point: Point[];
 }

@@ -45,14 +45,10 @@ export class Plan {
   @Column({ type: 'time', precision: 0 })
   endTime: Date;
 
-  @CreateDateColumn({
-    type: 'timestamp' /*, default: () => 'CURRENT_TIMESTAMP' */,
-  })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({
-    type: 'timestamp' /*, default: () => 'CURRENT_TIMESTAMP' */,
-  })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
   @Column({ type: 'boolean', default: false }) // 기본값은 false
