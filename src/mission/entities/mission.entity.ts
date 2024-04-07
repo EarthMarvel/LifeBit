@@ -46,6 +46,7 @@ export class Mission {
 
   // numberPeople
   @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: false })
   numberPeople: number;
 
   // thumbnailUrl
