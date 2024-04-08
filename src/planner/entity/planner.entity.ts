@@ -1,23 +1,14 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { Plan } from './plan.entity';
-import { User } from 'src/user/entities/user.entity';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Task } from "./task.entity";
 
 @Entity({ name: 'planner' })
 export class Planner {
   @PrimaryGeneratedColumn()
   plannerId: number;
 
-  @OneToMany(() => Plan, (plan) => plan.planner)
-  plan: Plan[];
+  @OneToMany(() => Task, (task) => task.planner)
+  task : Task[]
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
