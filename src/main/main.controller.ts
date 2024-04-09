@@ -1,11 +1,42 @@
-import { Controller } from '@nestjs/common';
+import { Body, Res } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    HttpStatus,
+    Query,
+  } from '@nestjs/common';
+import { Response } from 'express';
+import { MainService } from './main.service';
+import { MissionType } from 'src/mission/types/missionType';
+import { Category } from 'src/board/types/category_status.enum';
+import { MainDto } from './dto/main.dto';
 
 @Controller('main')
 export class MainController {
-  /**
-   * 전체 미션, 카테고리별, 정렬별 조회
-   */
-  /**
-   * 미션 검색
-   */
+
+    constructor(
+        private readonly mainService : MainService
+    ) {}
+        
+
+    /**
+     * 메인 조회
+     * @param category 
+     * @param sort 
+     * @param title 
+     * @param res 
+     * @returns 
+     */
+    @Get('/')
+    async main(@Query('category') category : Category, 
+        @Query('sort') sort : string, 
+        @Query('type') type : MissionType,
+        @Body() mainDto : MainDto,
+        @Res() res : Response) {
+            
+        return res.status(HttpStatus.OK).json({
+            message : "메인 페이지를 조회했습니다",
+            data : await this.mainService.main(category, sort, mainDto.title, type)
+        });
+    }
 }

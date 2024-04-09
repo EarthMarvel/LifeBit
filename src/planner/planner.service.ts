@@ -1,22 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { TodoDto } from './dto/todo.dto';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { TaskDto } from './dto/task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Planner } from './entity/planner.entity';
-import { DataSource, Repository } from 'typeorm';
-import { Plan } from './entity/plan.entity';
+import { DataSource, EntityManager, Repository } from 'typeorm';
+import { Task } from './entity/task.entity';
 import { DateDto } from './dto/get.planner.dto';
 import { PlannerDto } from './dto/update.planner.dto';
 import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class PlannerService {
-  constructor(
-    @InjectRepository(Planner)
-    private readonly plannerRepository: Repository<Planner>, //사용자가 회원가입 하면 자동으로 planner row 도 생성된다.
-    @InjectRepository(Plan)
-    private readonly planRepository: Repository<Plan>,
-    private readonly dataSouce: DataSource, //커넥션 풀에서 커넥션(-> 트랜잭션) 가져오기
-  ) {}
+    constructor(
+        @InjectRepository(Planner) 
+        private readonly plannerRepository : Repository<Planner>, //사용자가 회원가입 하면 자동으로 planner row 도 생성된다.
+        @InjectRepository(Task)
+        private readonly taskRepository : Repository<Task>,
+        private readonly dataSouce : DataSource //커넥션 풀에서 커넥션(-> 트랜잭션) 가져오기
+    ) {}
 
   /**
    * 마이페이지 접근 (만약 user 가 없다면 빈 플래너 생성해서 보내기)
@@ -33,79 +33,67 @@ export class PlannerService {
       });
     }
 
-    const month_plans = await this.planRepository
-      .createQueryBuilder('plan')
-      .select(['plan.todo', 'plan.startDate', 'plan.endDate'])
-      .innerJoin(Planner, 'planner', 'plan.plannerId = planner.planner_id')
-      .where('planner.userId = :userId', { userId: user.user_id })
-      .andWhere(
-        'year(plan.start_date) * 12 + month(plan.start_date) <= year(now()) * 12 + month(now())',
-      )
-      .andWhere(
-        'year(plan.end_date) * 12 + month(plan.end_date) >= year(now()) * 12 + month(now())',
-      )
-      .orderBy('plan.start_date')
-      .getMany();
+    const month_tasks_list = await this.taskRepository
+        .createQueryBuilder('task')
+        .select(['task.todo', 'task.startDate', 'task.endDate'])
+        .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
+        .where('planner.userId = :userId', {userId : user.user_id})
+        .andWhere('year(task.start_date) * 12 + month(task.start_date) <= year(now()) * 12 + month(now())')
+        .andWhere('year(task.end_date) * 12 + month(task.end_date) >= year(now()) * 12 + month(now())')
+        .orderBy('task.start_date')
+        .getMany();
 
-    const today = await this.planRepository
-      .createQueryBuilder('plan')
-      .select([
-        'plan.todo',
-        'plan.startDate',
-        'plan.endDate',
-        'plan.startTime',
-        'plan.endTime',
-        'plan.planId',
-        'plan.authYn',
-        'plan.checkYn',
-      ])
-      .innerJoin(Planner, 'planner', 'plan.plannerId = planner.planner_id')
-      .where('planner.userId = :userId', { userId: user.user_id })
-      .andWhere('plan.start_date <= CURDATE()')
-      .andWhere('plan.end_date >= CURDATE()')
-      .getMany();
+    const today_task = await this.taskRepository
+        .createQueryBuilder('task')
+        .select([
+            'task.todo', 
+            'task.startDate', 
+            'task.endDate', 
+            'task.startTime', 
+            'task.endTime', 
+            'task.taskId', 
+            'task.authSum', 
+            'task.checkYn'
+            ])
+        .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
+        .where('planner.userId = :userId', {userId : user.user_id})
+        .andWhere('task.start_date <= CURDATE()')
+        .andWhere('task.end_date >= CURDATE()')
+        .getMany();
 
     const planner_info = await this.plannerRepository
-      .createQueryBuilder('planner')
-      .select(['planner.name', 'planner.description', 'planner.plannerId']) //엔티티로 select
-      .where('planner.userId = :userId', { userId: user.user_id }) //쿼리
-      .getOne(); //쿼리 실행
-
+            .createQueryBuilder('planner')
+            .select(['planner.name', 'planner.description', 'planner.plannerId']) //엔티티로 select
+            .where('planner.userId = :userId', {userId : user.user_id}) //쿼리
+            .getOne(); //쿼리 실행
+    
     return {
-      month_plans,
-      today,
-      planner_info,
-    };
-  }
+        month_tasks_list, today_task, planner_info
+    }
+    
+}
 
-  /**
-   * 플래너 조회
-   * @param dateDto
-   * @param plannerId
-   * @returns
-   */
-  async getPlanner(dateDto: DateDto, plannerId: number) {
-    return await this.planRepository
-      .createQueryBuilder('plan')
-      .select([
-        'plan.todo',
-        'plan.startDate',
-        'plan.endDate',
-        'planner.plannerId',
-      ])
-      .innerJoin('plan.planner', 'planner')
-      .where('planner.planner_id = :plannerId', { plannerId })
-      .andWhere(
-        'year(plan.start_date) * 12 + month(plan.start_date) <= :year * 12 + :month',
-        { year: dateDto.year, month: dateDto.month },
-      )
-      .andWhere(
-        'year(plan.end_date) * 12 + month(plan.end_date) >= :year * 12 + :month',
-        { year: dateDto.year, month: dateDto.month },
-      )
-      .orderBy('plan.start_date')
-      .getMany();
-  }
+    /**
+     * 플래너 조회
+     * @param dateDto 
+     * @param plannerId 
+     * @returns 
+     */
+    async getPlanner(dateDto : DateDto, plannerId: number) {
+
+        return await this.taskRepository
+            .createQueryBuilder('task')
+            .select(['task.todo', 'task.startDate', 'task.endDate', 'planner.plannerId'])
+            .innerJoin('task.planner', 'planner')
+            .where('planner.planner_id = :plannerId', {plannerId})
+            .andWhere('year(task.start_date) * 12 + month(task.start_date) <= :year * 12 + :month', 
+                {year : dateDto.year, month : dateDto.month})
+            .andWhere('year(task.end_date) * 12 + month(task.end_date) >= :year * 12 + :month',
+                {year : dateDto.year, month : dateDto.month})
+            .orderBy('task.start_date')
+            .getMany();
+
+    }
 
   /**
    * 플래너 정보 수정
@@ -124,114 +112,135 @@ export class PlannerService {
     return updatedPlanner;
   }
 
-  /**
-   * 일정 등록
-   * @param todoDto
-   * @param plannerId
-   * @returns
-   */
-  async postTodo(todoDto: TodoDto, plannerId: number) {
-    const planner = await this.plannerRepository.findOneBy({ plannerId });
+    /**
+     * 일정 등록
+     * @param taskDto 
+     * @param plannerId 
+     * @returns 
+     */
+    async postTodo(taskDto : TaskDto, plannerId : number) {
+
+        const planner = await this.plannerRepository.findOneBy({plannerId});
 
     if (!planner) {
       throw new NotFoundException('존재하지 않는 플래너입니다.');
     }
 
-    const plan = await this.planRepository
-      .createQueryBuilder()
-      .insert()
-      .into('plan')
-      .values({
-        todo: todoDto.todo,
-        startDate: todoDto.startDate,
-        endDate: todoDto.endDate,
-        startTime: todoDto.startTime,
-        endTime: todoDto.endTime,
-        ifMission: todoDto.ifMission,
-        thenMissionId: todoDto.thenMissionId,
-        planner: planner,
-      })
-      .execute();
+        const task = await this.taskRepository
+            .createQueryBuilder()
+            .insert()
+            .into('task')
+            .values({
+                todo : taskDto.todo, 
+                startDate : taskDto.startDate,
+                endDate : taskDto.endDate,
+                startTime : taskDto.startTime,
+                authDate : this.getToday(),
+                endTime : taskDto.endTime,
+                planner : planner
+            })
+            .execute();
 
-    return plan;
-  }
+        return task;
+    }
+    
+    /**
+     * 일정 수정
+     * @param taskId 
+     * @param taskDto 
+     * @returns 
+     */
+    async updateTodo(taskId: number, taskDto : TaskDto) {
 
-  /**
-   * 일정 수정
-   * @param planId
-   * @param todoDto
-   * @returns
-   */
-  async updateTodo(planId: number, todoDto: TodoDto) {
-    const updatedTodo = await this.planRepository.findOneBy({ planId: planId });
+        const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
 
     if (!updatedTodo) {
       throw new NotFoundException('존재하지 않는 일정입니다.');
     }
 
-    const plan = this.planRepository
-      .createQueryBuilder()
-      .update(Plan)
-      .set({
-        todo: todoDto.todo,
-        startDate: todoDto.startDate,
-        endDate: todoDto.endDate,
-        startTime: todoDto.startTime,
-        endTime: todoDto.endTime,
-        ifMission: todoDto.ifMission,
-        thenMissionId: todoDto.thenMissionId,
-      })
-      .where('plan_id = :planId', { planId })
-      .execute();
-    return plan;
-  }
+        const plan =  this.taskRepository
+            .createQueryBuilder()
+            .update(Task) 
+            .set({
+                todo: taskDto.todo,
+                startDate: taskDto.startDate,
+                endDate: taskDto.endDate,
+                startTime: taskDto.startTime,
+                endTime: taskDto.endTime,
+            })
+            .where("task_id = :taskId", { taskId })
+            .execute();
+        return plan;
+    }
+    
+    /**
+     * 일정 삭제
+     * @param taskId 
+     */
+    async deleteTodo(taskId: number) {
 
-  /**
-   * 일정 삭제
-   * @param planId
-   */
-  async deleteTodo(planId: number) {
-    const updatedTodo = await this.planRepository.findOneBy({ planId: planId });
+        const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
 
     if (!updatedTodo) {
       throw new NotFoundException('존재하지 않는 일정입니다.');
     }
 
-    await this.planRepository
-      .createQueryBuilder()
-      .delete()
-      .from(Plan)
-      .where('plan_id = :planId', { planId })
-      .execute();
-  }
-
-  /**
-   * 일정 체크 / 언체크
-   * @param planId
-   */
-  async checkTodo(planId: number) {
-    const updatedTodo = await this.planRepository.findOneBy({ planId: planId });
+        await this.taskRepository
+            .createQueryBuilder()
+            .delete()
+            .from(Task)
+            .where("task_id = :taskId", { taskId })
+            .execute();
+    }
+    
+    /**
+     * 일정 체크 / 언체크
+     * @param taskId
+     */
+    async checkTodo(taskId: number) {
+        const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
 
     if (!updatedTodo) {
       throw new NotFoundException('존재하지 않는 일정입니다.');
     }
     updatedTodo.checkYn = !updatedTodo.checkYn;
 
-    await this.planRepository.save(updatedTodo);
-  }
+        await this.taskRepository.save(updatedTodo);
+    }
+    
+    /**
+     * 일정 인증
+     * @param taskId
+     */
+    async authTodo(taskId: number) {
+        const task = await this.taskRepository.findOneBy({taskId});
 
-  /**
-   * 일정 인증
-   * @param planId
-   */
-  async authTodo(planId: number) {
-    const updatedTodo = await this.planRepository.findOneBy({ planId });
+        if (!task) {
+            throw new NotFoundException('존재하지 않는 일정입니다.');
+        }
 
-    if (!updatedTodo) {
-      throw new NotFoundException('존재하지 않는 일정입니다.');
+        //인증은 24시간만 가능하다.
+        //스케줄러 -> 자정을 기준으로 오늘 할 일을 찾아서 authDate.set(오늘 날짜) , authYn.set(false) 로 바꾼다.
+        const today = this.getToday();
+
+        if (task.authDate != today) {
+            throw new ForbiddenException('인증할 수 없습니다');
+        }
+
+        if (task.authYn) {
+            throw new ForbiddenException('이미 인증을 완료했습니다.');
+        }
+
+        task.authYn = true;
+        task.authSum += 1;
+        task.authDate = today;
+        return await this.taskRepository.save(task);
     }
 
-    updatedTodo.authYn = true;
-    await this.planRepository.save(updatedTodo);
-  }
+    private getToday() {
+        const today = new Date(); //인증 시도한 날짜
+        today.setHours(0, 0, 0, 0); // 날짜 부분만 필요하므로 시간을 0시 0분 0초로 설정
+
+        return today;
+    }
 }

@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { PlannerController } from './planner.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Plan } from './entity/plan.entity';
+import { Task } from './entity/task.entity';
 import { Planner } from './entity/planner.entity';
-import { Point } from 'src/point/entity/point.entity';
 import { PlannerService } from './planner.service';
+import { Mission } from 'src/mission/entities/mission.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Planner, Plan, Point])],
-
+  imports : [TypeOrmModule.forFeature([Planner, Task, Mission])],
   providers: [PlannerService],
   controllers: [PlannerController],
 })
