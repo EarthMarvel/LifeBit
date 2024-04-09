@@ -10,6 +10,7 @@ import { CreateBoardDto } from './dto/create_board.dto';
 import { UpdateBoardDto } from './dto/update_board.dto';
 import { SearchBoardDto } from './dto/serach_board.dto';
 import { User } from 'src/user/entities/user.entity';
+import { SocketGateway } from './socket/socket.gateway';
 // import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class BoardService {
   constructor(
     @InjectRepository(Boards)
     private boardRepository: Repository<Boards>,
+    private readonly socketGateway: SocketGateway,
   ) {}
 
   // 게시물 전체 조회
@@ -70,14 +72,12 @@ export class BoardService {
       throw new NotFoundException('해당 게시물을 찾을 수 없습니다.');
     }
 
-    // 이미 좋아요 한 유저인지 확인
-    const alreadyLiked =
-      board && board.like && board.like.some((user) => user.user_id === userId);
-    // board.like.some((user) => user.user_id === userId);
+    // const alreadyLiked =
+    //   board && board.like && board.like.some((user) => user.user_id === userId);
 
-    if (alreadyLiked) {
-      throw new BadRequestException('이미 좋아요를 누른 사용자입니다');
-    }
+    // if (alreadyLiked) {
+    //   throw new BadRequestException('이미 좋아요를 누른 사용자입니다');
+    // }
 
     if (!board.like) {
       board.like = [];
@@ -92,6 +92,9 @@ export class BoardService {
     board.likedCount++;
 
     await this.boardRepository.save(board);
+
+    // 좋아요 알림 발송
+    this.socketGateway.LikeNotification(boardId, userId);
   }
 
   // 게시물 좋아요 취소
