@@ -1,5 +1,14 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
-import { Planner } from "./planner.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Timestamp,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Planner } from './planner.entity';
 
 /**
  * {
@@ -13,47 +22,53 @@ import { Planner } from "./planner.entity";
 }
 */
 
-@Entity({name : 'task'})
+@Entity({ name: 'task' })
 export class Task {
+  @PrimaryGeneratedColumn()
+  taskId: number;
 
-    @PrimaryGeneratedColumn()
-    taskId : number;
+  @ManyToOne(() => Planner, (planner) => planner.task)
+  @JoinColumn({ name: 'plannerId' })
+  planner: Planner;
 
-    @ManyToOne(() => Planner, (planner) => planner.task)
-    @JoinColumn({name : 'plannerId'})
-    planner : Planner
+  @Column({ type: 'varchar', nullable: false })
+  todo: string;
 
-    @Column({type : 'varchar', nullable : false})
-    todo : string
+  @Column({ type: 'date' })
+  startDate: Date;
 
-    @Column({ type: 'date' }) 
-    startDate: Date;
+  @Column({ type: 'date' })
+  endDate: Date;
 
-    @Column({ type: 'date' }) 
-    endDate: Date;
-    
-    @Column({ type: 'time', precision: 0 })
-    startTime: Date;
+  @Column({ type: 'time', precision: 0 })
+  startTime: Date;
 
-    @Column({ type: 'time', precision: 0 })
-    endTime: Date;
-    
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Timestamp;
-    
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Timestamp;
+  @Column({ type: 'time', precision: 0 })
+  endTime: Date;
 
-    @Column({ default: 0 }) // 기본값은 false
-    authSum: number;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Timestamp;
 
-    @Column({ type: 'date' }) 
-    authDate : Date;
+  // 서버 실행할 때 오류 이슈로 잠시 주석!
+  // @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  // createdAt: Timestamp;
 
-    @Column({type : 'boolean'})
-    authYn : boolean;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Timestamp;
 
-    @Column({ type: 'boolean', default: false }) // 기본값은 false
-    checkYn: boolean;
+  // 서버 실행할 때 오류 이슈로 잠시 주석!
+  // @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  // updatedAt: Timestamp;
 
+  @Column({ default: 0 }) // 기본값은 false
+  authSum: number;
+
+  @Column({ type: 'date' })
+  authDate: Date;
+
+  @Column({ type: 'boolean' })
+  authYn: boolean;
+
+  @Column({ type: 'boolean', default: false }) // 기본값은 false
+  checkYn: boolean;
 }
