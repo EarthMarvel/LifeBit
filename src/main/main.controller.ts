@@ -7,9 +7,9 @@ import {
   } from '@nestjs/common';
 import { Response } from 'express';
 import { MainService } from './main.service';
-import { MissionType } from 'src/mission/types/missionType';
-import { Category } from 'src/board/types/category_status.enum';
+import { MissionType } from '../mission/types/missionType';
 import { MainDto } from './dto/main.dto';
+import { Category } from '../mission/types/category';
 
 @Controller('main')
 export class MainController {
