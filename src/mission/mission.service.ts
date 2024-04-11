@@ -9,6 +9,7 @@ import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { DataSource, Repository } from 'typeorm';
+import { UserInfo } from 'src/utils/userInfo.decorator';
 
 @Injectable()
 export class MissionService {
@@ -51,6 +52,8 @@ export class MissionService {
 
   async update(userId: number, id: number, updateMissionDto: UpdateMissionDto) {
     const mission = await this.findOne(id);
+
+    console.log('userInfo : ' + UserInfo.name); // null
 
     /*
     if (mission.user_id !== userId) {
