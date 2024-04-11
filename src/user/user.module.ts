@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOptionsFactory } from 'src/utils/multer.options.factory';
 import { S3Service } from './s3.service';
+import { Repository } from 'typeorm';
 
 @Module({
   imports: [

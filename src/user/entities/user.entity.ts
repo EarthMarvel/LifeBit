@@ -30,11 +30,14 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   nickName: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: true })
   password: string;
 
   @Column({ type: 'varchar', nullable: true })
   image: string;
+
+  @Column({ nullable: true })
+  providerId: string;
 
   @ManyToMany(() => Boards, (boards) => boards.like)
   @JoinTable()
