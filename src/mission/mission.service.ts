@@ -65,18 +65,4 @@ export class MissionService {
     const updatedMission = await this.missionRepository.save(mission);
     return { updatedMission, message: '미션이 정상적으로 수정되었습니다.' };
   }
-
-  /*
-  async postMissionCertificate(
-    postMissionCertificateDto: PostMisionCertificateDto,
-  ) {
-
-  }
-
-  async getMissionCertificate(
-    getMissionCertificateDto: GetMissionCertificateDto,
-  ) {
-
-  }
-  */
 }

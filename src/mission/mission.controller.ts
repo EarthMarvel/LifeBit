@@ -83,43 +83,4 @@ export class MissionController {
       return { message: `${error}` };
     }
   }
-
-  // 미션 인증
-  // POST
-
-  /*
-
-  @Post('/:missionId/missionCertificate')
-  async postMissionCertificate(
-    @Param('missionId') missionId: number,
-    @Req() req: any,
-  ) {
-    try {
-      console.log('Post Mission Certification');
-
-      const userId = req.user_id;
-
-      return await this.missionService.postMissionCertificate(
-        +missionId,
-        userId,
-      );
-    } catch (error) {
-      return { message: `${error}` };
-    }
-  }
-
-  // 미션 인증 결과 반환
-  // GET
-
-  @Get('/missionId/missionCertificate')
-  async getMissionCertificate(@Param('missionId') missionId: number) {
-    try {
-      console.log('Get Mision Certification Result');
-
-      return await this.missionService.getMissionCertificate();
-    } catch (error) {
-      return { message: `${error}` };
-    }
-  }
-  */
 }
