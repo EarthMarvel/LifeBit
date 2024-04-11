@@ -30,7 +30,7 @@ export class BoardController {
     return await this.boardService.getAllBoards();
   }
 
-  // ??
+  // 게시물 검색
   @Get('search')
   async searchBoards(
     @Query() searchBoardDto: SearchBoardDto,
@@ -85,7 +85,11 @@ export class BoardController {
   @Post('/:boardId/like')
   async likeBoard(@Param('boardId') boardId: number, @Req() req) {
     const userId = req.user.userId;
-    await this.boardService.likeBoard(boardId, userId);
+    const like = await this.boardService.likeBoard(boardId, userId);
+    return {
+      like,
+      message: '좋아요!',
+    };
   }
 
   // 게시물 좋아요 취소
@@ -93,6 +97,10 @@ export class BoardController {
   @Delete('/:boardId/unlike')
   async unlikeBoard(@Param('boardId') boardId: number, @Req() req) {
     const userId = req.user.userId;
-    await this.boardService.unlikeBoard(boardId, userId);
+    const unlike = await this.boardService.unlikeBoard(boardId, userId);
+    return {
+      unlike,
+      message: '좋아요 취소!',
+    };
   }
 }

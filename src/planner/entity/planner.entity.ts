@@ -1,6 +1,16 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { User } from "src/user/entities/user.entity";
-import { Task } from "./task.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Task } from './task.entity';
 
 @Entity({ name: 'planner' })
 export class Planner {
@@ -8,7 +18,7 @@ export class Planner {
   plannerId: number;
 
   @OneToMany(() => Task, (task) => task.planner)
-  task : Task[]
+  task: Task[];
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
