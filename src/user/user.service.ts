@@ -21,6 +21,7 @@ import { EmailAuthDto } from './dto/emailAuth.dto';
 import { S3Service } from './s3.service';
 import { ProfileDto } from './dto/profile.dto';
 import { extname } from 'path';
+import { WithdrawDto } from './dto/withdraw.dto';
 
 @Injectable()
 export class UserService {
@@ -97,7 +98,7 @@ export class UserService {
     return { accessToken: this.jwtService.sign(payload) };
   }
 
-  // 프로필 수정
+  // 프로필 작성
   async profile(
     user_id: number,
     profileDto: ProfileDto,
@@ -107,23 +108,58 @@ export class UserService {
 
     const { nickName } = profileDto;
 
-    if (_.isNil(file)) {
+    if (file) {
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+      const fileExt = extname(file.originalname).toLowerCase();
+      if (!allowedExtensions.includes(fileExt)) {
+        throw new BadRequestException('올바른 JPEG, PNG, GIF 파일이 아닙니다.');
+      }
+
+      await this.s3Service.putObject(file);
+
+      if (user.image) {
+        await this.s3Service.deleteObject(user.image);
+      }
+      user.nickName = nickName;
+      user.image = file.filename;
+
+      await this.userRepository.save(user);
+    } else {
       throw new BadRequestException('파일이 존재하지 않습니다.');
     }
+  }
 
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
-
-    const fileExt = extname(file.originalname).toLowerCase();
-    if (!allowedExtensions.includes(fileExt)) {
-      throw new BadRequestException('올바른 JPEG, PNG, GIF 파일이 아닙니다.');
+  // 프로필 조회
+  profileInfo(user_id: number) {
+    // return this.userRepository.findOne({
+    //   where: { user_id },
+    //   select: ['image', 'nickName'],
+    // });
+    const user = this.userRepository.findOne({
+      where: { user_id },
+      select: ['image', 'nickName'],
+    });
+    if (!user) {
+      throw new NotFoundException('해당 사용자를 찾지 못했습니다.');
     }
+    return user;
+  }
 
-    user.nickName = nickName;
-    user.image = file.filename;
+  // 회원 탈퇴
+  async withdraw(user_id: number, withdrawDto: WithdrawDto) {
+    const user = await this.userRepository.findOne({
+      where: { user_id },
+      select: ['password', 'image'],
+    });
 
-    await this.userRepository.save(user);
+    const { password } = withdrawDto;
 
-    await this.s3Service.putObject(file);
+    if (!(await compare(password, user.password))) {
+      throw new UnauthorizedException('비밀번호를 확인해주세요.');
+    }
+    await this.s3Service.deleteObject(user.image);
+    await this.userRepository.delete({ user_id });
   }
 
   // 이메일로 회원 정보 가져오기
@@ -132,9 +168,25 @@ export class UserService {
   }
 
   // 인증 코드 숫자 생성 함수
-  private generateRandomNum(): number {
+  generateRandomNum(): number {
     const min = 100000;
     const max = 999999;
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  async findByEmailOrSave(
+    email: string,
+    fullName: string,
+    providerId: string,
+  ): Promise<User> {
+    const user = await this.findByEmail(email);
+    if (user) return user;
+    console.log('---------->', fullName);
+    const newUser = await this.userRepository.save({
+      email,
+      name: fullName,
+      providerId,
+    });
+    return newUser;
   }
 }
