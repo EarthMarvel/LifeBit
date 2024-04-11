@@ -18,10 +18,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
-    "types": [
-      "node",
-      "cache-manager",
-      "jest"
-    ]
+    "types": ["node", "cache-manager", "jest"]
   }
 }

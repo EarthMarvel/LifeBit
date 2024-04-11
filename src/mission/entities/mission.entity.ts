@@ -11,7 +11,7 @@ import {
 import { MissionType } from '../types/missionType';
 import { Category } from '../types/category';
 
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity()
 export class Mission {

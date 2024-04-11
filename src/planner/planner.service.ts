@@ -24,6 +24,7 @@ export class PlannerService {
    * @returns
    */
   async myPage(user: User) {
+    console.log(user);
     const exist = await this.plannerRepository.findOneBy({ user });
 
     //플래너가 없을 경우 새로 생성
@@ -122,9 +123,9 @@ export class PlannerService {
 
         const planner = await this.plannerRepository.findOneBy({plannerId});
 
-    if (!planner) {
-      throw new NotFoundException('존재하지 않는 플래너입니다.');
-    }
+        if (!planner) {
+        throw new NotFoundException('존재하지 않는 플래너입니다.');
+        }
 
         const task = await this.taskRepository
             .createQueryBuilder()
@@ -152,11 +153,11 @@ export class PlannerService {
      */
     async updateTodo(taskId: number, taskDto : TaskDto) {
 
-        const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
+    const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
 
-    if (!updatedTodo) {
-      throw new NotFoundException('존재하지 않는 일정입니다.');
-    }
+        if (!updatedTodo) {
+        throw new NotFoundException('존재하지 않는 일정입니다.');
+        }
 
         const plan =  this.taskRepository
             .createQueryBuilder()
@@ -200,13 +201,13 @@ export class PlannerService {
     async checkTodo(taskId: number) {
         const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
 
-    if (!updatedTodo) {
-      throw new NotFoundException('존재하지 않는 일정입니다.');
-    }
-    updatedTodo.checkYn = !updatedTodo.checkYn;
+        if (!updatedTodo) {
+        throw new NotFoundException('존재하지 않는 일정입니다.');
+        }
+        updatedTodo.checkYn = !updatedTodo.checkYn;
 
-        await this.taskRepository.save(updatedTodo);
-    }
+            await this.taskRepository.save(updatedTodo);
+        }
     
     /**
      * 일정 인증
@@ -220,10 +221,15 @@ export class PlannerService {
         }
 
         //인증은 24시간만 가능하다.
-        //스케줄러 -> 자정을 기준으로 오늘 할 일을 찾아서 authDate.set(오늘 날짜) , authYn.set(false) 로 바꾼다.
-        const today = this.getToday();
+        const today = this.getToday();//2024-04-11T18:44:36.265Z
+        const dateString = today.toISOString().slice(0, 10); // YYYY-MM-DD 형식의 문자열
+        
+        const taskDate = new Date(task.authDate);
 
-        if (task.authDate != today) {
+        console.log(dateString); //2024-04-11
+        console.log(task.authDate); //2024-04-11
+
+        if (taskDate.toISOString().slice(0, 10) !== dateString) {
             throw new ForbiddenException('인증할 수 없습니다');
         }
 
@@ -233,14 +239,13 @@ export class PlannerService {
 
         task.authYn = true;
         task.authSum += 1;
-        task.authDate = today;
         return await this.taskRepository.save(task);
     }
 
     private getToday() {
-        const today = new Date(); //인증 시도한 날짜
-        today.setHours(0, 0, 0, 0); // 날짜 부분만 필요하므로 시간을 0시 0분 0초로 설정
-
-        return today;
+        const todayUTC = new Date();
+        const todayKoreanTime = new Date(todayUTC.getTime() + (9 * 60 * 60 * 1000));
+    
+        return todayKoreanTime;
     }
 }
