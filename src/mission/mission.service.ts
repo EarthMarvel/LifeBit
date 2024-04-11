@@ -9,6 +9,7 @@ import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { DataSource, Repository } from 'typeorm';
+import { UserInfo } from 'src/utils/userInfo.decorator';
 
 @Injectable()
 export class MissionService {
@@ -52,6 +53,8 @@ export class MissionService {
   async update(userId: number, id: number, updateMissionDto: UpdateMissionDto) {
     const mission = await this.findOne(id);
 
+    console.log('userInfo : ' + UserInfo.name); // null
+
     /*
     if (mission.user_id !== userId) {
       throw new UnauthorizedException('해당 미션을 수정할 권한이 없습니다.');
@@ -62,4 +65,18 @@ export class MissionService {
     const updatedMission = await this.missionRepository.save(mission);
     return { updatedMission, message: '미션이 정상적으로 수정되었습니다.' };
   }
+
+  /*
+  async postMissionCertificate(
+    postMissionCertificateDto: PostMisionCertificateDto,
+  ) {
+
+  }
+
+  async getMissionCertificate(
+    getMissionCertificateDto: GetMissionCertificateDto,
+  ) {
+
+  }
+  */
 }
