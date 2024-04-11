@@ -5,13 +5,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Timestamp,
   UpdateDateColumn,
 } from 'typeorm';
 import { Planner } from './planner.entity';
 
 /**
  * {
-  "planId": 1,
+  "taskId": 1,
   "planner": {},
   "todo": "할 일 내용",
   "startDate": "2024-04-02", // 특정 날짜만 받음
@@ -21,12 +22,12 @@ import { Planner } from './planner.entity';
 }
 */
 
-@Entity({ name: 'plan' })
-export class Plan {
+@Entity({ name: 'task' })
+export class Task {
   @PrimaryGeneratedColumn()
-  planId: number;
+  taskId: number;
 
-  @ManyToOne(() => Planner, (planner) => planner.plan)
+  @ManyToOne(() => Planner, (planner) => planner.task)
   @JoinColumn({ name: 'plannerId' })
   planner: Planner;
 
@@ -46,20 +47,28 @@ export class Plan {
   endTime: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  createdAt: Timestamp;
+
+  // 서버 실행할 때 오류 이슈로 잠시 주석!
+  // @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  // createdAt: Timestamp;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
+  updatedAt: Timestamp;
 
-  @Column({ type: 'boolean', default: false }) // 기본값은 false
+  // 서버 실행할 때 오류 이슈로 잠시 주석!
+  // @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  // updatedAt: Timestamp;
+
+  @Column({ default: 0 }) // 기본값은 false
+  authSum: number;
+
+  @Column({ type: 'date' })
+  authDate: Date;
+
+  @Column({ type: 'boolean' })
   authYn: boolean;
 
   @Column({ type: 'boolean', default: false }) // 기본값은 false
   checkYn: boolean;
-
-  @Column({ type: 'boolean', default: false }) // 기본값은 false
-  ifMission: boolean;
-
-  @Column()
-  thenMissionId: number;
 }

@@ -1,5 +1,6 @@
 import { Boards } from 'src/board/entities/board.entity';
 import { Point } from 'src/point/entity/point.entity';
+import { Mission } from 'src/mission/entities/mission.entity';
 import {
   Column,
   Entity,
@@ -15,6 +16,10 @@ import {
 export class User {
   @PrimaryGeneratedColumn()
   user_id: number;
+
+  @ManyToMany(() => Mission, (mission) => mission.user_id)
+  @JoinTable()
+  missions: Mission[];
 
   @Column({ type: 'varchar', nullable: false })
   email: string;

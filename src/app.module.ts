@@ -14,11 +14,13 @@ import { PlannerModule } from './planner/planner.module';
 import { CommentModule } from './comment/comment.module';
 import { Boards } from './board/entities/board.entity';
 import { User } from './user/entities/user.entity';
-import { MainController } from './main/main.controller';
-import { MainService } from './main/main.service';
 import { MainModule } from './main/main.module';
-import { Plan } from './planner/entity/plan.entity';
+import { Task } from './planner/entity/task.entity';
 import { Planner } from './planner/entity/planner.entity';
+import { Mission } from './mission/entities/mission.entity';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { SchedulerModule } from './utils/scheduler/scheduler.module';
 import { Point } from './point/entity/point.entity';
 
 const typeOrmModuleOptions = {
@@ -32,9 +34,7 @@ const typeOrmModuleOptions = {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
-
-    entities: [User, Planner, Plan, Point, Boards],
-
+    entities: [User, Planner, Task, Point, Boards, Mission],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -70,8 +70,9 @@ const typeOrmModuleOptions = {
     PlannerModule,
     CommentModule,
     MainModule,
+    SchedulerModule
   ],
-  controllers: [MainController],
-  providers: [MainService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -84,6 +84,7 @@ describe('UserController', () => {
       providerId: null,
       likeBoards: null,
       point: null,
+      missions: null,
     };
     const profileDto: ProfileDto = { nickName: 'TestUser' };
     const file: Express.Multer.File = {
@@ -124,6 +125,7 @@ describe('UserController', () => {
       providerId: null,
       likeBoards: null,
       point: null,
+      missions: null,
     };
     const profileInfoMock = {
       user_id: 1,
@@ -135,6 +137,7 @@ describe('UserController', () => {
       providerId: null,
       likeBoards: null,
       point: null,
+      missions: null,
     };
 
     jest
@@ -158,6 +161,7 @@ describe('UserController', () => {
       providerId: null,
       likeBoards: null,
       point: null,
+      missions: null,
     };
     const withdrawDto: WithdrawDto = { password: 'password' };
 
