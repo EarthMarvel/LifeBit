@@ -27,6 +27,6 @@ import { S3Service } from './s3.service';
   ],
   providers: [UserService, EmailService, S3Service],
   controllers: [UserController],
-  exports: [UserService],
+  exports: [UserService, S3Service],
 })
 export class UserModule {}

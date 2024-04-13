@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   // BadRequestException,
   Injectable,
   NotFoundException,
@@ -11,14 +12,17 @@ import { UpdateBoardDto } from './dto/update_board.dto';
 import { SearchBoardDto } from './dto/serach_board.dto';
 import { User } from 'src/user/entities/user.entity';
 import { SocketGateway } from './socket/socket.gateway';
-// import { User } from 'src/user/entities/user.entity';
+import { S3Service } from 'src/user/s3.service';
+import { extname } from 'path';
+import _ from 'lodash';
 
 @Injectable()
 export class BoardService {
   constructor(
     @InjectRepository(Boards)
-    private boardRepository: Repository<Boards>,
+    private readonly boardRepository: Repository<Boards>,
     private readonly socketGateway: SocketGateway,
+    private readonly s3Service: S3Service,
   ) {}
 
   // 게시물 전체 조회
@@ -38,13 +42,24 @@ export class BoardService {
   }
 
   // 게시물 생성
-  async createBoard(createBoardDto: CreateBoardDto): Promise<Boards> {
-    const newBoard = this.boardRepository.create({
-      ...createBoardDto,
-    });
+  async createBoard(createBoardDto: CreateBoardDto, file: Express.Multer.File) {
+    if (_.isNil(file)) {
+      throw new BadRequestException('파일이 존재하지 않습니다.');
+    }
 
-    await this.boardRepository.save(newBoard);
-    return newBoard;
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+    const fileExt = extname(file.originalname).toLowerCase();
+    if (!allowedExtensions.includes(fileExt)) {
+      throw new BadRequestException('올바른 JPEG, PNG, GIF 파일이 아닙니다.');
+    }
+
+    await this.boardRepository.save({
+      ...createBoardDto,
+      thumbnail: file.filename,
+    });
+    console.log(file);
+    await this.s3Service.putObject(file);
   }
 
   // 게시물 수정

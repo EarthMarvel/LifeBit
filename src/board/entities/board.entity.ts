@@ -23,11 +23,11 @@ export class Boards extends BaseEntity {
   content: string;
 
   // 이미지
-  @Column()
+  @Column({ type: 'varchar', nullable: false, default: '' })
   thumbnail: string;
 
   // 좋아요 기능
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', nullable: false, default: 0 })
   likedCount: number;
 
   @CreateDateColumn({ type: 'timestamp' })
