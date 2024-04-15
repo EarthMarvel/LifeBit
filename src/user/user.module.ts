@@ -28,6 +28,6 @@ import { Repository } from 'typeorm';
   ],
   providers: [UserService, EmailService, S3Service],
   controllers: [UserController],
-  exports: [UserService],
+  exports: [UserService, S3Service],
 })
 export class UserModule {}
