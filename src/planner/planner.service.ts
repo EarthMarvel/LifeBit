@@ -93,7 +93,6 @@ export class PlannerService {
                 {year : dateDto.year, month : dateDto.month})
             .orderBy('task.start_date')
             .getMany();
-
     }
 
   /**
@@ -124,7 +123,7 @@ export class PlannerService {
         const planner = await this.plannerRepository.findOneBy({plannerId});
 
         if (!planner) {
-        throw new NotFoundException('존재하지 않는 플래너입니다.');
+            throw new NotFoundException('존재하지 않는 플래너입니다.');
         }
 
         const task = await this.taskRepository
@@ -156,7 +155,7 @@ export class PlannerService {
     const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
 
         if (!updatedTodo) {
-        throw new NotFoundException('존재하지 않는 일정입니다.');
+            throw new NotFoundException('존재하지 않는 일정입니다.');
         }
 
         const plan =  this.taskRepository
@@ -182,9 +181,9 @@ export class PlannerService {
 
         const updatedTodo = await this.taskRepository.findOneBy({taskId : taskId});
 
-    if (!updatedTodo) {
-      throw new NotFoundException('존재하지 않는 일정입니다.');
-    }
+        if (!updatedTodo) {
+            throw new NotFoundException('존재하지 않는 일정입니다.');
+        }
 
         await this.taskRepository
             .createQueryBuilder()

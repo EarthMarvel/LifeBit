@@ -30,7 +30,7 @@ describe('MainController', () => {
     jest.clearAllMocks();
   });
 
-  it('main test', async () => {
+  it('메인 페이지 호출 - controller', async () => {
     const mockCategory = Category.FIRST;
     const mockSort = 'mockSort';
     const mockType = MissionType.CHALLENGE;

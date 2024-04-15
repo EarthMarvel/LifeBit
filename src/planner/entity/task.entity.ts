@@ -46,19 +46,11 @@ export class Task {
   @Column({ type: 'time', precision: 0 })
   endTime: Date;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Timestamp;
+  @CreateDateColumn()
+  createdAt: Date;
 
-  // 서버 실행할 때 오류 이슈로 잠시 주석!
-  // @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  // createdAt: Timestamp;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Timestamp;
-
-  // 서버 실행할 때 오류 이슈로 잠시 주석!
-  // @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  // updatedAt: Timestamp;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column({ default: 0 }) // 기본값은 false
   authSum: number;
@@ -66,8 +58,8 @@ export class Task {
   @Column({ type: 'date' })
   authDate: Date;
 
-    @Column({type : 'boolean', default: false})
-    authYn : boolean;
+  @Column({type : 'boolean', default: false})
+  authYn : boolean;
 
   @Column({ type: 'boolean', default: false }) // 기본값은 false
   checkYn: boolean;
