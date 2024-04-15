@@ -10,4 +10,4 @@ export class SocketGateway {
     this.server.emit('likeNotification', { boardId, userId });
   }
 }
-// 프론트에서 띄우기
+// 알림  프론트에서 띄우기
