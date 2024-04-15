@@ -61,13 +61,16 @@ export class BoardController {
   // 게시물 수정
   @UseGuards(AuthGuard('jwt'))
   @Patch('/:boardId')
+  @UseInterceptors(FileInterceptor('file'))
   async updateBoard(
     @Param('boardId') boardId: number,
     @Body() updateBoardDto: UpdateBoardDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     const updateBoard = await this.boardService.updateBoard(
       boardId,
       updateBoardDto,
+      file,
     );
     return {
       updateBoard,

@@ -66,8 +66,31 @@ export class BoardService {
   async updateBoard(
     boardId: number,
     updateBoardDto: UpdateBoardDto,
+    file: Express.Multer.File,
   ): Promise<void> {
-    await this.findOneBoards(boardId);
+    const board = await this.findOneBoards(boardId);
+
+    if (file) {
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+      const fileExt = extname(file.originalname).toLowerCase();
+      if (!allowedExtensions.includes(fileExt)) {
+        throw new BadRequestException('올바른 JPEG, PNG, GIF 파일이 아닙니다.');
+      }
+
+      await this.s3Service.putObject(file);
+
+      if (board.thumbnail) {
+        await this.s3Service.deleteObject(board.thumbnail);
+      }
+      updateBoardDto: UpdateBoardDto;
+      board.thumbnail = file.filename;
+
+      await this.boardRepository.save(board);
+    } else {
+      throw new BadRequestException('파일이 존재하지 않습니다.');
+    }
+
     await this.boardRepository.update({ boardId }, updateBoardDto);
   }
 

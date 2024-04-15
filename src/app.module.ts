@@ -22,6 +22,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SchedulerModule } from './utils/scheduler/scheduler.module';
 import { Point } from './point/entity/point.entity';
+import { VisionService } from './vision/vision.service';
+import { VisionModule } from './vision/vision.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -70,7 +72,8 @@ const typeOrmModuleOptions = {
     PlannerModule,
     CommentModule,
     MainModule,
-    SchedulerModule
+    SchedulerModule,
+    VisionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

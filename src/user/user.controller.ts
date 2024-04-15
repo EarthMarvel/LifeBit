@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   Patch,
   Post,
   Res,
@@ -17,6 +19,7 @@ import { ProfileDto } from './dto/profile.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { User } from './entities/user.entity';
+import { WithdrawDto } from './dto/withdraw.dto';
 
 @Controller('user')
 export class UserController {
@@ -37,7 +40,7 @@ export class UserController {
   async login(@Body() loginDto: LoginDto, @Res() res: any) {
     const token = await this.userService.login(loginDto);
     res.cookie('authorization', `Bearer ${token.accessToken}`);
-    res.json({ message: '로그인이  완료되었습니다.' });
+    res.json({ message: '로그인이 완료되었습니다.' });
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -50,5 +53,18 @@ export class UserController {
   ) {
     await this.userService.profile(user.user_id, profileDto, file);
     return { message: '프로필 작성이 완료되었습니다.' };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('profileInfo')
+  profileInfo(@UserInfo() user: User) {
+    return this.userService.profileInfo(user.user_id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('withdraw')
+  async withdraw(@UserInfo() user: User, @Body() withdrawDto: WithdrawDto) {
+    await this.userService.withdraw(user.user_id, withdrawDto);
+    return { message: '회원탈퇴가 되었습니다.' };
   }
 }

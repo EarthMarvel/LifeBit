@@ -8,6 +8,9 @@ import {
   Put,
   Res,
   Req,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 
 import { MissionService } from './mission.service';
@@ -15,6 +18,7 @@ import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { MissionType } from './types/missionType';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('mission') // 기본 경로로 설정되어 있음
 export class MissionController {
@@ -22,6 +26,7 @@ export class MissionController {
 
   // 미션 등록
   // POST /mission
+  @UseGuards(AuthGuard())
   @Post()
   async createMission(
     @Body() createMissionDto: CreateMissionDto,
