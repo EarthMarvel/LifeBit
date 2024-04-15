@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -19,6 +18,8 @@ import { SearchBoardDto } from './dto/serach_board.dto';
 import { Boards } from './entities/board.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserInfo } from 'src/utils/userInfo.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('boards')
 export class BoardController {
@@ -92,27 +93,11 @@ export class BoardController {
   // 게시물 좋아요
   @UseGuards(AuthGuard('jwt'))
   @Post('/:boardId/like')
-  async likeBoard(@Param('boardId') boardId: number, @Req() req) {
-    const userId = req.user.userId;
+  async likeBoard(@Param('boardId') boardId: number, @UserInfo() user: User) {
+    const userId = user.user_id;
     const like = await this.boardService.likeBoard(boardId, userId);
     return {
       like,
-      message: '좋아요!',
-    };
-  }
-
-  // 게시물 좋아요 취소
-  @UseGuards(AuthGuard('jwt'))
-  @Delete('/:boardId/unlike')
-  async unlikeBoard(@Param('boardId') boardId: number, @Req() req) {
-    const userId = req.user.userId;
-    const unlike = await this.boardService.unlikeBoard(boardId, userId);
-    return {
-      unlike,
-      message: '좋아요 취소!',
     };
   }
 }
-
-// 머지 왜 pr이 사라졌지
-// 다시 pr 올리기용 주석

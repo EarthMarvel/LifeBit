@@ -189,4 +189,14 @@ export class UserService {
     });
     return newUser;
   }
+
+  async findOneuser(userId: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { user_id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException('해당 사용자를 찾을 수 없습니다.');
+    }
+    return user;
+  }
 }
