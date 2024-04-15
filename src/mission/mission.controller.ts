@@ -17,6 +17,7 @@ import { MissionService } from './mission.service';
 import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
+import { CertificateMissionDto } from './dto/certificate-mission.dto';
 import { MissionType } from './types/missionType';
 import { AuthGuard } from '@nestjs/passport';
 

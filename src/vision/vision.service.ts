@@ -32,4 +32,30 @@ export class VisionService {
     const labels = result.labelAnnotations.map((label) => label.description);
     return labels;
   }
+
+  // 이미지 라벨을 감지하고, 주어진 카테고리와 일치하는지 검증
+  async verifyImageCategory(
+    fileName: string,
+    category: string,
+  ): Promise<{
+    requestedCategory: string;
+    detectedLabels: string[];
+    isCategoryMatched: boolean;
+  }> {
+    try {
+      const [result] = await this.client.labelDetection(fileName);
+      const labels = result.labelAnnotations.map((label) => label.description);
+      // 주어진 카테고리가 감지된 라벨들 중 하나와 일치하는지 확인
+      const isCategoryMatched = labels.includes(category);
+      // 결과 객체 반환
+      return {
+        requestedCategory: category,
+        detectedLabels: labels,
+        isCategoryMatched: isCategoryMatched,
+      };
+    } catch (error) {
+      this.logger.error(`detectLabels 오류: ${error.message}`);
+      throw new Error(`Label Detection 실패: ${error.message}`);
+    }
+  }
 }

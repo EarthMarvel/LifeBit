@@ -8,6 +8,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
+import { CertificateMissionDto } from './dto/certificate-mission.dto';
 import { DataSource, Repository } from 'typeorm';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 
