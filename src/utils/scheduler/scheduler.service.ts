@@ -14,8 +14,8 @@ export class SchedulerService {
         private readonly taskRepository : Repository<Task>
     ) {}
 
-    @Interval(60000) //1분 뒤 시작
-    //@Cron('0 0 * * *') //매일 자정 실행
+    //@Interval(60000) //1분 뒤 시작
+    @Cron('0 0 * * *') //매일 자정 실행
     async taskHandle() {
         this.logger.log('Initialize to-do authentication')
 
