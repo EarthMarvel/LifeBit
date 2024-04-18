@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
+import { Like } from 'src/board/entities/likes.entity';
 
 @Entity({
   name: 'users',
@@ -40,9 +41,11 @@ export class User {
   @Column({ nullable: true })
   providerId: string;
 
-  @ManyToMany(() => Boards, (boards) => boards.like)
-  @JoinTable()
-  likeBoards: Boards[];
+  @OneToMany(() => Boards, (boards) => boards.users)
+  boards: Boards[];
+
+  @OneToMany(() => Like, (likes) => likes.users)
+  likes: Like[];
 
   @OneToMany(() => Point, (point) => point.user)
   point: Point[];

@@ -8,11 +8,11 @@ import { UserModule } from 'src/user/user.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { multerOptionsFactory } from 'src/utils/multer.options.factory';
-// import { S3Service } from 'src/user/s3.service';
+import { Like } from './entities/likes.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Boards]),
+    TypeOrmModule.forFeature([Boards, Like]),
     SocketModule,
     UserModule,
     MulterModule.registerAsync({
