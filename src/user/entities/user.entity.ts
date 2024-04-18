@@ -9,6 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 
 @Entity({
   name: 'users',
@@ -17,7 +18,7 @@ export class User {
   @PrimaryGeneratedColumn()
   user_id: number;
 
-  @ManyToMany(() => Mission, (mission) => mission.user_id)
+  @ManyToMany(() => Mission, (mission) => mission.creatorId)
   @JoinTable()
   missions: Mission[];
 
@@ -45,4 +46,10 @@ export class User {
 
   @OneToMany(() => Point, (point) => point.user)
   point: Point[];
+
+  @OneToMany(
+    () => CertificatedImage,
+    (certificatedImage) => certificatedImage.user,
+  )
+  certificatedImages: CertificatedImage[];
 }
