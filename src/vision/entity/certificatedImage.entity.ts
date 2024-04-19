@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Mission } from 'src/mission/entities/mission.entity';
+import { Category } from 'src/mission/types/category';
 
 @Entity({ name: 'certificatedImage' })
 export class CertificatedImage {
@@ -19,6 +20,9 @@ export class CertificatedImage {
 
   @Column({ default: false })
   isCertificated: boolean;
+
+  @Column({ default: '' })
+  category: Category;
 
   @ManyToOne(() => Mission, (mission) => mission.certificatedImages)
   @JoinColumn({ name: 'missionId' })

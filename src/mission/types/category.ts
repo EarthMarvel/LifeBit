@@ -1,10 +1,12 @@
 export enum Category {
   SPORTS = 'Sports',
-  READING = 'Reading',
   COOKING = 'Cooking',
   MUSIC = 'Music',
   ART = 'Art',
   TRAVEL = 'Travel',
   PHOTOGRAPHY = 'Photography',
-  BOOK = 'Book',
+  WORKOUT = 'Workout',
+  READING = 'Reading',
+  STUDY = 'Study',
+  SELFHELP = 'Selfhelp',
 }
