@@ -10,11 +10,6 @@ export class CreateBoardDto {
   @IsNotEmpty({ message: '내용을 입력해주세요.' })
   content: string;
 
-<<<<<<< HEAD
-  // thumbnail: string;
-
-=======
->>>>>>> 78cbaccd05781b0b8d8ad9a1a074ad7033ef92db
   @IsEnum(Category)
   category: Category;
 }

@@ -11,17 +11,10 @@ import { CreateBoardDto } from './dto/create_board.dto';
 import { UpdateBoardDto } from './dto/update_board.dto';
 import { SearchBoardDto } from './dto/serach_board.dto';
 import { SocketGateway } from './socket/socket.gateway';
-<<<<<<< HEAD
 import _ from 'lodash';
 import { extname } from 'path';
 import { S3Service } from 'src/user/s3.service';
-// import { User } from 'src/user/entities/user.entity';
-=======
-import { S3Service } from 'src/user/s3.service';
-import { extname } from 'path';
-import _ from 'lodash';
 import { Like } from './entities/likes.entity';
->>>>>>> 78cbaccd05781b0b8d8ad9a1a074ad7033ef92db
 
 @Injectable()
 export class BoardService {
