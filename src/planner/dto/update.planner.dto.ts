@@ -7,5 +7,5 @@ export class PlannerDto {
 
   @IsNotEmpty()
   @IsString()
-  description: number;
+  description: string;
 }

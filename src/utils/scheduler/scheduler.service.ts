@@ -2,7 +2,6 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron, Interval } from "@nestjs/schedule";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Task } from "src/planner/entity/task.entity";
-import { PlannerService } from "src/planner/planner.service";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -21,17 +20,20 @@ export class SchedulerService {
         this.logger.log('Initialize to-do authentication')
 
         //오늘 할 일 처리하는 작업 수행
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const todayUTC = new Date();
+        const todayKoreanTime = new Date(todayUTC.getTime() + (9 * 60 * 60 * 1000));
+        const dateString = todayKoreanTime.toISOString().slice(0, 10); // YYYY-MM-DD 형식의 문자열
+
+        const taskDate = new Date(dateString);
 
         const todoList = await this.taskRepository
             .createQueryBuilder('task')
-            .where(':today between task.start_date and task.end_date', {today})
+            .where(':today between task.start_date and task.end_date', {today : dateString})
             .getMany();
 
         for (const task of todoList) {
             task.authYn = false;
-            task.authDate = today
+            task.authDate = taskDate
         }
 
         await this.taskRepository.save(todoList);

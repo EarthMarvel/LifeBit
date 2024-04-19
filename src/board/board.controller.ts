@@ -21,11 +21,12 @@ import { SearchBoardDto } from './dto/serach_board.dto';
 import { Boards } from './entities/board.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-// import { AuthGuard } from '@nestjs/passport';
+import { UserInfo } from 'src/utils/userInfo.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('boards')
 export class BoardController {
-  constructor(private boardService: BoardService) {}
+  constructor(private readonly boardService: BoardService) {}
 
   // 게시물 전체 조회
   @Get('')
@@ -50,27 +51,29 @@ export class BoardController {
 
   // 게시물 생성
   @UseGuards(AuthGuard('jwt'))
-  @Post()
+  @Post('')
   @UseInterceptors(FileInterceptor('file'))
   async createBoard(
-    @UploadedFile() file: Express.Multer.File,
     @Body() createBoardDto: CreateBoardDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log('-----------컨트롤러--->', file);
     await this.boardService.createBoard(createBoardDto, file);
-    return { message: '게시물 생성 성공' };
+    return { message: '게시물 생성 완료' };
   }
 
   // 게시물 수정
   @UseGuards(AuthGuard('jwt'))
   @Patch('/:boardId')
+  @UseInterceptors(FileInterceptor('file'))
   async updateBoard(
     @Param('boardId') boardId: number,
     @Body() updateBoardDto: UpdateBoardDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     const updateBoard = await this.boardService.updateBoard(
       boardId,
       updateBoardDto,
+      file,
     );
     return {
       updateBoard,
@@ -92,24 +95,13 @@ export class BoardController {
   // 게시물 좋아요
   @UseGuards(AuthGuard('jwt'))
   @Post('/:boardId/like')
-  async likeBoard(@Param('boardId') boardId: number, @Req() req) {
-    const userId = req.user.userId;
+  async likeBoard(@Param('boardId') boardId: number, @UserInfo() user: User) {
+    const userId = user.user_id;
     const like = await this.boardService.likeBoard(boardId, userId);
     return {
       like,
-      message: '좋아요!',
-    };
-  }
-
-  // 게시물 좋아요 취소
-  @UseGuards(AuthGuard('jwt'))
-  @Delete('/:boardId/unlike')
-  async unlikeBoard(@Param('boardId') boardId: number, @Req() req) {
-    const userId = req.user.userId;
-    const unlike = await this.boardService.unlikeBoard(boardId, userId);
-    return {
-      unlike,
-      message: '좋아요 취소!',
     };
   }
 }
+
+// pr용 주석

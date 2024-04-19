@@ -6,6 +6,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createReadStream } from 'fs';
+// import { Readable } from 'stream';
 
 @Injectable()
 export class S3Service {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from 'src/board/types/category_status.enum';
-import { Mission } from 'src/mission/entities/mission.entity';
-import { MissionType } from 'src/mission/types/missionType';
+import { Mission } from '../mission/entities/mission.entity';
+import { Category } from '../mission/types/category';
+import { MissionType } from '../mission/types/missionType';
 import { Repository } from 'typeorm';
 
 @Injectable()

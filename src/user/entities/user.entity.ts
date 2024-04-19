@@ -1,6 +1,6 @@
-import { Boards } from 'src/board/entities/board.entity';
-import { Point } from 'src/point/entity/point.entity';
-import { Mission } from 'src/mission/entities/mission.entity';
+import { Boards } from '../../board/entities/board.entity';
+import { Point } from '../../point/entity/point.entity';
+import { Mission } from '../../mission/entities/mission.entity';
 import {
   Column,
   Entity,
@@ -9,6 +9,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
+import { Like } from 'src/board/entities/likes.entity';
 
 @Entity({
   name: 'users',
@@ -17,7 +19,7 @@ export class User {
   @PrimaryGeneratedColumn()
   user_id: number;
 
-  @ManyToMany(() => Mission, (mission) => mission.user_id)
+  @ManyToMany(() => Mission, (mission) => mission.creatorId)
   @JoinTable()
   missions: Mission[];
 
@@ -39,10 +41,18 @@ export class User {
   @Column({ nullable: true })
   providerId: string;
 
-  @ManyToMany(() => Boards, (boards) => boards.like)
-  @JoinTable()
-  likeBoards: Boards[];
+  @OneToMany(() => Boards, (boards) => boards.users)
+  boards: Boards[];
+
+  @OneToMany(() => Like, (likes) => likes.users)
+  likes: Like[];
 
   @OneToMany(() => Point, (point) => point.user)
   point: Point[];
+
+  @OneToMany(
+    () => CertificatedImage,
+    (certificatedImage) => certificatedImage.user,
+  )
+  certificatedImages: CertificatedImage[];
 }

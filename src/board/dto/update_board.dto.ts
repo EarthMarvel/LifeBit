@@ -10,8 +10,6 @@ export class UpdateBoardDto {
   @IsString()
   content: string;
 
-  thumbnail: string;
-
   @IsOptional()
   @IsEnum(Category)
   category: Category;
