@@ -7,9 +7,12 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  //   Req,
+  //   UseGuards,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create_board.dto';
@@ -54,7 +57,6 @@ export class BoardController {
     @Body() createBoardDto: CreateBoardDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    // console.log(file);
     await this.boardService.createBoard(createBoardDto, file);
     return { message: '게시물 생성 완료' };
   }

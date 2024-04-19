@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SocialRequest } from './dto/auth.social.dto';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { object } from 'joi';
 
 @Injectable()
 export class AuthService {
@@ -60,6 +59,17 @@ export class AuthService {
       };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
+    }
+  }
+
+  async validateAccessToken(token: string): Promise<boolean> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      if (decodedToken) {
+        return true;
+      }
+    } catch (err) {
+      return false;
     }
   }
 }

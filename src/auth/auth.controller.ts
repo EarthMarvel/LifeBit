@@ -16,7 +16,10 @@ export class AuthController {
   @UseGuards(AuthGuard('naver'))
   async naverLoginCallback(@Req() req: SocialRequest, @Res() res) {
     const token = await this.authService.socialLogin(req);
-    res.cookie('authorization', `Bearer ${token.accessToken}`);
+    res.cookie('authorization', `Bearer ${token.accessToken}`, {
+      maxAge: 10000,
+      HttpOnly: true,
+    });
     res.json({ message: '로그인이  완료되었습니다.' });
   }
 
