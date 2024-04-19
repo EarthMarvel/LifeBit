@@ -12,6 +12,7 @@ import { MissionType } from '../types/missionType';
 import { Category } from '../types/category';
 
 import { User } from '../../user/entities/user.entity';
+import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 
 @Entity()
 export class Mission {
@@ -21,8 +22,8 @@ export class Mission {
   @ManyToMany(() => User, (user) => user.missions)
   user_ids: User[];
 
-  @Column({ type: 'varchar', unique: true, nullable: true })
-  user_id: number;
+  @Column({ type: 'varchar', nullable: true })
+  creatorId: number;
 
   // category : ENUM
   @Column({ type: 'enum', enum: Category, nullable: false })
@@ -46,11 +47,10 @@ export class Mission {
 
   // numberPeople
   @Column({ type: 'int', nullable: false })
-  @Column({ type: 'int', nullable: false })
   numberPeople: number;
 
   // thumbnailUrl
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: false, default: '' })
   thumbnailUrl: string;
 
   // type
@@ -68,4 +68,10 @@ export class Mission {
   // Mission과 ChatRoom의 일대일 관계
   // @OneToOne(() => ChatRoom, (chatRoom) => chatRoom.mission)
   // chatRoom: ChatRoom;
+
+  @OneToMany(
+    () => CertificatedImage,
+    (certificatedImage) => certificatedImage.mission,
+  )
+  certificatedImages: CertificatedImage[];
 }

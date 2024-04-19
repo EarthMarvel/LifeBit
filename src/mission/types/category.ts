@@ -6,4 +6,5 @@ export enum Category {
   ART = 'Art',
   TRAVEL = 'Travel',
   PHOTOGRAPHY = 'Photography',
+  BOOK = 'Book',
 }
