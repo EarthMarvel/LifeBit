@@ -8,7 +8,9 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   //   Req,
   //   UseGuards,
 } from '@nestjs/common';
@@ -18,6 +20,7 @@ import { UpdateBoardDto } from './dto/update_board.dto';
 import { SearchBoardDto } from './dto/serach_board.dto';
 import { Boards } from './entities/board.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 // import { AuthGuard } from '@nestjs/passport';
 
 @Controller('boards')
@@ -48,8 +51,14 @@ export class BoardController {
   // 게시물 생성
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async createBoard(@Body() createBoardDto: CreateBoardDto) {
-    return await this.boardService.createBoard(createBoardDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async createBoard(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createBoardDto: CreateBoardDto,
+  ) {
+    console.log('-----------컨트롤러--->', file);
+    await this.boardService.createBoard(createBoardDto, file);
+    return { message: '게시물 생성 성공' };
   }
 
   // 게시물 수정
