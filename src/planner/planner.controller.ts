@@ -15,11 +15,13 @@ import { Response } from 'express';
 import { TaskDto } from './dto/task.dto';
 import { DateDto } from './dto/get.planner.dto';
 import { PlannerDto } from './dto/update.planner.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
 import { PlannerService } from './planner.service';
 import { UserInfo } from 'src/utils/userInfo.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
+import { AuthGuard } from '@nestjs/passport';
 
+//@UseGuards(JwtAuthGuard)
 @Controller('myPage')
 @UseGuards(AuthGuard('jwt'))
 export class PlannerController {
