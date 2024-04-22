@@ -53,9 +53,10 @@ export class BoardController {
   async createBoard(
     @Body() createBoardDto: CreateBoardDto,
     @UploadedFile() file: Express.Multer.File,
+    @UserInfo() user: User,
   ) {
-    // console.log(file);
-    await this.boardService.createBoard(createBoardDto, file);
+    const userId = user.user_id;
+    await this.boardService.createBoard(createBoardDto, file, userId);
     return { message: '게시물 생성 완료' };
   }
 
@@ -101,5 +102,3 @@ export class BoardController {
     };
   }
 }
-
-// pr용 주석

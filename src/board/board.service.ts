@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create_board.dto';
 import { UpdateBoardDto } from './dto/update_board.dto';
 import { SearchBoardDto } from './dto/serach_board.dto';
-import { SocketGateway } from './socket/socket.gateway';
+import { LikeGateway } from '../socket/likes.gateway';
 import { S3Service } from 'src/user/s3.service';
 import { extname } from 'path';
 import _ from 'lodash';
@@ -23,7 +23,7 @@ export class BoardService {
     private readonly boardRepository: Repository<Boards>,
     @InjectRepository(Like)
     private readonly likeRepository: Repository<Like>,
-    private readonly socketGateway: SocketGateway,
+    private readonly socketGateway: LikeGateway,
     private readonly s3Service: S3Service,
   ) {}
 
@@ -35,7 +35,7 @@ export class BoardService {
   // 게시물 단건 조회
   async findOneBoards(boardId: number): Promise<Boards> {
     const board = await this.boardRepository.findOne({
-      where: { boardId: boardId },
+      where: { boardId },
     });
     if (!board) {
       throw new NotFoundException('해당 게시물을 찾을 수 없습니다.');
@@ -44,7 +44,11 @@ export class BoardService {
   }
 
   // 게시물 생성
-  async createBoard(createBoardDto: CreateBoardDto, file: Express.Multer.File) {
+  async createBoard(
+    createBoardDto: CreateBoardDto,
+    file: Express.Multer.File,
+    userId: number,
+  ) {
     if (_.isNil(file)) {
       throw new BadRequestException('파일이 존재하지 않습니다.');
     }
@@ -59,6 +63,7 @@ export class BoardService {
     await this.boardRepository.save({
       ...createBoardDto,
       thumbnail: file.filename,
+      userId,
     });
     console.log(file);
     await this.s3Service.putObject(file);
@@ -70,7 +75,14 @@ export class BoardService {
     updateBoardDto: UpdateBoardDto,
     file: Express.Multer.File,
   ): Promise<void> {
-    const board = await this.findOneBoards(boardId);
+    const board = await this.boardRepository.findOne({
+      where: {
+        boardId: boardId,
+      },
+    });
+    if (!board) {
+      throw new NotFoundException('해당 게시물을 찾을 수 없습니다.');
+    }
 
     if (file) {
       const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
@@ -98,7 +110,15 @@ export class BoardService {
 
   // 게시물 삭제
   async deleteBoard(boardId: number): Promise<void> {
-    await this.findOneBoards(boardId);
+    const board = await this.boardRepository.findOne({
+      where: {
+        boardId: boardId,
+      },
+    });
+    if (!board) {
+      throw new NotFoundException('해당 게시물을 찾을 수 없습니다.');
+    }
+
     await this.boardRepository.delete(boardId);
   }
 

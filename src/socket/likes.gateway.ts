@@ -2,7 +2,7 @@ import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
 @WebSocketGateway()
-export class SocketGateway {
+export class LikeGateway {
   @WebSocketServer() server: Server;
 
   LikeNotification(boardId: number, userId: number) {
