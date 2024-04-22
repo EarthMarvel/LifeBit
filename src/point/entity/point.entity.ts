@@ -1,29 +1,29 @@
-import { User } from '../../user/entities/user.entity';
 import {
-  Column,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 
-@Entity({ name: 'point' })
+@Entity()
 export class Point {
   @PrimaryGeneratedColumn()
-  pointId: number;
+  id: number;
+
+  @Column()
+  value: number;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  created_at: Date;
 
   @Column({ default: 0 })
-  point: number;
+  totalValue: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @ManyToOne(() => User, (user) => user.point)
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'user_id' })
+  // User와의 1:1 관계로 수정
+  @OneToOne(() => User, (user) => user.point) // 수정됨
+  @JoinColumn({ name: 'user_id' }) // 외래 키 컬럼 이름을 지정
   user: User;
-
-  @Column({ type: 'int', nullable: true })
-  user_id: number;
 }

@@ -10,7 +10,7 @@ import {
 import { VisionService } from './vision.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CertificateImageCategoryDto } from './dto/certificateImageCategory.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 import { GetUser } from 'src/user/dto/getUser.dto';
 import { User } from 'src/user/entities/user.entity';
 
@@ -20,7 +20,7 @@ export class VisionController {
 
   // 로컬 이미지 파일의 라벨을 감지하고, 주어진 카테고리와 일치하는지 검증하는 엔드포인트
   @Post('/certificate-category')
-  @UseGuards(AuthGuard('jwt')) // JWT AuthGuard를 활용하여 인증 적용
+  @UseGuards(JwtAuthGuard) // JWT AuthGuard를 활용하여 인증 적용
   @UseInterceptors(FileInterceptor('file'))
   async certificateImageCategory(
     @GetUser() user: User, // 사용자 인증 정보를 요청 객체에서 직접 추출
@@ -39,7 +39,7 @@ export class VisionController {
       file.buffer, // multer로 받은 파일의 buffer를 사용합니다.
       category,
       +missionId,
-      userId, // 서비스 메소드에 사용자 아이디를 추가로 전달합니다.
+      +userId,
     );
 
     return { isCategoryMatched };

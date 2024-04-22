@@ -31,7 +31,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
+    console.log('Before : payload : ' + payload);
     const user = await this.userService.findByEmail(payload.email);
+    console.log('validate : user : ' + user);
+    console.log('validate : JSON.stringify(user) : ' + JSON.stringify(user));
+    console.log('validate : payload : ' + payload);
+    console.log(
+      'validate : JSON.stringify(payload) : ' + JSON.stringify(payload),
+    );
+    console.log('validate : payload.email : ' + payload.email);
     if (_.isNil(user)) {
       throw new NotFoundException('해당 사용자를 찾을 수 없습니다.');
     }

@@ -50,7 +50,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       const payload = await this.jwtService.verify(refreshToken);
       const newAccessToken = this.jwtService.sign(
-        { user_id: payload.user_id },
+        { user_id: payload.user_id, email: payload.email },
         {
           expiresIn: '10s',
         },
