@@ -7,6 +7,8 @@ import {
   Patch,
   Post,
   Query,
+  Render,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -101,5 +103,11 @@ export class BoardController {
     return {
       like,
     };
+  }
+
+  @Get('main')
+  @Render('board.ejs')
+  async getSignIn(@Req() req: Request) {
+    return { isLoggedIn: req['isLoggedIn'] };
   }
 }
