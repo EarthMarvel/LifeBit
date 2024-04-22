@@ -93,9 +93,23 @@ export class UserService {
       throw new UnauthorizedException('비밀번호를 확인해주세요.');
     }
 
-    const payload = { email, user_id: user.user_id };
+    const payload = { user_id: user.user_id };
+    const refreshToken = this.jwtService.sign(
+      { user_id: user.user_id },
+      { expiresIn: '7d' },
+    );
 
-    return { accessToken: this.jwtService.sign(payload) };
+    await this.cacheManager.set(email, refreshToken, { ttl: 604800000 });
+
+    return {
+      accessToken: this.jwtService.sign(payload, { expiresIn: '10s' }),
+      refreshToken,
+    };
+  }
+
+  // 로그아웃
+  async logout(email: string) {
+    await this.cacheManager.del(email);
   }
 
   // 프로필 작성
@@ -181,7 +195,7 @@ export class UserService {
   ): Promise<User> {
     const user = await this.findByEmail(email);
     if (user) return user;
-    console.log('---------->', fullName);
+
     const newUser = await this.userRepository.save({
       email,
       name: fullName,

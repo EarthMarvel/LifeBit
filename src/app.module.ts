@@ -23,6 +23,7 @@ import { AppService } from './app.service';
 import { SchedulerModule } from './utils/scheduler/scheduler.module';
 import { Point } from './point/entity/point.entity';
 import { VisionModule } from './vision/vision.module';
+import { CertificatedImage } from './vision/entity/certificatedImage.entity';
 import { Like } from './board/entities/likes.entity';
 import { ChatGateway } from './socket/chat.gateway';
 
@@ -37,7 +38,7 @@ const typeOrmModuleOptions = {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
-    entities: [User, Planner, Task, Point, Boards, Mission, Like],
+    entities: [User, Planner, Task, Point, Boards, Mission, Like, CertificatedImage],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),

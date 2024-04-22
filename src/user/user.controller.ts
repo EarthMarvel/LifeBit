@@ -20,6 +20,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { User } from './entities/user.entity';
 import { WithdrawDto } from './dto/withdraw.dto';
+import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 
 @Controller('user')
 export class UserController {
@@ -39,11 +40,27 @@ export class UserController {
   @Post('log-in')
   async login(@Body() loginDto: LoginDto, @Res() res: any) {
     const token = await this.userService.login(loginDto);
-    res.cookie('authorization', `Bearer ${token.accessToken}`);
+    res.cookie('authorization', `Bearer ${token.accessToken}`, {
+      maxAge: 10000,
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', `${token.refreshToken}`, {
+      maxAge: 604800000,
+      httpOnly: true,
+    });
     res.json({ message: '로그인이 완료되었습니다.' });
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
+  @Post('log-out')
+  async logout(@UserInfo() user: User, @Res() res: any) {
+    await this.userService.logout(user.email);
+    res.clearCookie('authorization');
+    res.clearCookie('refreshToken');
+    res.json({ message: '로그아웃되었습니다.' });
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch('profile')
   @UseInterceptors(FileInterceptor('file'))
   async profile(
@@ -55,13 +72,13 @@ export class UserController {
     return { message: '프로필 작성이 완료되었습니다.' };
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('profileInfo')
   profileInfo(@UserInfo() user: User) {
     return this.userService.profileInfo(user.user_id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Delete('withdraw')
   async withdraw(@UserInfo() user: User, @Body() withdrawDto: WithdrawDto) {
     await this.userService.withdraw(user.user_id, withdrawDto);

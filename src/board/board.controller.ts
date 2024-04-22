@@ -57,6 +57,7 @@ export class BoardController {
   ) {
     const userId = user.user_id;
     await this.boardService.createBoard(createBoardDto, file, userId);
+
     return { message: '게시물 생성 완료' };
   }
 

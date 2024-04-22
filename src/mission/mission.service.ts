@@ -4,11 +4,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
+
 import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
-import { CertificateMissionDto } from './dto/certificate-mission.dto';
 import { DataSource, Repository } from 'typeorm';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 
@@ -20,8 +19,14 @@ export class MissionService {
     private dataSource: DataSource,
   ) {}
 
-  async create(createMissionDto: CreateMissionDto) {
+  async create(
+    createMissionDto: CreateMissionDto,
+    userId: number,
+    file: Express.Multer.File,
+  ) {
     const mission = this.missionRepository.create(createMissionDto);
+
+    mission.creatorId = userId;
 
     await this.missionRepository.save(mission);
 
