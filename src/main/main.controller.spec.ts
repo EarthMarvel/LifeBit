@@ -31,7 +31,7 @@ describe('MainController', () => {
   });
 
   it('메인 페이지 호출 - controller', async () => {
-    const mockCategory = Category.FIRST;
+    const mockCategory = Category.ART;
     const mockSort = 'mockSort';
     const mockType = MissionType.CHALLENGE;
     const mockMainDto = { title: 'mockTitle' };
@@ -44,11 +44,12 @@ describe('MainController', () => {
       json: jest.fn().mockReturnThis(),
     };
 
-    await controller.main(mockCategory, 
-      mockSort, 
-      mockType, 
-      mockMainDto,
-      responseMock as Response);
+    await controller.main();
+    // await controller.main(mockCategory, 
+    //   mockSort, 
+    //   mockType, 
+    //   mockMainDto,
+    //   responseMock as Response);
 
       expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
       expect(responseMock.json).toHaveBeenCalledWith({

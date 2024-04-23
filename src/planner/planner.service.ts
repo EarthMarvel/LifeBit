@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Planner } from './entity/planner.entity';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Task } from './entity/task.entity';
-import { DateDto } from './dto/get.planner.dto';
 import { PlannerDto } from './dto/update.planner.dto';
 import { User } from 'src/user/entities/user.entity';
 
@@ -20,16 +19,27 @@ export class PlannerService {
     private readonly plannerRepository: Repository<Planner>, //사용자가 회원가입 하면 자동으로 planner row 도 생성된다.
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    // @InjectRepository(User)
+    // private readonly userRepository: Repository<User>,
     private readonly dataSouce: DataSource, //커넥션 풀에서 커넥션(-> 트랜잭션) 가져오기
   ) {}
 
+
+  /** 프론트 테스트 용도 
+   * async myPageTest(userId : number, startDate?: Date, endDate?: Date) {
+
+    const user = await this.userRepository.findOne({ where: { user_id : userId } });
+
+    const exist = await this.plannerRepository.findOneBy({ user });
+  */
+
   /**
-   * 마이페이지 접근 (만약 user 가 없다면 빈 플래너 생성해서 보내기)
+   * 플래너 접속
    * @param userId
    * @returns
    */
-  async myPage(user: User) {
-    console.log(user);
+  async myPage(user : User, startDate?: Date, endDate?: Date) {
+
     const exist = await this.plannerRepository.findOneBy({ user });
 
     //플래너가 없을 경우 새로 생성
@@ -39,79 +49,45 @@ export class PlannerService {
       });
     }
 
-    const month_tasks_list = await this.taskRepository
-      .createQueryBuilder('task')
-      .select(['task.todo', 'task.startDate', 'task.endDate'])
-      .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
-      .where('planner.userId = :userId', { userId: user.user_id })
-      .andWhere(
-        'year(task.start_date) * 12 + month(task.start_date) <= year(now()) * 12 + month(now())',
-      )
-      .andWhere(
-        'year(task.end_date) * 12 + month(task.end_date) >= year(now()) * 12 + month(now())',
-      )
-      .orderBy('task.start_date')
-      .getMany();
+    //할 일 조회
+    let query = await this.taskRepository
+        .createQueryBuilder('task')
+        .select([
+          'task.todo',
+          'task.startDate',
+          'task.taskId',
+          'task.authSum',
+          'task.checkYn',
+        ])
+        .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
+        .where('planner.userId = :userId', { userId: user.user_id });
 
-    const today_task = await this.taskRepository
-      .createQueryBuilder('task')
-      .select([
-        'task.todo',
-        'task.startDate',
-        'task.endDate',
-        'task.startTime',
-        'task.endTime',
-        'task.taskId',
-        'task.authSum',
-        'task.checkYn',
-      ])
-      .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
-      .where('planner.userId = :userId', { userId: user.user_id })
-      .andWhere('task.start_date <= CURDATE()')
-      .andWhere('task.end_date >= CURDATE()')
-      .getMany();
 
+      if (startDate) {
+          query = query.andWhere('task.startDate = :startDate', { startDate });
+      }
+
+      // 현재 날짜를 기준으로 작업을 필터링
+      if (!startDate) {
+          query = query
+              .andWhere('task.startDate = CURDATE()');
+      }
+
+    const today_task = await query.getMany();
+
+    //플래너 정보 조회
     const planner_info = await this.plannerRepository
       .createQueryBuilder('planner')
-      .select(['planner.name', 'planner.description', 'planner.plannerId']) //엔티티로 select
-      .where('planner.userId = :userId', { userId: user.user_id }) //쿼리
-      .getOne(); //쿼리 실행
+      .select(['planner.description', 'planner.plannerId']) 
+      .where('planner.userId = :userId', { userId: user.user_id })
+      .getOne(); 
 
     return {
-      month_tasks_list,
       today_task,
       planner_info,
     };
   }
 
-  /**
-   * 플래너 조회
-   * @param dateDto
-   * @param plannerId
-   * @returns
-   */
-  async getPlanner(dateDto: DateDto, plannerId: number) {
-    return await this.taskRepository
-      .createQueryBuilder('task')
-      .select([
-        'task.todo',
-        'task.startDate',
-        'task.endDate',
-        'planner.plannerId',
-      ])
-      .innerJoin('task.planner', 'planner')
-      .where('planner.planner_id = :plannerId', { plannerId })
-      .andWhere(
-        'year(task.start_date) * 12 + month(task.start_date) <= :year * 12 + :month',
-        { year: dateDto.year, month: dateDto.month },
-      )
-      .andWhere(
-        'year(task.end_date) * 12 + month(task.end_date) >= :year * 12 + :month',
-        { year: dateDto.year, month: dateDto.month },
-      )
-      .orderBy('task.start_date')
-      .getMany();
-  }
 
   /**
    * 플래너 정보 수정
@@ -123,7 +99,7 @@ export class PlannerService {
     const updatedPlanner = await this.plannerRepository
       .createQueryBuilder()
       .update('planner')
-      .set({ name: plannerDto.name, description: plannerDto.description })
+      .set({ description: plannerDto.description })
       .where('planner.planner_id = :plannerId', { plannerId })
       .execute();
 
@@ -138,7 +114,7 @@ export class PlannerService {
    */
   async postTodo(taskDto: TaskDto, plannerId: number) {
     const planner = await this.plannerRepository.findOneBy({ plannerId });
-
+    
     if (!planner) {
       throw new NotFoundException('존재하지 않는 플래너입니다.');
     }
@@ -150,10 +126,9 @@ export class PlannerService {
       .values({
         todo: taskDto.todo,
         startDate: taskDto.startDate,
-        endDate: taskDto.endDate,
-        startTime: taskDto.startTime,
+        // startTime: taskDto.startTime,
+        // endTime: taskDto.endTime,
         authDate: this.getToday(),
-        endTime: taskDto.endTime,
         planner: planner,
       })
       .execute();
@@ -180,9 +155,6 @@ export class PlannerService {
       .set({
         todo: taskDto.todo,
         startDate: taskDto.startDate,
-        endDate: taskDto.endDate,
-        startTime: taskDto.startTime,
-        endTime: taskDto.endTime,
       })
       .where('task_id = :taskId', { taskId })
       .execute();

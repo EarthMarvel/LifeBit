@@ -2,13 +2,11 @@ import { Body, Render, Res } from '@nestjs/common';
 import {
     Controller,
     Get,
-    HttpStatus,
     Query,
   } from '@nestjs/common';
 import { Response } from 'express';
 import { MainService } from './main.service';
 import { MissionType } from '../mission/types/missionType';
-import { MainDto } from './dto/main.dto';
 import { Category } from '../mission/types/category';
 
 @Controller('main')
@@ -17,7 +15,6 @@ export class MainController {
     constructor(
         private readonly mainService : MainService
     ) {}
-        
 
     /**
      * 메인 조회
