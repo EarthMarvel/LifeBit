@@ -7,14 +7,14 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
+  JoinColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 import { Like } from 'src/board/entities/likes.entity';
 
-@Entity({
-  name: 'users',
-})
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   user_id: number;
@@ -47,8 +47,8 @@ export class User {
   @OneToMany(() => Like, (likes) => likes.users)
   likes: Like[];
 
-  @OneToMany(() => Point, (point) => point.user)
-  point: Point[];
+  @OneToOne(() => Point, (point) => point.user)
+  point: Point;
 
   @OneToMany(
     () => CertificatedImage,
