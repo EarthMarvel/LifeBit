@@ -1,19 +1,17 @@
-import { Injectable, Logger } from '@nestjs/common'; // Logger 추가
+import { Inject, Injectable, Logger } from '@nestjs/common'; // Logger 추가
 import { ImageAnnotatorClient } from '@google-cloud/vision';
-import { Storage } from '@google-cloud/storage'; // GCS를 위한 라이브러리 import
-import { format } from 'date-fns'; // 날짜 포맷을 위해 사용
-import { ko } from 'date-fns/locale'; // 한국어 locale
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CertificatedImage } from './entity/certificatedImage.entity';
 import { Mission } from 'src/mission/entities/mission.entity';
 import { Category } from 'src/mission/types/category';
 import { User } from 'src/user/entities/user.entity';
+import { Point } from 'src/point/entity/point.entity';
+import { PointService } from 'src/point/point.service';
 
 @Injectable()
 export class VisionService {
   private client: ImageAnnotatorClient;
-  private storage = new Storage(); // GCS 인스턴스 생성
   private readonly logger = new Logger(VisionService.name); // 로그를 위한 Logger 인스턴스 생성
 
   constructor(
@@ -23,6 +21,9 @@ export class VisionService {
     private missionRepository: Repository<Mission>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Point)
+    private pointRepository: Repository<Point>,
+    private pointService: PointService,
   ) {
     this.client = new ImageAnnotatorClient();
   }
@@ -34,11 +35,39 @@ export class VisionService {
     missionId: number,
     userId: number,
   ) {
+    console.log('before try : userId : ' + userId);
     try {
-      const user = await this.userRepository.findOneBy({ user_id: userId });
+      const user = await this.userRepository.findOne({
+        where: { user_id: userId },
+        relations: ['point'],
+      });
 
       if (!user) {
         throw new Error('User not found');
+      }
+
+      const point = await this.pointRepository.findOne({
+        where: { user: { user_id: userId } },
+        relations: ['user'],
+      });
+
+      console.log('initial : point.user : ' + point.user);
+      console.log('initial : point.id : ' + point.id);
+      console.log('initial : point.user.user_id :' + point.user.user_id);
+
+      if (!user.point) {
+        // 새 Point 객체 생성
+        const newPoint = new Point();
+        newPoint.totalValue = 0; // 초기 totalValue 설정
+        newPoint.value = 0; // 초기 value 설정
+
+        // user와 새로운 Point 객체 연결
+        user.point = newPoint;
+
+        // 데이터베이스에 새 Point 객체 저장
+        await this.pointRepository.save(newPoint);
+        // 변경된 user 객체도 저장할 수 있음 (user 엔티티에 따라 다름)
+        await this.userRepository.save(user);
       }
 
       const mission = await this.missionRepository.findOneBy({
@@ -56,6 +85,18 @@ export class VisionService {
       } else {
         console.log('mission.category : ' + mission.category);
         console.log('category : ' + category);
+      }
+
+      const currentPoint = await this.pointRepository.findOne({
+        where: { user: { user_id: userId } }, // 수정된 부분
+        relations: ['user'],
+      });
+
+      console.log('currentPoint : ' + currentPoint);
+      console.log('currentPoint.id : ' + currentPoint.id);
+
+      if (!currentPoint) {
+        throw new Error('currentPoint not found');
       }
 
       // mission.category와 category는 다를 수 있다.
@@ -436,6 +477,31 @@ export class VisionService {
       if (isCategoryMatched) {
         // 인증 성공 로직
         console.log('인증 성공 : ', labels.join(', '));
+
+        // 사용자의 현재 포인트 가져오기 또는 새로 생성
+        let userPoint = await this.pointRepository.findOne({
+          where: { user: { user_id: userId } },
+        });
+
+        console.log('userPoint : ' + userPoint);
+        console.log('userId : ' + userId);
+
+        // if (!userPoint) {
+        //   userPoint = this.pointRepository.create({
+        //     user: user, // User 엔티티 인스턴스 자체를 할당
+        //     totalValue: 0,
+        //     value: 0,
+        //   });
+        // }
+
+        // 포인트 업데이트
+        this.pointService.plusPoint(100, userId);
+
+        await this.pointRepository.save(userPoint);
+
+        console.log(
+          `사용자 ID ${user.user_id}의 포인트 업데이트 성공: totalValue에 100 추가, value를 100으로 설정`,
+        );
       } else {
         // 인증 실패 로직
         console.log('인증 실패 : ', labels.join(', '));
@@ -452,34 +518,20 @@ export class VisionService {
       // CertificatedImage 테이블에 결과 저장
       await this.certificatedImageRepository.save(certificatedImage);
 
+      // 함수 마지막에 총 포인트 값을 반환
+      const updatedUser = await this.userRepository.findOne({
+        where: { user_id: userId },
+      });
+
       return {
         requestedCategory: category,
         detectedLabels: labels,
-        isCategoryMatched: isCategoryMatched,
+        isCategoryMatched,
+        Point,
       };
     } catch (error) {
       this.logger.error(`detectLabels 오류: ${error.message}`);
       throw new Error(`Label Detection 실패: ${error.message}`);
     }
-  }
-
-  async uploadLogToGCS(
-    bucketName: string,
-    logFolder: string,
-    fileName: string,
-    logContent: string,
-  ): Promise<void> {
-    const fileContent = Buffer.from(logContent, 'utf8');
-
-    // 현재 시간을 한국표준시로 포맷팅하여 파일명에 사용
-    const currentTime = format(new Date(), 'yyyy-MM-dd_HH:mm:ss', {
-      locale: ko,
-    });
-    // 로그 파일명을 생성할 때, 지정된 폴더 경로를 포함시킴
-    const destinationFileName = `${logFolder}${currentTime}_${fileName}.txt`;
-
-    const file = this.storage.bucket(bucketName).file(destinationFileName);
-    await file.save(fileContent); // 파일 저장
-    this.logger.log(`Log file uploaded: ${destinationFileName}`); // 로그 기록
   }
 }
