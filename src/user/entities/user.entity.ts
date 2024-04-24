@@ -7,6 +7,7 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
@@ -38,6 +39,9 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   image: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  description: string;
+
   @Column({ nullable: true })
   providerId: string;
 
@@ -47,8 +51,8 @@ export class User {
   @OneToMany(() => Like, (likes) => likes.users)
   likes: Like[];
 
-  @OneToMany(() => Point, (point) => point.user)
-  point: Point[];
+  @OneToOne(() => Point, (point) => point.user)
+  point: Point;
 
   @OneToMany(
     () => CertificatedImage,

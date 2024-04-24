@@ -1,4 +1,15 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Render } from '@nestjs/common';
+import { PointService } from './point.service';
 
-@Controller('point')
-export class PointController {}
+@Controller('')
+export class PointController {
+  constructor(private readonly pointService: PointService) {}
+
+  @Get('ranking')
+  @Render('ranking.ejs')
+  async getRanking() {
+    const usersPoint = await this.pointService.allPointView();
+    console.log('------>', usersPoint);
+    return { usersPoint };
+  }
+}

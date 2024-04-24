@@ -93,16 +93,16 @@ export class UserService {
       throw new UnauthorizedException('비밀번호를 확인해주세요.');
     }
 
-    const payload = { user_id: user.user_id };
+    const payload = { user_id: user.user_id, email: user.email };
     const refreshToken = this.jwtService.sign(
-      { user_id: user.user_id },
+      { user_id: user.user_id, email: user.email },
       { expiresIn: '7d' },
     );
 
     await this.cacheManager.set(email, refreshToken, { ttl: 604800000 });
 
     return {
-      accessToken: this.jwtService.sign(payload, { expiresIn: '10s' }),
+      accessToken: this.jwtService.sign(payload, { expiresIn: '12h' }),
       refreshToken,
     };
   }
@@ -120,7 +120,7 @@ export class UserService {
   ) {
     const user = await this.userRepository.findOne({ where: { user_id } });
 
-    const { nickName } = profileDto;
+    const { nickName, description } = profileDto;
 
     if (file) {
       const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
@@ -136,6 +136,7 @@ export class UserService {
         await this.s3Service.deleteObject(user.image);
       }
       user.nickName = nickName;
+      user.description = description;
       user.image = file.filename;
 
       await this.userRepository.save(user);
@@ -146,10 +147,6 @@ export class UserService {
 
   // 프로필 조회
   profileInfo(user_id: number) {
-    // return this.userRepository.findOne({
-    //   where: { user_id },
-    //   select: ['image', 'nickName'],
-    // });
     const user = this.userRepository.findOne({
       where: { user_id },
       select: ['image', 'nickName'],

@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,7 +21,7 @@ export class Point {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.point)
+  @OneToOne(() => User, (user) => user.point)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'user_id' })
   user: User;
 

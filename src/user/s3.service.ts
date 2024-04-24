@@ -1,5 +1,6 @@
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -47,5 +48,15 @@ export class S3Service {
         Key: key,
       }),
     );
+  }
+
+  async getObject(key: string) {
+    const response = await this.client.send(
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+      }),
+    );
+    return response.Body.transformToString();
   }
 }
