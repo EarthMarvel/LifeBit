@@ -9,7 +9,6 @@
     <style>
         /* Custom CSS styles */
         body {
-            font-family: Arial, sans-serif;
             background-color: #f8f9fa;
             padding-top: 60px;
         }
@@ -22,6 +21,12 @@
         .challenge-card {
             margin-bottom: 20px;
         }
+        .row {
+            margin-top: 20px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -32,36 +37,35 @@
 
 <div class="container">
     <div class="row">
+        <div class="col-md-8">
+            <h2>My Challenges</h2>
+            <% if (data && data.length > 0) { %>
+                <% data.forEach(mission => { %>
+                    <div class="challenge-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <img src="<%= mission.mission_thumbnail_url %>" alt="Mission Thumbnail">
+                                <h5 class="card-title"><%= mission.mission_title %></h5>
+                                <p class="card-text"><%= mission.mission_description %></p>
+                                <p>
+                                    <span class="card-text">#<%= mission.mission_category %></span>
+                                    <span class="card-text">Number of People: <%= mission.mission_number_people %></span>
+                                </p>
+                                <a href="#" class="btn btn-primary">Let's Start</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No missions found.</p>
+            <% } %>
+            <!-- Add more challenge cards here -->
+        </div>
         <div class="col-md-4">
             <div class="text-center">
                 <h2>User Information</h2>
-                <img src="profile.jpg" alt="Profile Picture" class="profile-image">
-                <p>Name: John Doe</p>
-                <p>Email: johndoe@example.com</p>
-                <p>Age: 30</p>
+                <button class="btn btn-primary" id="editUserInfoBtn">Edit User Info</button>
             </div>
-        </div>
-        <div class="col-md-8">
-            <h2>My Challenges</h2>
-            <div class="challenge-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Challenge 1</h5>
-                        <p class="card-text">Description of Challenge 1.</p>
-                        <a href="#" class="btn btn-primary">View Details</a>
-                    </div>
-                </div>
-            </div>
-            <div class="challenge-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Challenge 2</h5>
-                        <p class="card-text">Description of Challenge 2.</p>
-                        <a href="#" class="btn btn-primary">View Details</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Add more challenge cards here -->
         </div>
     </div>
 </div>

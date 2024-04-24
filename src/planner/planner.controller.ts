@@ -20,60 +20,60 @@ import { PlannerService } from './planner.service';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('my')
 export class PlannerController {
   constructor(private readonly plannerService: PlannerService) {}
 
 
-     //테스트 용도
-     //날짜 없이 task 조회 (오늘 task 조회)
-     @Get('/planner')
-        @Render('planner.ejs')
-        async myPage(@Res() res : Response) {
+    //  //테스트 용도
+    //  //날짜 없이 task 조회 (오늘 task 조회)
+    //  @Get('/planner')
+    //     @Render('planner.ejs')
+    //     async myPage(@Res() res : Response) {
 
-        const userId = 1;
-        const data = await this.plannerService.myPage(userId);
-        return { data }; 
-    }
-
-    //날짜에 해당하는 task 조회
-    @Get('/plannerWithDate')
-    async myPageWithDate(@Res() res: Response, @Query('startDate') startDate: Date) {
-
-        const userId = 1;
-        return res.status(HttpStatus.CREATED).json({
-            message : "일정을 조회했습니다.",
-            data : await this.plannerService.myPage(userId, startDate,)
-       });
-    }
-
-    // /** 
-    //  * 날짜 없이 task 조회 (오늘 task 조회)
-    //  * @param user 
-    //  * @param res 
-    //  * @returns 
-    //  */
-    // @Get('/planner')
-    // @Render('planner.ejs')
-    // async myPage(@UserInfo() user: User, @Res() res : Response) {
-
-    //     const data = await this.plannerService.myPage(user);
+    //     const userId = 1;
+    //     const data = await this.plannerService.myPage(userId);
     //     return { data }; 
     // }
 
-
-    // /**
-    //  * 날짜에 해당하는 task 조회
-    //  */
+    // //날짜에 해당하는 task 조회
     // @Get('/plannerWithDate')
-    // async myPageWithDate(@UserInfo() user: User, @Res() res: Response, @Query('startDate') startDate: Date) {
+    // async myPageWithDate(@Res() res: Response, @Query('startDate') startDate: Date) {
 
+    //     const userId = 1;
     //     return res.status(HttpStatus.CREATED).json({
     //         message : "일정을 조회했습니다.",
-    //         data : await this.plannerService.myPage(user, startDate)
+    //         data : await this.plannerService.myPage(userId, startDate,)
     //    });
     // }
+
+    /** 
+     * 날짜 없이 task 조회 (오늘 task 조회)
+     * @param user 
+     * @param res 
+     * @returns 
+     */
+    @Get('/planner')
+    @Render('planner.ejs')
+    async myPage(@UserInfo() user: User, @Res() res : Response) {
+
+        const data = await this.plannerService.myPage(user);
+        return { data }; 
+    }
+
+
+    /**
+     * 날짜에 해당하는 task 조회
+     */
+    @Get('/plannerWithDate')
+    async myPageWithDate(@UserInfo() user: User, @Res() res: Response, @Query('startDate') startDate: Date) {
+
+        return res.status(HttpStatus.CREATED).json({
+            message : "일정을 조회했습니다.",
+            data : await this.plannerService.myPage(user, startDate)
+       });
+    }
 
 
     /**
@@ -175,9 +175,27 @@ export class PlannerController {
     }
 
 
+    // /**
+    //  * 내 미션 확인 (테스트용)
+    //  */
+    // @Get('/mission')
+    // async mission(@UserInfo() user: User) {
+
+    //     const data = await this.plannerService.mission(user);
+    //     return { data }; 
+    // }
+
     /**
      * 내 미션 확인
      */
+    @Get('/mypage')
+    @Render('mypage.ejs')
+    async mission() {
 
+        const userId = 1;
+        const data = await this.plannerService.mission(userId);
+        console.log(data);
+        return { data }; 
+    }
     
 }
