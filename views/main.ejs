@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challengers Web</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding-top: 60px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Life-Bit</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Challenge</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Planner</a>
+            </li>
+            <li class="nav-item" id="loginLink">
+                <a class="nav-link" href="#">Login</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Welcome to Life-Bit</h1>
+    
+    <form class="search-bar">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search challengers...">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary searchBtn" type="button">Search</button>
+            </div>
+        </div>
+    </form>
+    
+    <div class="btn-group mb-3" role="group">
+        <button type="button" class="btn btn-secondary category">All</button>
+        <button type="button" class="btn btn-secondary category">Sports</button>
+        <button type="button" class="btn btn-secondary category">Cooking</button>
+        <button type="button" class="btn btn-secondary category">Music</button>
+    </div>
+
+    <% data.forEach(mission => { %>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><%= mission.title %></h5>
+            <p class="card-text"><%= mission.description %></p>
+            <p class="card-text">#<%= mission.category %></p>
+            <a href="#" class="btn btn-primary">Let's Start</a>
+        </div>
+    </div>
+    <% }); %>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+function searchTitle(event) {
+    event.preventDefault(); 
+    
+    var searchValue = document.querySelector('.form-control').value;
+
+    fetch(`/main/search?title=${searchValue}`)
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(function(data) {
+        document.querySelector('.container').innerHTML = data;
+    })
+    .catch(function(error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+}
+
+function searchCategory(event) {
+    event.preventDefault(); 
+    
+    var category = event.target.innerText;
+
+    fetch(`/main/search?category=${category}`)
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(function(data) {
+        document.querySelector('.container').innerHTML = data;
+    })
+    .catch(function(error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+}
+
+// 페이지가 로드되면 이벤트 핸들러를 추가
+document.addEventListener('DOMContentLoaded', function() {
+
+     // 페이지가 로드될 때 로그인/로그아웃 링크를 업데이트하는 함수 호출
+     updateLoginLogoutLink();
+
+    function updateLoginLogoutLink() {
+        const loginLink = document.getElementById('loginLink');
+
+        // 쿠키에서 토큰 값을 가져옴, 쿠키 이름을 'authorization'으로 가정
+        const token = getCookie('authorization');
+
+        // 토큰 값이 있는지 확인하여 로그인/로그아웃 링크를 업데이트
+        if (token) {
+            loginLink.innerHTML = '<a class="nav-link" href="#">Logout</a>';
+        } else {
+            loginLink.innerHTML = '<a class="nav-link" href="#">Login</a>';
+        }
+    }
+
+    // 쿠키에서 지정된 이름의 쿠키 값을 가져오는 함수
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    document.addEventListener('submit', function(event) {
+        if (event.target.matches('.search-bar')) { // 검색 폼이 제출되었는지 확인
+            searchTitle(event); // 검색 이벤트를 처리
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        if (event.target.matches('.searchBtn')) { // 검색 버튼이 클릭되었는지 확인
+            searchTitle(event); // 검색 이벤트를 처리
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        if (event.target.matches('.category')) { // 검색 버튼이 클릭되었는지 확인
+            searchCategory(event); // 검색 이벤트를 처리
+        }
+    });
+});
+
+
+
+</script>
+</body>
+</html>

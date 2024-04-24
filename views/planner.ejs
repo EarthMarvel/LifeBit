@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Web</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS styles */
+        body {
+            background-color: #f9f9f9;
+            padding-top: 60px;
+        }
+        @media (min-width: 1200px) {
+        .container, .container-lg, .container-md, .container-sm, .container-xl {
+           max-width: 1600px;
+         }   
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-top: 30px;
+        }
+        .calendar {
+            margin-bottom: 20px;
+        }
+        .event-list {
+            margin-top: 20px;
+        }
+        .date-button {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+        }
+        .event-marker {
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            text-align: center;
+            line-height: 20px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+        .taskList {
+            margin-top: 20px;
+        }
+        .form-row {
+            display: block;
+            margin-top: 9px;
+        }
+        .form-control {
+            width: 150%;
+        }
+        #plannerDescription {
+            font-size: 15px;
+            font-family: Arial, sans-serif;
+        }
+        #editDescriptionBtnNN {
+            font-size: 12px;
+            border-radius: 10px;
+            border: none;
+            border: 1px solid #6c757d;
+            outline: none;
+        }
+        .mb-3 {
+            margin-top: 10px;
+        }
+        .mt-2 {
+            margin-left: 110px;
+        }
+        #addEventForm {
+            display: flex;
+            margin-bottom: 40px;
+        }
+        .btn-primary,
+        .btn-danger {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-primary:hover,
+        .btn-danger:hover
+         {
+            background-color: #62686d;
+            border-color: #62686d;
+        }
+        .btn-warning {
+            background-color: #c3c3c3;
+            border-color: #a9a9a9;
+        }
+        .btn-warning:hover {
+            background-color: #979797;
+            border-color: #979797;
+        }
+        #scheduleList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .taskList {
+            display: inline-flex; /* inline-flex로 변경 */
+            align-items: center;
+            margin-bottom: 5px;
+            width: 100%; /* li 요소가 모든 너비를 차지하도록 설정 */
+            font-size: 15px;
+            display: inline;
+            margin-right: 30px;
+        }
+
+        .taskList .form-check-input {
+            margin-right: 10px;
+        }
+
+        .taskList input[type="hidden"],
+        .taskList .form-check-input,
+        .taskList button {
+            flex: 0 0 auto;
+        }
+
+        .taskList input[type="hidden"],
+        .taskList .form-check-input {
+            margin-right: 5px;
+        }
+
+        .taskList-div {
+            margin-top: 10px;
+        }
+
+        .form-check-input {
+            width: 1.5em; /* 너비 설정 */
+            height: 1.5em; /* 높이 설정 */
+            margin-top: .2rem;
+            margin-left: -1.8rem;
+        }
+
+        .form-check-input {
+            position: unset;
+            margin-top: unset;
+            margin-left: unset;
+        }
+        #scheduleTable td {
+            padding: 5px;
+        }
+        table {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Planner</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">My Page</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <!-- Calendar -->
+        <div class="col-md-8">
+            <h2 id="currentMonthYear"></h2>
+            <span id="plannerDescription"><%= data.planner_info.description%></span>
+            <button id="editDescriptionBtnNN">edit</button>
+            <input type="hidden" name="plannerId" value=<%= data.planner_info.plannerId %>
+            
+            <!-- Calendar -->
+            <div class="calendar">
+                <!-- Toggle buttons -->
+                <div class="btn-group mb-3" role="group">
+                    <button id="prevMonthBtn" type="button" class="btn btn-secondary">Previous Month</button>
+                    <button id="nextMonthBtn" type="button" class="btn btn-secondary">Next Month</button>
+                </div>
+
+                <!-- Calendar display -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Weekdays header -->
+                            <div class="col date-button">Sun</div>
+                            <div class="col date-button">Mon</div>
+                            <div class="col date-button">Tue</div>
+                            <div class="col date-button">Wed</div>
+                            <div class="col date-button">Thu</div>
+                            <div class="col date-button">Fri</div>
+                            <div class="col date-button">Sat</div>
+                        </div>
+                        <div id="calendarDates"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Event list -->
+        <div class="col-md-4">
+            <div class="event-list">
+                <h2>Today's Schedule</h2>
+
+                <form id="addEventForm">
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="text" class="form-control" id="eventDescription" placeholder="Enter event description" required>
+                        </div>
+                    </div>
+                    <div class="form-row mt-2">
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Add Event</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <!--today-->
+                <% if (data.today_task && data.today_task.length > 0) { %>
+                    <table id="scheduleTable">
+                        <tbody>
+                            <% data.today_task.forEach(task => { %>
+                                <tr class="taskList-row">
+                                    <td><%= task.todo %></td>
+                                    <td><input type="hidden" class="task_id" value="<%= task.taskId %>"></td>
+                                    <td>
+                                        <input class="form-check-input" 
+                                            type="checkbox" 
+                                            value="<%= task.taskId %>" 
+                                            id="taskCheckbox<%= task.taskId %>"
+                                            <% if (task.checkYn) { %> checked <% } %>
+                                        >
+                                    </td>
+                                    <td><button type="button" class="btn btn-warning btn-sm editTaskBtn" data-task-id="<%= task.taskId %>">Edit</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-sm deleteTaskBtn" data-task-id="<%= task.taskId %>">Delete</button></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No tasks for today.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+        let currentDate = new Date(); 
+        let currentMonth = currentDate.getMonth(); 
+        let currentYear = currentDate.getFullYear();
+        let selectedDate = currentDate.getDate(); 
+
+        function generateCalendar(month, year) {
+            $('#calendarDates').empty();
+
+            let firstDay = new Date(year, month, 1);
+            let lastDay = new Date(year, month + 1, 0);
+
+            let calendarDatesHtml = '';
+            let dateCounter = 1;
+
+            for (let i = 0; i < 6; i++) {
+                calendarDatesHtml += '<div class="row">';
+                for (let j = 0; j < 7; j++) {
+                    if ((i === 0 && j < firstDay.getDay()) || dateCounter > lastDay.getDate()) {
+                        calendarDatesHtml += '<div class="col date-button"></div>';
+                    } else {
+                        calendarDatesHtml += '<div class="col date-button" data-date="' + dateCounter + '">' + dateCounter + '</div>';
+                        dateCounter++;
+                    }
+                }
+                calendarDatesHtml += '</div>';
+            }
+
+            $('#calendarDates').html(calendarDatesHtml);
+        }
+
+        generateCalendar(currentMonth, currentYear);
+        updateMonthYear(currentMonth, currentYear);
+
+        $('#prevMonthBtn').click(function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar(currentMonth, currentYear);
+            updateMonthYear(currentMonth, currentYear);
+        });
+
+        $('#nextMonthBtn').click(function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar(currentMonth, currentYear);
+            updateMonthYear(currentMonth, currentYear);
+        });
+
+        $(document).on('click', '.date-button', function() {
+            selectedDate = parseInt($(this).attr('data-date'));
+            updateScheduleTitle(selectedDate, currentMonth, currentYear);
+        });
+
+        $('#addEventForm').submit(function(event) {
+            event.preventDefault();
+            let eventDescription = $('#eventDescription').val();
+            $('#scheduleList').append('<li class="time-slot">' + eventDescription + '</li>'); 
+            $('#eventDescription').val('');
+        });
+
+        function updateScheduleTitle(date, month, year) {
+            let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            $('#currentMonthYear').text(monthNames[month] + ' ' + date + ', ' + year);
+        }
+
+        function updateMonthYear(month, year) {
+            let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            $('#currentMonthYear').text(monthNames[month] + ' ' + year);
+        }
+
+        // 페이지 로드 시 오늘의 날짜 표시
+        updateScheduleTitle(currentDate.getDate(), currentDate.getMonth(), currentDate.getFullYear());
+
+        // 오늘의 일정을 동적으로 추가하는 함수
+        function updateTodaySchedule(todayTasks) {
+            const todayScheduleTableBody = document.getElementById('scheduleTable').querySelector('tbody');
+            todayScheduleTableBody.innerHTML = ''; // 이전에 추가된 일정을 모두 지우고 다시 추가
+
+            if (todayTasks.length === 0) {
+                const newRow = document.createElement('tr');
+                const noTaskCell = document.createElement('td');
+                noTaskCell.setAttribute('colspan', '4'); // 셀 병합
+                noTaskCell.textContent = 'No tasks for today';
+                newRow.appendChild(noTaskCell);
+                todayScheduleTableBody.appendChild(newRow);
+            } else {
+                todayTasks.forEach(task => {
+                    const newRow = document.createElement('tr');
+                    newRow.classList.add('taskList-row');
+
+                    const taskCell = document.createElement('td');
+                    taskCell.textContent = task.todo;
+                    newRow.appendChild(taskCell);
+
+                    const taskIdInput = document.createElement('input');
+                    taskIdInput.setAttribute('type', 'hidden');
+                    taskIdInput.classList.add('task_id');
+                    taskIdInput.value = task.taskId;
+                    newRow.appendChild(taskIdInput);
+
+                    const checkboxCell = document.createElement('td');
+                    const checkboxInput = document.createElement('input');
+                    checkboxInput.classList.add('form-check-input');
+                    checkboxInput.setAttribute('type', 'checkbox');
+                    checkboxInput.value = task.taskId;
+                    checkboxInput.id = `taskCheckbox${task.taskId}`;
+                    checkboxCell.appendChild(checkboxInput);
+                    newRow.appendChild(checkboxCell);
+
+                    const editButtonCell = document.createElement('td');
+                    const editButton = document.createElement('button');
+                    editButton.setAttribute('type', 'button');
+                    editButton.classList.add('btn', 'btn-warning', 'btn-sm', 'editTaskBtn');
+                    editButton.setAttribute('data-task-id', task.taskId);
+                    editButton.textContent = 'Edit';
+                    editButtonCell.appendChild(editButton);
+                    newRow.appendChild(editButtonCell);
+
+                    const deleteButtonCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.setAttribute('type', 'button');
+                    deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'deleteTaskBtn');
+                    deleteButton.setAttribute('data-task-id', task.taskId);
+                    deleteButton.textContent = 'Delete';
+                    deleteButtonCell.appendChild(deleteButton);
+                    newRow.appendChild(deleteButtonCell);
+
+                    todayScheduleTableBody.appendChild(newRow);
+                });
+            }
+        }
+
+
+        //날짜 별 할 일 조회
+        document.querySelector('.container').addEventListener('click', async function(event) {
+        if (event.target.classList.contains('date-button')) {
+            
+            // 클릭된 버튼의 data-date 속성 값 가져오기
+            const selectedDate = event.target.dataset.date;
+            let dateString;
+            let formattedDate;
+
+            // 현재 월/년 정보 추출 -> 에휴.. 자꾸 이전 값이 잡혀서 1초 sleep 시킴
+            await new Promise(resolve => {
+                setTimeout(() => {
+                    dateString = document.querySelector('#currentMonthYear').innerHTML;
+                    const dateObj = new Date(dateString);
+                    const year = dateObj.getFullYear();
+                    const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+                    const day = ("0" + dateObj.getDate()).slice(-2);
+                    formattedDate = `${year}-${month}-${day}`;
+                    console.log(formattedDate);
+                    resolve(); // setTimeout이 끝나면 resolve 호출
+                }, 100);
+            });
+                
+            try {
+            // 서버로 선택된 날짜와 플래너 ID를 전송하여 작업 조회
+            const response = await fetch(`/my/plannerWithDate?startDate=${formattedDate}`);
+            
+            // 응답을 JSON 형식으로 파싱
+            const responseData = await response.json();
+            console.log(responseData);
+            
+            // 기존의 할 일 목록을 테이블의 tbody로 참조
+            const scheduleTableBody = document.querySelector('#scheduleTable tbody');
+            scheduleTableBody.innerHTML = ''; // 기존 목록 초기화
+            
+            // 새로운 할 일 목록 추가
+            responseData.data.today_task.forEach(item => {
+                const newRow = document.createElement('tr');
+                newRow.classList.add('taskList-row');
+
+                // 각 항목을 생성하고 셀에 추가
+                const taskCell = document.createElement('td');
+                taskCell.textContent = item.todo;
+                newRow.appendChild(taskCell);
+
+                const taskIdInput = document.createElement('input');
+                taskIdInput.setAttribute('type', 'hidden');
+                taskIdInput.classList.add('task_id');
+                taskIdInput.value = item.taskId;
+                newRow.appendChild(taskIdInput);
+
+                const checkboxCell = document.createElement('td');
+                const checkboxInput = document.createElement('input');
+                checkboxInput.classList.add('form-check-input');
+                checkboxInput.setAttribute('type', 'checkbox');
+                checkboxInput.value = item.taskId;
+                checkboxInput.id = `taskCheckbox${item.taskId}`;
+                checkboxCell.appendChild(checkboxInput);
+                newRow.appendChild(checkboxCell);
+
+                const editButtonCell = document.createElement('td');
+                const editButton = document.createElement('button');
+                editButton.setAttribute('type', 'button');
+                editButton.classList.add('btn', 'btn-warning', 'btn-sm', 'editTaskBtn');
+                editButton.setAttribute('data-task-id', item.taskId);
+                editButton.textContent = 'Edit';
+                editButtonCell.appendChild(editButton);
+                newRow.appendChild(editButtonCell);
+
+                const deleteButtonCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.setAttribute('type', 'button');
+                deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'deleteTaskBtn');
+                deleteButton.setAttribute('data-task-id', item.taskId);
+                deleteButton.textContent = 'Delete';
+                deleteButtonCell.appendChild(deleteButton);
+                newRow.appendChild(deleteButtonCell);
+
+                // 테이블에 새로운 행 추가
+                scheduleTableBody.appendChild(newRow);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        }
+    });
+
+
+
+    //할 일 저장
+    const addButton = document.querySelector('.btn-primary');
+
+    addButton.addEventListener('click', async function(event) {
+        event.preventDefault();
+
+        const todo = document.getElementById('eventDescription').value;
+        const plannerId = document.querySelector('input[name="plannerId"]').value;
+
+        // 빈 값인지 확인
+        if (!todo.trim()) { // trim()을 사용하여 문자열 앞뒤의 공백을 제거한 후 빈 문자열인지 확인
+            alert('할 일을 입력하세요.'); // 빈 값일 경우 알림 표시
+            return; // 함수 종료
+        }
+
+        // "Apr 22, 2024" 형식의 날짜 데이터
+        let dateString = document.querySelector('#currentMonthYear').innerHTML;
+        
+        console.log(dateString);
+        // Date 객체로 변환
+        let dateObj = new Date(dateString);
+        
+        // "2024-04-22" 형식으로 변환
+        let year = dateObj.getFullYear();
+        let month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+        let day = ("0" + dateObj.getDate()).slice(-2);
+        let formattedDate = `${year}-${month}-${day}`;
+
+        // TaskDto 생성
+        const taskDto = {
+            todo: todo,
+            startDate: formattedDate, // 선택된 날짜 정보를 조합하여 "2024-04-19" 형식으로 만듦
+        };
+
+        try {
+            // 서버로 POST 요청 보내기
+            const response = await fetch(`/my/todo?plannerId=${plannerId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(taskDto)
+            });
+            const responseData = await response.json();
+            location.reload();
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+
+    // "Edit" 버튼 클릭 시 이벤트 리스너 추가
+    document.querySelectorAll('.editTaskBtn').forEach(button => {
+        button.addEventListener('click', async function() {
+            // 해당 작업의 ID 가져오기
+            const taskId = this.dataset.taskId;
+            
+            // 여기서 필요한 작업 데이터를 가져와서 수정
+            const taskDescription = prompt('Enter new task description:');
+            
+            // 서버로 수정 요청
+            try {
+                const response = await fetch(`/my/todo?taskId=${taskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ todo: taskDescription })
+                });
+                
+                // 서버 응답 처리
+                const responseData = await response.json();
+                console.log(responseData);
+                location.reload();
+                // 필요한 처리 수행
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+
+    // "Delete" 버튼 클릭 시 이벤트 리스너 추가
+    document.querySelectorAll('.deleteTaskBtn').forEach(button => {
+        button.addEventListener('click', async function() {
+            // 해당 작업의 ID 가져오기
+            const taskId = this.dataset.taskId;
+            
+            // 삭제 확인 다이얼로그 표시
+            const confirmDelete = confirm('Are you sure you want to delete this task?');
+            
+            // 사용자가 확인을 눌렀을 때만 삭제 요청 보내기
+            if (confirmDelete) {
+                try {
+                    const response = await fetch(`/my/todo?taskId=${taskId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    // 서버 응답 처리
+                    const responseData = await response.json();
+                    console.log(responseData);
+                    location.reload();
+                    // 필요한 처리 수행
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        });
+    });
+
+
+    // 체크박스 클릭 시 이벤트 리스너 추가
+    document.querySelectorAll('.form-check-input').forEach(checkbox => {
+        checkbox.addEventListener('change', async function() {
+            // 해당 작업의 ID 가져오기
+            const taskId = this.value;
+            
+            try {
+                const response = await fetch(`/my/todo/check?taskId=${taskId}`, {
+                    method: 'POST'
+                });
+                
+                // 서버 응답 처리
+                const responseData = await response.json();
+        
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    //플래너 설명 수정
+    document.getElementById('editDescriptionBtnNN').addEventListener('click', async function() {
+    var currentDescription = document.getElementById('plannerDescription').innerText;
+    var newDescription = prompt("Enter new planner description:", currentDescription);
+    
+    if (newDescription !== null) {
+        // 플래너 설명을 업데이트
+        document.getElementById('plannerDescription').innerText = newDescription;
+        console.log(newDescription);
+
+        // 변경된 플래너 설명을 서버로 전송
+        var plannerIdInput = document.querySelector('input[name="plannerId"]');
+
+        // input 요소의 value 속성
+        var plannerIdValue = plannerIdInput.value;
+
+        try {
+            const response = await fetch(`/my/info?plannerId=${plannerIdValue}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                        description: newDescription
+                })
+            });
+            
+            // 서버 응답 처리
+            const responseData = await response.json();
+            console.log(responseData);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+});
+});
+
+</script>
+</body>
+</html>
