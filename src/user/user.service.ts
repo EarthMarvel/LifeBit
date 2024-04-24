@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import { compare, hash } from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
@@ -22,6 +22,8 @@ import { S3Service } from './s3.service';
 import { ProfileDto } from './dto/profile.dto';
 import { extname } from 'path';
 import { WithdrawDto } from './dto/withdraw.dto';
+import { Point } from 'src/point/entity/point.entity';
+import { PointService } from 'src/point/point.service';
 
 @Injectable()
 export class UserService {
@@ -33,6 +35,9 @@ export class UserService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly s3Service: S3Service,
+    @InjectRepository(Point)
+    private pointRepository: Repository<Point>,
+    private pointService: PointService,
   ) {}
 
   // 이메일, 토큰 캐싱 부분
@@ -69,17 +74,27 @@ export class UserService {
     if (password !== chekPassword) {
       throw new BadRequestException('비밀번호가 일치하지 않습니다.');
     }
+
     const hashPassword = await hash(password, 12);
-    await this.userRepository.save({
+    const newUser = await this.userRepository.save({
       email,
       password: hashPassword,
       name,
     });
+
+    const newPoint = await this.pointService.createInitialPoint();
+    await this.pointRepository.save(newPoint);
+    newUser.point = newPoint;
+
+    // 사용자를 데이터베이스에 저장합니다.
+    await this.userRepository.save(newUser);
   }
 
   // 로그인
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
+    console.log('login : email : ' + email);
+    console.log('login : password : ' + password);
     const user = await this.userRepository.findOne({
       where: { email },
       select: ['user_id', 'email', 'password'],
@@ -93,9 +108,9 @@ export class UserService {
       throw new UnauthorizedException('비밀번호를 확인해주세요.');
     }
 
-    const payload = { user_id: user.user_id };
+    const payload = { user_id: user.user_id, email: user.email };
     const refreshToken = this.jwtService.sign(
-      { user_id: user.user_id },
+      { user_id: user.user_id, email: user.email },
       { expiresIn: '7d' },
     );
 
@@ -178,6 +193,7 @@ export class UserService {
 
   // 이메일로 회원 정보 가져오기
   async findByEmail(email: string) {
+    console.log('findByEmail : email : ' + email);
     return await this.userRepository.findOne({ where: { email } });
   }
 

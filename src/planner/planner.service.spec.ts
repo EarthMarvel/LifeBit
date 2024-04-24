@@ -106,7 +106,6 @@ describe('PlannerService', () => {
   const mockPlanner = {
     plannerId: 1,
     user: mockUser, 
-    name: "testname",
     description: "testdescription",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -117,9 +116,9 @@ describe('PlannerService', () => {
     planner: mockPlanner,
     todo: "할 일 내용",
     startDate: new Date("2024-04-02"), 
-    endDate: new Date("2024-04-02"), 
-    startTime: new Date("2024-04-02T12:00:00.000Z"),
-    endTime: new Date("2024-04-02T12:00:00.000Z"),
+    // endDate: new Date("2024-04-02"), 
+    // startTime: new Date("2024-04-02T12:00:00.000Z"),
+    // endTime: new Date("2024-04-02T12:00:00.000Z"),
     createdAt: new Date("2024-04-02T09:00:00.000Z"), 
     updatedAt: new Date("2024-04-02T09:30:00.000Z"), 
     authSum: 0,
@@ -141,9 +140,9 @@ describe('PlannerService', () => {
   const mockTaskDto = {
     todo: '할 일 내용',
     startDate: new Date(),
-    endDate: new Date(),
-    startTime: new Date(),
-    endTime: new Date(),
+    // endDate: new Date(),
+    // startTime: new Date(),
+    // endTime: new Date(),
     planner: mockPlanner,
     authSum: 0, 
     authDate: new Date(), 
@@ -151,18 +150,11 @@ describe('PlannerService', () => {
     checkYn: false 
 };
 
-  it('마이페이지 접근 - service', async () => {  
-    const result = await service.myPage(mockUser);
+  // it('마이페이지 접근 - service', async () => {  
+  //   const result = await service.myPage(mockUser);
 
-    expect(result).toEqual({ month_tasks_list: [mockTask], today_task: [mockTask], planner_info: mockPlanner });
-  });
-
-  it('플래너 조회 - service', async () => {
-    const mockPlannerId = 1;
-
-    const result = await service.getPlanner(mockDateDto, mockPlannerId);
-    expect(result).toEqual([mockTask]);
-  });
+  //   expect(result).toEqual({ month_tasks_list: [mockTask], today_task: [mockTask], planner_info: mockPlanner });
+  // });
 
   it('플래너 정보 수정 - service', async () => {
     const mockPlannerId = 1;

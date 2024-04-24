@@ -7,70 +7,72 @@ import {
   Post,
   Put,
   Query,
+  Render,
   Res,
   UseGuards,
 } from '@nestjs/common';
 
 import { Response } from 'express';
 import { TaskDto } from './dto/task.dto';
-import { DateDto } from './dto/get.planner.dto';
 import { PlannerDto } from './dto/update.planner.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
 import { PlannerService } from './planner.service';
 import { UserInfo } from 'src/utils/userInfo.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 
-@Controller('myPage')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
+@Controller('my')
 export class PlannerController {
   constructor(private readonly plannerService: PlannerService) {}
 
-    /**
-     * 마이페이지 호출
+
+    //  //테스트 용도
+    //  //날짜 없이 task 조회 (오늘 task 조회)
+    //  @Get('/planner')
+    //     @Render('planner.ejs')
+    //     async myPage(@Res() res : Response) {
+
+    //     const userId = 1;
+    //     const data = await this.plannerService.myPage(userId);
+    //     return { data }; 
+    // }
+
+    // //날짜에 해당하는 task 조회
+    // @Get('/plannerWithDate')
+    // async myPageWithDate(@Res() res: Response, @Query('startDate') startDate: Date) {
+
+    //     const userId = 1;
+    //     return res.status(HttpStatus.CREATED).json({
+    //         message : "일정을 조회했습니다.",
+    //         data : await this.plannerService.myPage(userId, startDate,)
+    //    });
+    // }
+
+    /** 
+     * 날짜 없이 task 조회 (오늘 task 조회)
      * @param user 
      * @param res 
      * @returns 
      */
-    @Get('/')
+    @Get('/planner')
+    @Render('planner.ejs')
     async myPage(@UserInfo() user: User, @Res() res : Response) {
 
-        return res.status(HttpStatus.OK).json({
-        message : "마이 페이지를 조회했습니다.",
-        data : await this.plannerService.myPage(user)
-        })
-    }
-
-    /**
-     * 플래너 조회
-     * @param plannerId
-     * @param dateDto 
-     * @param res 
-     * @returns 
-     */
-    @Get('/planner')
-    async getPlanner(@Query('plannerId') plannerId : number, @Body() dateDto : DateDto, @Res() res : Response) {
-
-        return res.status(HttpStatus.OK).json({
-        message : "플래너를 조회했습니다.",
-        data : await this.plannerService.getPlanner(dateDto, plannerId)
-        })
+        const data = await this.plannerService.myPage(user);
+        return { data }; 
     }
 
 
     /**
-     * 플래너 수정
-     * @param plannerId 
-     * @param plannerDto 
-     * @param res 
-     * @returns 
+     * 날짜에 해당하는 task 조회
      */
-    @Put('/planner')
-    async updatePlanner(@Query('plannerId') plannerId : number, @Body() plannerDto : PlannerDto, @Res() res : Response) {
+    @Get('/plannerWithDate')
+    async myPageWithDate(@UserInfo() user: User, @Res() res: Response, @Query('startDate') startDate: Date) {
 
-        return res.status(HttpStatus.OK).json({
-        message : "플래너가 수정되었습니다.",
-        data : await this.plannerService.updatePlanner(plannerDto, plannerId)
-        })
+        return res.status(HttpStatus.CREATED).json({
+            message : "일정을 조회했습니다.",
+            data : await this.plannerService.myPage(user, startDate)
+       });
     }
 
 
@@ -85,8 +87,8 @@ export class PlannerController {
     async postTodo(@Query('plannerId') plannerId : number, @Body() taskDto : TaskDto, @Res() res : Response) {
         
         return res.status(HttpStatus.CREATED).json({
-        message : "일정을 등록했습니다.",
-        data : await this.plannerService.postTodo(taskDto, plannerId)
+            message : "일정을 등록했습니다.",
+            data : await this.plannerService.postTodo(taskDto, plannerId)
         })
     }
 
@@ -155,8 +157,45 @@ export class PlannerController {
         })
     }
 
-  /**
-   * 내 미션 확인하기
-   */
 
+    /**
+     * 플래너 수정
+     * @param plannerId 
+     * @param plannerDto 
+     * @param res 
+     * @returns 
+     */
+    @Put('/info')
+    async updatePlanner(@Query('plannerId') plannerId : number, @Body() plannerDto : PlannerDto, @Res() res : Response) {
+
+        return res.status(HttpStatus.OK).json({
+        message : "플래너가 수정되었습니다.",
+        data : await this.plannerService.updatePlanner(plannerDto, plannerId)
+        })
+    }
+
+
+    // /**
+    //  * 내 미션 확인 (테스트용)
+    //  */
+    // @Get('/mission')
+    // async mission(@UserInfo() user: User) {
+
+    //     const data = await this.plannerService.mission(user);
+    //     return { data }; 
+    // }
+
+    /**
+     * 내 미션 확인
+     */
+    @Get('/mypage')
+    @Render('mypage.ejs')
+    async mission() {
+
+        const userId = 1;
+        const data = await this.plannerService.mission(userId);
+        console.log(data);
+        return { data }; 
+    }
+    
 }

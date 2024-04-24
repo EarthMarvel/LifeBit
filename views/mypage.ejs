@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/myPage.css">
+    <style>
+        /* Custom CSS styles */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 60px;
+        }
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .challenge-card {
+            margin-bottom: 20px;
+        }
+        .row {
+            margin-top: 20px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">My Page</a>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>My Challenges</h2>
+            <% if (data && data.length > 0) { %>
+                <% data.forEach(mission => { %>
+                    <div class="challenge-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <img src="<%= mission.mission_thumbnail_url %>" alt="Mission Thumbnail">
+                                <h5 class="card-title"><%= mission.mission_title %></h5>
+                                <p class="card-text"><%= mission.mission_description %></p>
+                                <p>
+                                    <span class="card-text">#<%= mission.mission_category %></span>
+                                    <span class="card-text">Number of People: <%= mission.mission_number_people %></span>
+                                </p>
+                                <a href="#" class="btn btn-primary">Let's Start</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No missions found.</p>
+            <% } %>
+            <!-- Add more challenge cards here -->
+        </div>
+        <div class="col-md-4">
+            <div class="text-center">
+                <h2>User Information</h2>
+                <button class="btn btn-primary" id="editUserInfoBtn">Edit User Info</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="../js/myPage.js"></script>
+</body>
+</html>

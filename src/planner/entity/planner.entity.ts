@@ -25,9 +25,6 @@ export class Planner {
   user: User;
 
   @Column({ type: 'varchar', nullable: true })
-  name: string;
-
-  @Column({ type: 'varchar', nullable: true })
   description: string;
 
   @CreateDateColumn()
