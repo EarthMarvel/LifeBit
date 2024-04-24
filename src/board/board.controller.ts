@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   Render,
-  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -28,7 +27,9 @@ export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   // 게시물 전체 조회
+  // 메인 페이지?
   @Get('')
+  @Render('board-main.ejs')
   async getAllBoards() {
     return await this.boardService.getAllBoards();
   }
@@ -38,12 +39,13 @@ export class BoardController {
   async searchBoards(
     @Query() searchBoardDto: SearchBoardDto,
   ): Promise<Boards[]> {
-    console.log('test');
     return this.boardService.searchBoards(searchBoardDto);
   }
 
-  // 게시물 단건 조회
+  // 게시물 상세 조회
+  // 상세 페이지?
   @Get('/:boardId')
+  @Render('board-Detail.ejs')
   async findOneBoards(@Param('boardId') boardId: number) {
     return await this.boardService.findOneBoards(boardId);
   }
@@ -105,9 +107,11 @@ export class BoardController {
     };
   }
 
-  @Get('main')
-  @Render('board.ejs')
-  async getSignIn(@Req() req: Request) {
-    return { isLoggedIn: req['isLoggedIn'] };
-  }
+  @Get('create')
+  @Render('board-create.ejs')
+  getCreateBoardPage() {}
+
+  @Get('update')
+  @Render('board-update.ejs')
+  getUpdateBoardPage() {}
 }

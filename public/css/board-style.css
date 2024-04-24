@@ -1,40 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
-
-* {
-  font-family: 'Gowun Dodum', sans-serif;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif; /* 湲�瑗� �ㅼ젙 */
+  background-color: #f4f4f4; /* 諛곌꼍�� */
 }
 
-.main {
-  height: 350px;
-  background-color: white;
-
-  background-image: url();
-  background-position: center;
-  background-size: cover;
+/* 而⑦뀒�대꼫 �ㅽ��� */
+.min-h-screen {
+  min-height: 100vh; /* �꾩껜 �섏씠吏� �믪씠 */
+  padding: 16px; /* �섏씠吏� �⑤뵫 */
 }
 
-.header {
-  background-color: black;
+/* �ㅻ뜑 �ㅽ��� */
+header {
+  display: flex;
+  justify-content: space-between; /* 醫뚯슦濡� 媛꾧꺽 �좎� */
+  align-items: center; /* 媛��대뜲 �뺣젹 */
+  padding-bottom: 16px; /* �꾨옒 �⑤뵫 */
+  border-bottom: 1px solid #e0e0e0; /* �ㅻ뜑 �뚮몢由� */
+  margin-bottom: 16px; /* �꾨옒 媛꾧꺽 */
 }
 
-.search {
-  margin: 12px;
+/* �ㅻ뜑 濡쒓퀬 �ㅽ��� */
+header h1 {
+  font-size: 32px; /* 濡쒓퀬 湲�瑗� �ш린 */
+  font-weight: bold; /* 濡쒓퀬 湲�瑗� �먭퍡 */
+  margin: 0; /* �щ갚 �쒓굅 */
 }
 
-.mycards {
-  width: 1200px;
-  margin: 20px auto 20px auto;
+/* 寃��� �낅젰 �꾨뱶 �ㅽ��� */
+input {
+  width: 200px; /* �낅젰 �꾨뱶 �덈퉬 */
+  padding: 8px; /* �대� �⑤뵫 */
+  border-radius: 4px; /* 紐⑥꽌由� �κ�寃� */
+  border: 1px solid #ccc; /* �뚮몢由� */
+  font-size: 14px; /* 湲�瑗� �ш린 */
+  outline: none; /* 湲곕낯 �ъ빱�� �뚮몢由� �쒓굅 */
 }
 
-.mypostingbox {
-  width: 500px;
-  margin: 20px auto 20px auto;
-
-  border: 1px solid black;
-  padding: 20px;
-  border-radius: 5px;
+/* 寃��� 踰꾪듉 �ㅽ��� */
+button {
+  padding: 8px 16px; /* �대� �⑤뵫 */
+  border-radius: 4px; /* 紐⑥꽌由� �κ�寃� */
+  background-color: #00ffff; /* 諛곌꼍�� */
+  color: #000; /* 湲��먯깋 */
+  font-size: 14px; /* 湲�瑗� �ш린 */
+  cursor: pointer; /* 而ㅼ꽌 */
+  border: none; /* �뚮몢由� �쒓굅 */
+  outline: none; /* 湲곕낯 �ъ빱�� �뚮몢由� �쒓굅 */
+  transition: background-color 0.2s ease; /* 諛곌꼍�� �꾪솚 */
 }
 
-.mypostingbox > button {
-  width: 100%;
+/* 寃��� 踰꾪듉 �몃쾭 �ㅽ��� */
+button:hover {
+  background-color: #00cccc; /* �몃쾭 �� 諛곌꼍�� 蹂�寃� */
+}
+
+/* 硫붿씤 �곸뿭 �ㅽ��� */
+main {
+  display: grid; /* 洹몃━�� �덉씠�꾩썐 */
+  grid-template-columns: repeat(2, 1fr); /* �� �대줈 諛곗튂 */
+  gap: 16px; /* 移대뱶 �ъ씠 媛꾧꺽 */
+}
+
+/* 移대뱶 而⑦뀒�대꼫 �ㅽ��� */
+.card {
+  background-color: #ffffff; /* 移대뱶 諛곌꼍�� */
+  border: 2px solid #007bff; /* 移대뱶 �뚮몢由� �됱긽 諛� �먭퍡 議곗젙 */
+  border-radius: 8px; /* 移대뱶 紐⑥꽌由� �κ�寃� */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 移대뱶 洹몃┝�� 媛뺥솕 */
+  padding: 16px; /* �대� �⑤뵫 */
+  display: flex;
+  flex-direction: column; /* �섏쭅 諛곗튂 */
+  justify-content: space-between; /* �곹븯 媛꾧꺽 �좎� */
+  transition: transform 0.2s ease-in-out; /* 留덉슦�� �ㅻ쾭 �� �좊땲硫붿씠�� */
+}
+
+/* 移대뱶 而⑦뀒�대꼫 �몃쾭 �ㅽ��� */
+.card:hover {
+  transform: translateY(-4px); /* 留덉슦�� �ㅻ쾭 �� 移대뱶 �댁쭩 �꾨줈 �대룞 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* 留덉슦�� �ㅻ쾭 �� 洹몃┝�� 媛뺥솕 */
+}
+
+/* 移대뱶 �쒕ぉ �ㅽ��� */
+.card h2 {
+  font-size: 18px; /* �쒕ぉ 湲�瑗� �ш린 */
+  font-weight: bold; /* 湲�瑗� �먭퍡 */
+  margin-bottom: 8px; /* �꾨옒 媛꾧꺽 */
+  color: #333; /* 湲��먯깋 */
+}
+
+/* 移대뱶 �ㅻ챸 �띿뒪�� �ㅽ��� */
+.card p {
+  font-size: 14px; /* �띿뒪�� 湲�瑗� �ш린 */
+  color: #6c757d; /* �띿뒪�� �됱긽 */
+  margin-bottom: 12px; /* �꾨옒 媛꾧꺽 */
+}
+
+.card .participant-info {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
 }
