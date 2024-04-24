@@ -50,7 +50,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="#">Planner</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" id="loginLink">
                 <a class="nav-link" href="#">Login</a>
             </li>
         </ul>
@@ -88,6 +88,7 @@
     <% }); %>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -135,6 +136,30 @@ function searchCategory(event) {
 
 // 페이지가 로드되면 이벤트 핸들러를 추가
 document.addEventListener('DOMContentLoaded', function() {
+
+     // 페이지가 로드될 때 로그인/로그아웃 링크를 업데이트하는 함수 호출
+     updateLoginLogoutLink();
+
+    function updateLoginLogoutLink() {
+        const loginLink = document.getElementById('loginLink');
+
+        // 쿠키에서 토큰 값을 가져옴, 쿠키 이름을 'authorization'으로 가정
+        const token = getCookie('authorization');
+
+        // 토큰 값이 있는지 확인하여 로그인/로그아웃 링크를 업데이트
+        if (token) {
+            loginLink.innerHTML = '<a class="nav-link" href="#">Logout</a>';
+        } else {
+            loginLink.innerHTML = '<a class="nav-link" href="#">Login</a>';
+        }
+    }
+
+    // 쿠키에서 지정된 이름의 쿠키 값을 가져오는 함수
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
 
     document.addEventListener('submit', function(event) {
         if (event.target.matches('.search-bar')) { // 검색 폼이 제출되었는지 확인
