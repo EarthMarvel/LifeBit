@@ -1,22 +1,23 @@
-import { User } from '../../user/entities/user.entity';
 import {
-  Column,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 
-@Entity({ name: 'point' })
+@Entity()
 export class Point {
   @PrimaryGeneratedColumn()
-  pointId: number;
+  id: number;
+
+  @Column()
+  value: number;
 
   @Column({ default: 0 })
-  point: number;
+  totalValue: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -24,7 +25,4 @@ export class Point {
   @OneToOne(() => User, (user) => user.point)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'user_id' })
   user: User;
-
-  @Column({ type: 'int', nullable: true })
-  user_id: number;
 }

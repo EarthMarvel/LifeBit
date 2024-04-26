@@ -4,18 +4,22 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { User } from 'src/user/entities/user.entity';
 import { Mission } from './entities/mission.entity';
+import { Point } from 'src/point/entity/point.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { DataSource, Repository } from 'typeorm';
-import { UserInfo } from 'src/utils/userInfo.decorator';
 
 @Injectable()
 export class MissionService {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(Mission)
     private missionRepository: Repository<Mission>,
+    @InjectRepository(Point)
+    private pointRepository: Repository<Point>,
     private dataSource: DataSource,
   ) {}
 
@@ -59,7 +63,7 @@ export class MissionService {
   async update(userId: number, id: number, updateMissionDto: UpdateMissionDto) {
     const mission = await this.findOne(id);
 
-    console.log('userInfo : ' + UserInfo.name); // null
+    console.log('userInfo : ' + User.name); // null
 
     /*
     if (mission.user_id !== userId) {

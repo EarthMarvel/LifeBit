@@ -37,14 +37,11 @@ export class Task {
   @Column({ type: 'date' })
   startDate: Date;
 
-  @Column({ type: 'date' })
-  endDate: Date;
+  // @Column({ type: 'time', precision: 0 })
+  // startTime: Date;
 
-  @Column({ type: 'time', precision: 0 })
-  startTime: Date;
-
-  @Column({ type: 'time', precision: 0 })
-  endTime: Date;
+  // @Column({ type: 'time', precision: 0 })
+  // endTime: Date;
 
   @CreateDateColumn()
   createdAt: Date;

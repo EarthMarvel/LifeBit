@@ -49,14 +49,4 @@ export class S3Service {
       }),
     );
   }
-
-  async getObject(key: string) {
-    const response = await this.client.send(
-      new GetObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-      }),
-    );
-    return response.Body.transformToString();
-  }
 }

@@ -12,14 +12,22 @@ export class MainService {
         @InjectRepository(Mission)
         private readonly missionRepository : Repository<Mission>
     ) {}
-
+    
     /**
      * 메인 조회
+     * @returns 
+     */
+    async main() {
+        return this.missionRepository.find();
+    }
+
+    /**
+     * 검색
      * @param category 
      * @param sort 
      * @param title 
      */
-    async main(category: Category, sort: string, title: string, type: MissionType) {
+    async search(category: Category, sort: string, title: string, type: MissionType) {
 
         let query = this.missionRepository.createQueryBuilder('mission');
 

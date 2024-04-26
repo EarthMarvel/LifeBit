@@ -41,7 +41,7 @@ $('#bottomBtnForm').submit((event) => {
     data: JSON.stringify(formData),
     success: (data) => {
       alert('회원가입이 완료되었습니다.');
-      window.location.href = 'http://localhost:3000/user/setProfile';
+      window.location.href = 'http://localhost:3000/user/sign-in';
     },
     error: (jqXHR, textStatus, errorThrown) => {
       const errorMessage = jqXHR.responseJSON

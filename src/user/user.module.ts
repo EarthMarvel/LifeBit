@@ -10,6 +10,13 @@ import { MulterModule } from '@nestjs/platform-express';
 import { multerOptionsFactory } from 'src/utils/multer.options.factory';
 import { S3Service } from './s3.service';
 import { Repository } from 'typeorm';
+import { PointService } from 'src/point/point.service';
+import { VisionService } from 'src/vision/vision.service';
+import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
+import { Point } from 'src/point/entity/point.entity';
+import { MissionService } from 'src/mission/mission.service';
+import { Mission } from 'src/mission/entities/mission.entity';
+import { PlannerModule } from 'src/planner/planner.module';
 
 @Module({
   imports: [
@@ -24,10 +31,11 @@ import { Repository } from 'typeorm';
       useFactory: multerOptionsFactory,
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Mission, Point, CertificatedImage]),
+    PlannerModule,
   ],
-  providers: [UserService, EmailService, S3Service],
+  providers: [UserService, EmailService, S3Service, PointService],
   controllers: [UserController],
-  exports: [UserService, S3Service],
+  exports: [UserService, S3Service, TypeOrmModule.forFeature([User])],
 })
 export class UserModule {}

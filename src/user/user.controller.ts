@@ -23,10 +23,14 @@ import { UserInfo } from 'src/utils/userInfo.decorator';
 import { User } from './entities/user.entity';
 import { WithdrawDto } from './dto/withdraw.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
+import { PlannerService } from 'src/planner/planner.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly plannerService: PlannerService,
+  ) {}
 
   @Post('emailAuth')
   async sendVerification(@Body() emailAuthDto: EmailAuthDto) {
@@ -76,8 +80,13 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profileInfo')
-  profileInfo(@UserInfo() user: User) {
-    return this.userService.profileInfo(user.user_id);
+  @Render('mypage.ejs')
+  async profileInfo(@UserInfo() user: User, @Req() req: Request) {
+    const userInfo = await this.userService.profileInfo(user.user_id);
+    const data = await this.plannerService.mission(user.user_id);
+    console.log('-----2222312------->', userInfo);
+    console.log('---------dt---->', data);
+    return { userInfo, data, isLoggedIn: req['isLoggedIn'] };
   }
 
   @UseGuards(JwtAuthGuard)

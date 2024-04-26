@@ -94,7 +94,7 @@
           data: formData,
           success: (data) => {
             alert('프로필 설정이 완료되었습니다.');
-            window.location.href = 'http://localhost:3000';
+            window.location.href = 'http://localhost:3000/user/profileInfo';
           },
           error: (jqXHR, textStatus, errorThrown) => {
             const errorMessage = jqXHR.responseJSON

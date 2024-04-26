@@ -11,8 +11,8 @@ describe('MainService', () => {
   let missionRepository: Partial<Record<keyof Repository<Mission>, jest.Mock>>;
 
   const mockMissions = [
-    { id: 1, title: 'Mission 1', category: Category.FIRST, type: MissionType.CHALLENGE },
-    { id: 2, title: 'Mission 2', category: Category.FIRST, type: MissionType.CHALLENGE },
+    { id: 1, title: 'Mission 1', category: Category.ART, type: MissionType.CHALLENGE },
+    { id: 2, title: 'Mission 2', category: Category.ART, type: MissionType.CHALLENGE },
   ];
 
   beforeEach(async () => {
@@ -47,7 +47,8 @@ describe('MainService', () => {
 it('메인페이지 호출 - service', async () => {
  
   // 테스트 메서드 호출
-  const result = await mainService.main(Category.FIRST, 'ASC', '', MissionType.CHALLENGE);
+  //const result = await mainService.main(Category.ART, 'ASC', '', MissionType.CHALLENGE);
+  const result = await mainService.main();
 
   // 결과 검증
   expect(result).toEqual([mockMissions]);

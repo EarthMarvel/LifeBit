@@ -8,14 +8,13 @@ import {
   ManyToMany,
   OneToMany,
   OneToOne,
+  JoinColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 import { Like } from 'src/board/entities/likes.entity';
 
-@Entity({
-  name: 'users',
-})
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   user_id: number;

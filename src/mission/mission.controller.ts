@@ -18,7 +18,7 @@ import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { MissionType } from './types/missionType';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 
@@ -28,7 +28,7 @@ export class MissionController {
 
   // 미션 등록
   // POST /mission
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('thumbnail')) // 'thumbnail'은 클라이언트가 보내는 파일 필드의 이름입니다.
   async createMission(
@@ -37,7 +37,6 @@ export class MissionController {
     @Req() req: any,
   ) {
     const user = req.user; // 인증된 사용자 정보 사용
-    console.log('req.user.user_id : ' + req.user.user_id);
     // 파일 정보(file)와 나머지 데이터(createMissionDto)를 서비스에 전달
     return await this.missionService.create(
       createMissionDto,
