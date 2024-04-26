@@ -162,11 +162,19 @@ export class UserService {
 
   // 프로필 조회
   async profileInfo(user_id: number) {
-    const user = await this.userRepository.findOne({
-      where: { user_id },
-      select: ['image', 'name', 'nickName', 'description'],
-    });
-    console.log('-------11---->', user);
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.point', 'point')
+      .select([
+        'user.image',
+        'user.name',
+        'user.nickName',
+        'user.description',
+        'point.totalValue',
+      ])
+      .where('user.user_id = :user_id', { user_id })
+      .getOne();
+
     if (!user) {
       throw new NotFoundException('해당 사용자를 찾지 못했습니다.');
     }
