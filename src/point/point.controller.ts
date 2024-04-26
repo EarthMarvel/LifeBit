@@ -9,7 +9,6 @@ export class PointController {
   @Render('ranking.ejs')
   async getRanking() {
     const usersPoint = await this.pointService.allPointView();
-    console.log('------>', usersPoint);
     return { usersPoint };
   }
 }

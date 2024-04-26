@@ -1,4 +1,12 @@
-import { Controller, Get, Req, Res, Response, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Render,
+  Req,
+  Res,
+  Response,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
@@ -17,10 +25,14 @@ export class AuthController {
   async naverLoginCallback(@Req() req: SocialRequest, @Res() res) {
     const token = await this.authService.socialLogin(req);
     res.cookie('authorization', `Bearer ${token.accessToken}`, {
-      maxAge: 10000,
-      HttpOnly: true,
+      maxAge: 43200000,
+      httpOnly: true,
     });
-    res.json({ message: '로그인이  완료되었습니다.' });
+    res.cookie('refreshToken', `${token.refreshToken}`, {
+      maxAge: 604800000,
+      httpOnly: true,
+    });
+    res.redirect('/main');
   }
 
   @Get('kakao')
@@ -31,8 +43,15 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   async kakaoLoginCallback(@Req() req: SocialRequest, @Res() res) {
     const token = await this.authService.socialLogin(req);
-    res.cookie('authorization', `Bearer ${token.accessToken}`);
-    res.json({ message: '로그인이  완료되었습니다.' });
+    res.cookie('authorization', `Bearer ${token.accessToken}`, {
+      maxAge: 43200000,
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', `${token.refreshToken}`, {
+      maxAge: 604800000,
+      httpOnly: true,
+    });
+    res.redirect('/main');
   }
 
   @Get('google')
@@ -40,10 +59,18 @@ export class AuthController {
   async googleLogin(@Req() req: Request) {}
 
   @Get('google/callback')
+  @Render('log-in.ejs')
   @UseGuards(AuthGuard('google'))
   async googleLoginCallback(@Req() req: SocialRequest, @Res() res) {
     const token = await this.authService.googleLogin(req);
-    res.cookie('authorization', `Bearer ${token.accessToken}`);
-    res.json({ message: '로그인이  완료되었습니다.' });
+    res.cookie('authorization', `Bearer ${token.accessToken}`, {
+      maxAge: 43200000,
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', `${token.refreshToken}`, {
+      maxAge: 604800000,
+      httpOnly: true,
+    });
+    res.redirect('/main');
   }
 }

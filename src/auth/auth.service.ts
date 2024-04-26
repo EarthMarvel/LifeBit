@@ -28,7 +28,8 @@ export class AuthService {
       const socialPayload = { email, user_id: user.user_id };
 
       return {
-        accessToken: this.jwtService.sign(socialPayload),
+        accessToken: this.jwtService.sign(socialPayload, { expiresIn: '12h' }),
+        refreshToken: this.jwtService.sign(socialPayload, { expiresIn: '7d' }),
       };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
@@ -55,7 +56,8 @@ export class AuthService {
       const socialPayload = { email, user_id: user.user_id };
 
       return {
-        accessToken: this.jwtService.sign(socialPayload),
+        accessToken: this.jwtService.sign(socialPayload, { expiresIn: '12h' }),
+        refreshToken: this.jwtService.sign(socialPayload, { expiresIn: '7d' }),
       };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
