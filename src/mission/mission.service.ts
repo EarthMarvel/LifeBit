@@ -1,12 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Mission } from './entities/mission.entity';
 import { Point } from 'src/point/entity/point.entity';
+import { UserMission } from 'src/user-mission/entities/user-mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { DataSource, Repository } from 'typeorm';
@@ -20,6 +17,8 @@ export class MissionService {
     private missionRepository: Repository<Mission>,
     @InjectRepository(Point)
     private pointRepository: Repository<Point>,
+    @InjectRepository(UserMission)
+    private userMissionRepository: Repository<UserMission>,
     private dataSource: DataSource,
   ) {}
 
@@ -27,28 +26,55 @@ export class MissionService {
     createMissionDto: CreateMissionDto,
     userId: number,
     file: Express.Multer.File,
-  ) {
-    const mission = this.missionRepository.create(createMissionDto);
+  ): Promise<{ mission: Mission; message: string }> {
+    // 새로운 미션 객체 생성
+    const mission = new Mission();
 
-    console.log('mission : ' + mission);
+    // 입력 데이터 DTO에서 미션 객체로 복사
+    mission.title = createMissionDto.title;
+    mission.category = createMissionDto.category;
+    mission.startDate = createMissionDto.startDate;
+    mission.endDate = createMissionDto.endDate;
+    mission.numberPeople = createMissionDto.numberPeople;
+    mission.description = createMissionDto.description;
 
-    mission.creatorId = userId;
+    // userId를 User 객체로 조회
+    const user = await this.userRepository.findOne({
+      where: { user_id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
 
-    console.log('mission : creatorId : ' + mission.creatorId);
+    // 미션 객체를 데이터베이스에 저장
+    const savedMission = await this.missionRepository.save(mission);
 
-    await this.missionRepository.save(mission);
+    // 미션 생성자의 아이디와 미션의 아이디를 UserMission 엔티티에 추가
+    await this.addUserMission(savedMission.missionId, userId);
 
-    return { mission, message: '미션 생성 완료' };
+    // 응답 준비
+    return { mission: savedMission, message: '미션 생성 완료' };
   }
 
-  async findOne(id: number) {
-    const mission = await this.missionRepository.findOneBy({ missionId: id });
+  async findOne(missionId: number): Promise<Mission> {
+    const mission = await this.missionRepository.findOne({
+      where: { missionId },
+    });
 
     if (!mission) {
-      throw new NotFoundException('해당 mission은 존재하지 않습니다.');
+      throw new NotFoundException(`Mission with ID ${missionId} not found`);
     }
 
     return mission;
+  }
+
+  // 모든 미션 목록을 가져오는 메서드
+  async findAll(): Promise<Mission[]> {
+    // 미션 레포지토리를 통해 모든 미션을 가져옴
+    const missions = await this.missionRepository.find();
+
+    // 가져온 미션 목록을 반환
+    return missions;
   }
 
   async remove(id: number, userId: number) {
@@ -78,5 +104,44 @@ export class MissionService {
     this.missionRepository.merge(mission, updateMissionDto);
     const updatedMission = await this.missionRepository.save(mission);
     return { updatedMission, message: '미션이 정상적으로 수정되었습니다.' };
+  }
+
+  // 이메일로 User 엔티티 조회
+  async getUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    // 사용자 존재 여부 확인
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    // 조회된 User 객체 반환
+    return user;
+  }
+
+  // UserMission 추가
+  async addUserMission(missionId: number, userId: number): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { user_id: userId },
+    });
+    const mission = await this.missionRepository.findOne({
+      where: { missionId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    if (!mission) {
+      throw new NotFoundException(`Mission with ID ${missionId} not found`);
+    }
+
+    const userMission = new UserMission();
+    userMission.user = user;
+    userMission.mission = mission;
+    userMission.participationDate = new Date();
+
+    await this.userMissionRepository.save(userMission);
   }
 }

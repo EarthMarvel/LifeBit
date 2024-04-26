@@ -6,24 +6,20 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToMany,
+  ManyToOne,
+  JoinTable,
 } from 'typeorm';
 
 import { MissionType } from '../types/missionType';
 import { Category } from '../types/category';
-
 import { User } from '../../user/entities/user.entity';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
+import { UserMission } from 'src/user-mission/entities/user-mission.entity';
 
 @Entity()
 export class Mission {
   @PrimaryGeneratedColumn()
   missionId: number;
-
-  @ManyToMany(() => User, (user) => user.missions)
-  user_ids: User[];
-
-  @Column({ type: 'varchar', nullable: true })
-  creatorId: number;
 
   // category : ENUM
   @Column({ type: 'enum', enum: Category, nullable: false })
@@ -38,24 +34,20 @@ export class Mission {
   description: string;
 
   // startDate
-  @Column({ type: 'timestamp', nullable: false })
+  @Column({ type: 'datetime', nullable: false })
   startDate: Date;
 
   // endDate
-  @Column({ type: 'timestamp', nullable: false })
+  @Column({ type: 'datetime', nullable: false })
   endDate: Date;
 
   // numberPeople
   @Column({ type: 'int', nullable: false })
   numberPeople: number;
 
-  // thumbnailUrl
-  @Column({ type: 'varchar', nullable: false, default: '' })
-  thumbnailUrl: string;
-
   // type
-  @Column({ type: 'enum', enum: MissionType, nullable: false })
-  type: MissionType;
+  // @Column({ type: 'enum', enum: MissionType, nullable: false })
+  // type: MissionType;
 
   // authSum
   @Column({ type: 'int', default: 0 })
@@ -68,6 +60,13 @@ export class Mission {
   // Mission과 ChatRoom의 일대일 관계
   // @OneToOne(() => ChatRoom, (chatRoom) => chatRoom.mission)
   // chatRoom: ChatRoom;
+
+  // 미션 생성자 ID를 나타내는 필드 (연관 관계를 설정하지 않습니다)
+  @Column({ type: 'int', nullable: true })
+  creatorId: number;
+
+  @OneToMany(() => UserMission, (userMission) => userMission.user)
+  userMissions: UserMission[];
 
   @OneToMany(
     () => CertificatedImage,

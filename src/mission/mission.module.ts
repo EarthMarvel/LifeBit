@@ -9,10 +9,17 @@ import { ConfigService } from '@nestjs/config';
 import { UserModule } from 'src/user/user.module';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 import { VisionModule } from 'src/vision/vision.module';
+import { UserMission } from 'src/user-mission/entities/user-mission.entity';
+import { UserMissionRepository } from 'src/user-mission/user-mission.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Mission, CertificatedImage]),
+    TypeOrmModule.forFeature([
+      Mission,
+      CertificatedImage,
+      UserMission,
+      UserMissionRepository,
+    ]),
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET_KEY'),

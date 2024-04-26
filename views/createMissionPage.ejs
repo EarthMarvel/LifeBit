@@ -1,0 +1,461 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      /* 전체 스타일 */
+      body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1a1a1a; /* 어두운 배경색 */
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+      }
+
+      /* 중앙 정렬 */
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* 전체 높이 */
+        padding: 20px;
+      }
+
+      /* 카드 스타일 */
+      .card {
+        background-color: #2a2a2a; /* 약간 더 밝은 회색 배경 */
+        border-radius: 12px; /* 부드러운 모서리 */
+        padding: 24px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 그림자 효과 */
+      }
+
+      /* 헤더 스타일 */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        border-bottom: 2px solid #e54d47; /* 레드 오렌지 색상 하이라이트 */
+      }
+
+      header h1 {
+        font-size: 2.2rem; /* 폰트 크기 조정 */
+        font-weight: bold;
+        color: #e54d47; /* 레드 오렌지 색상 */
+      }
+
+      header span {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+        padding: 4px 12px; /* 글자 간 간격 조정 */
+        border-radius: 4px;
+        background-color: #e54d47; /* 레드 오렌지 배경색 */
+      }
+
+      .p-6 {
+        padding: 24px; /* 패딩 조정 */
+      }
+
+      .border {
+        border: 1px solid #ccc;
+      }
+
+      .rounded-lg {
+        border-radius: 12px; /* 부드러운 모서리 */
+      }
+
+      img {
+        border-radius: 50%; /* 원형 이미지 */
+        margin-bottom: 8px; /* 이미지 하단 마진 */
+      }
+
+      /* 이미지 업로드 섹션 */
+      .image-upload-container {
+        display: flex; /* 플렉스 컨테이너 */
+        align-items: center; /* 수직 중앙 정렬 */
+        justify-content: center; /* 수평 중앙 정렬 */
+        gap: 20px; /* 요소 간 간격 설정 */
+        margin-bottom: 16px; /* 섹션 하단 마진 */
+      }
+
+      /* 이미지 업로드 섹션 및 미리보기 이미지 스타일 */
+      .img-thumbnail {
+        width: 200px; /* 정사각형 형태를 위해 고정된 너비 */
+        height: 200px; /* 정사각형 형태를 위해 고정된 높이 */
+        object-fit: cover; /* 이미지가 컨테이너에 맞게 잘려서 표시되도록 함 */
+        border-radius: 12px; /* 부드러운 모서리로 처리 */
+      }
+
+      /* No Image 이미지를 정사각형으로 표시 */
+      .no-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover; /* 이미지를 정사각형으로 유지 */
+      }
+
+      /* 업로드 버튼 스타일 */
+      .upload-btn {
+        background-color: #e54d47; /* 더 강렬한 레드 오렌지 색상 */
+        color: white;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .upload-btn:hover {
+        background-color: #ff6f61; /* 레드 오렌지 색상 */
+      }
+
+      /* 폼 스타일 */
+      .input {
+        background-color: #3a3a3a; /* 더 어두운 회색 배경 */
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+        font-size: 1rem;
+        margin: 0; /* 좌우 여백 제거 */
+        width: 100%; /* 전체 너비 사용 */
+        box-sizing: border-box; /* 패딩 및 테두리 포함한 너비 계산 */
+      }
+
+      .input::placeholder {
+        color: #7a7a7a; /* 회색 플레이스홀더 */
+      }
+
+      .input:focus {
+        outline: none;
+        box-shadow: 0 0 6px #e54d47; /* 강렬한 레드 오렌지 그림자 효과 */
+      }
+
+      /* 텍스트에어리어 스타일 */
+      textarea {
+        resize: none; /* 크기 조정 불가 */
+        height: 120px;
+        width: 100%; /* 전체 너비 사용 */
+        box-sizing: border-box; /* 패딩 및 테두리 포함한 너비 계산 */
+      }
+
+      textarea::placeholder {
+        color: #7a7a7a; /* 회색 플레이스홀더 */
+      }
+
+      /* 폼 필드 간격 조정 */
+      .form-field {
+        margin-bottom: 16px; /* 폼 필드 사이 간격 */
+      }
+
+      /* 버튼 스타일 */
+      button {
+        background-color: #e54d47; /* 더 강렬한 레드 오렌지 색상 */
+        color: white;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #ff6f61; /* 레드 오렌지 색상 */
+      }
+
+      /* 등록하기 버튼 스타일 */
+      .submit-btn {
+        background-color: #e54d47; /* 더 강렬한 레드 오렌지 색상 */
+        color: white;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .submit-btn:hover {
+        background-color: #ff6f61; /* 레드 오렌지 색상 */
+      }
+
+      /* 버튼 스타일 */
+      .back-btn,
+      .submit-btn {
+        background-color: #e54d47; /* 더 강렬한 레드 오렌지 색상 */
+        color: white;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .back-btn:hover,
+      .submit-btn:hover {
+        background-color: #ff6f61; /* 레드 오렌지 색상 */
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="container d-flex flex-column align-items-center justify-content-center min-vh-100 p-4 bg-gray-100"
+    >
+      <div class="card w-100 max-w-4xl p-6 bg-white border rounded-md shadow">
+        <header class="flex justify-content-between mb-12">
+          <img src="/LifeBit.png" alt="Life Bit" />
+          <span class="text-base font-semibold">로그인/회원가입</span>
+        </header>
+        <div class="row g-4">
+          <div class="image-upload-container">
+            <br />
+            <img
+              src="/default.png"
+              class="img-thumbnail mb-4 margin: 20px"
+              width="200"
+              height="200"
+            />
+            <input
+              type="file"
+              id="imageUpload"
+              accept="image/*"
+              style="display: none"
+            />
+            <button class="btn btn-outline-secondary" id="chooseFileBtn">
+              파일 선택
+            </button>
+          </div>
+          <div class="col-md-6">
+            <h1 class="title mb-8 text-center"><%= "미션 생성" %></h1>
+            <!-- [미션] 제목 필드 -->
+            <div class="mb-3">
+              <label for="title" class="form-label">[미션] 제목</label>
+              <input
+                type="text"
+                id="title"
+                class="form-control"
+                placeholder="<%= challengeTitlePlaceholder %>"
+              />
+            </div>
+            <!-- [미션] 카테고리 필드 -->
+            <div class="mb-3">
+              <label for="category" class="form-label">[미션] 카테고리</label>
+              <select id="category" class="form-select">
+                <option value="">카테고리를 선택하세요</option>
+                <option value="Sports">스포츠</option>
+                <option value="Cooking">요리</option>
+                <option value="Music">음악</option>
+                <option value="Photography">사진</option>
+                <option value="Workout">헬스</option>
+                <option value="Reading">독서</option>
+                <option value="Study">학습</option>
+                <option value="Selfhelp">자기계발</option>
+              </select>
+            </div>
+            <!-- 챌린지 기간 -->
+            <div class="mb-3">
+              <label for="challengePeriod" class="form-label"
+                >[챌린지] 기간</label
+              >
+              <input
+                type="date"
+                id="challengeStartDate"
+                class="form-control"
+                onchange="handleDateChange(event, 'challengeStart')"
+              />
+              <input
+                type="date"
+                id="challengeEndDate"
+                class="form-control"
+                onchange="handleDateChange(event, 'challengeEnd')"
+              />
+              <div id="challengeWarning" class="text-danger"></div>
+            </div>
+            <!-- [정원] 및 [설명] 필드 -->
+            <div class="mb-3">
+              <label for="amount" class="form-label">[정원]</label>
+              <select id="amount" class="form-select">
+                <option value="">선택하세요</option>
+                <option value="5">5명</option>
+                <option value="10">10명</option>
+                <option value="15">15명</option>
+                <option value="20">20명</option>
+                <option value="25">25명</option>
+                <option value="30">30명</option>
+                <option value="35">35명</option>
+                <option value="40">40명</option>
+                <option value="45">45명</option>
+                <option value="50">50명</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">[설명]</label>
+              <textarea
+                id="description"
+                class="form-control"
+                placeholder="미션 설명을 작성해주세요."
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <button class="submit-btn btn-primary mt-3"><%= "등록하기" %></button>
+      </div>
+    </div>
+    <script>
+      // 경고 메시지를 표시하는 함수
+      function showWarning(warningId, message) {
+        const warningElement = document.getElementById(warningId);
+        warningElement.textContent = message;
+        warningElement.style.color = 'red';
+      }
+
+      function handleDateChange(event, type) {
+        const challengePeriodElement =
+          document.getElementById('challengePeriod');
+        const challengeStartDateElement =
+          document.getElementById('challengeStartDate');
+        const challengeEndDateElement =
+          document.getElementById('challengeEndDate');
+
+        // 선택된 날짜 값 가져오기
+        const challengeStartDate = challengeStartDateElement.value;
+        const challengeEndDate = challengeEndDateElement.value;
+
+        // 날짜 값 업데이트
+        if (type === 'challengeStart' || type === 'challengeEnd') {
+          // `challengePeriodElement`가 존재하는지 확인
+          if (
+            challengePeriodElement &&
+            challengeStartDate &&
+            challengeEndDate
+          ) {
+            challengePeriodElement.value = `${challengeStartDate} ~ ${challengeEndDate}`;
+          }
+        }
+      }
+
+      const chooseFileBtn = document.getElementById('chooseFileBtn');
+      if (chooseFileBtn) {
+        // 요소가 존재할 때만 코드를 실행합니다.
+        console.log('chooseFileBtn이 존재합니다!');
+      } else {
+        console.error('요소를 찾을 수 없습니다: chooseFileBtn');
+      }
+
+      // Choose File 버튼 클릭 시 파일 선택창 열기
+      document
+        .getElementById('chooseFileBtn')
+        .addEventListener('click', function () {
+          document.getElementById('imageUpload').click();
+        });
+
+      // thumbnail
+      const thumbnail = document.getElementById('thumbnail');
+      if (thumbnail) {
+        console.log('thumbnail이 존재합니다!');
+      } else {
+        console.error('요소를 찾을 수 없습니다: thumbnail');
+      }
+
+      // 이미지 선택 시 처리
+      document
+        .getElementById('imageUpload')
+        .addEventListener('change', function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              // 이미지 미리보기 업데이트
+              document.querySelector('.img-thumbnail').src = e.target.result;
+
+              // thumbnail 변수에 업로드된 파일을 할당
+              thumbnail = file;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            document.querySelector('.img-thumbnail').src =
+              '/path/to/default-image.png';
+          }
+        });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+          submitBtn.addEventListener('click', function (event) {
+            event.preventDefault(); // 기본 폼 제출을 방지합니다.
+
+            // 폼 데이터 수집
+            const formData = new FormData();
+
+            const startDateInput = new Date(
+              document.getElementById('challengeStartDate').value,
+            );
+            const endDateInput = new Date(
+              document.getElementById('challengeEndDate').value,
+            );
+
+            // startDate와 endDate를 Date 객체로 변환합니다.
+            const startDate = new Date(startDateInput);
+            const endDate = new Date(endDateInput);
+
+            // ISO 형식의 문자열로 변환합니다.
+            const startDateISO = startDate.toISOString();
+            const endDateISO = endDate.toISOString();
+
+            // YYYY-MM-DD HH:MM:SS 형식으로 변환합니다.
+            const formatDate = (isoString) => {
+              // 'T'를 공백(' ')으로 대체하고, 'Z'를 제거합니다.
+              return isoString.replace('T', ' ').replace(/\.\d{3}Z$/, '');
+            };
+
+            const startDateFormatted = formatDate(startDateISO);
+            const endDateFormatted = formatDate(endDateISO);
+
+            formData.append('title', document.getElementById('title').value);
+            formData.append(
+              'category',
+              document.getElementById('category').value,
+            );
+
+            formData.append('startDate', startDateFormatted);
+            formData.append('endDate', endDateFormatted);
+
+            const numberPeopleInput = document.getElementById('amount');
+            const numberPeopleValue = parseInt(numberPeopleInput.value, 10);
+            if (isNaN(numberPeopleValue)) {
+              alert('정원을 올바르게 입력해주세요.');
+              return; // 제출을 중단합니다.
+            }
+            formData.append('numberPeople', numberPeopleValue);
+
+            formData.append(
+              'description',
+              document.getElementById('description').value,
+            );
+
+            formData.append('thumbnail', thumbnail);
+
+            // POST 요청 전송
+            fetch('/mission', {
+              method: 'POST',
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log(data.message);
+                if (data.message === '미션 생성 완료') {
+                  alert('미션이 성공적으로 생성되었습니다.');
+                } else {
+                  alert('미션 생성에 실패했습니다: ' + data.message);
+                }
+              })
+              .catch((error) => {
+                console.error('미션 생성 중 에러가 발생했습니다:', error);
+              });
+          });
+        } else {
+          console.error('submit-btn 요소를 찾지 못했습니다.');
+        }
+      });
+    </script>
+  </body>
+</html>

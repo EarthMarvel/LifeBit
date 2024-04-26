@@ -25,6 +25,8 @@ import { Point } from './point/entity/point.entity';
 import { VisionModule } from './vision/vision.module';
 import { CertificatedImage } from './vision/entity/certificatedImage.entity';
 import { Like } from './board/entities/likes.entity';
+import { UserMission } from './user-mission/entities/user-mission.entity';
+import { UserMissionModule } from './user-mission/user-mission.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -46,6 +48,7 @@ const typeOrmModuleOptions = {
       Mission,
       Like,
       CertificatedImage,
+      UserMission,
     ],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
@@ -84,6 +87,7 @@ const typeOrmModuleOptions = {
     MainModule,
     SchedulerModule,
     VisionModule,
+    UserMissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
