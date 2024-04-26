@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -44,9 +45,12 @@ export class BoardController {
 
   // 게시물 상세 조회
   // 상세 페이지?
-  @Get('/:boardId')
-  @Render('board-Detail.ejs')
-  async findOneBoards(@Param('boardId') boardId: number) {
+  @UseGuards(AuthGuard('jwt')) @Get('/:boardId') async findOneBoards(
+    @Param('boardId') boardId: number,
+  ) {
+    if (isNaN(boardId) || boardId === null) {
+      throw new BadRequestException('유효한 boardId를 입력해주세요.');
+    }
     return await this.boardService.findOneBoards(boardId);
   }
 

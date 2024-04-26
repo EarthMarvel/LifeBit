@@ -8,7 +8,7 @@ import { UserModule } from 'src/user/user.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { multerOptionsFactory } from 'src/utils/multer.options.factory';
-import { Like } from './entities/likes.entity';
+import Like from './entities/likes.entity';
 
 @Module({
   imports: [

@@ -8,7 +8,6 @@ import {
   ManyToMany,
   OneToMany,
   OneToOne,
-  JoinColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';

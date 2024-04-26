@@ -24,7 +24,7 @@ import { SchedulerModule } from './utils/scheduler/scheduler.module';
 import { Point } from './point/entity/point.entity';
 import { VisionModule } from './vision/vision.module';
 import { CertificatedImage } from './vision/entity/certificatedImage.entity';
-import { Like } from './board/entities/likes.entity';
+import Like from './board/entities/likes.entity';
 import { ChatGateway } from './socket/chat.gateway';
 
 const typeOrmModuleOptions = {
