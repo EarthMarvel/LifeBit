@@ -13,15 +13,12 @@ import {
 } from 'typeorm';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 import { Like } from 'src/board/entities/likes.entity';
+import { UserMission } from 'src/user-mission/entities/user-mission.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   user_id: number;
-
-  @ManyToMany(() => Mission, (mission) => mission.creatorId)
-  @JoinTable()
-  missions: Mission[];
 
   @Column({ type: 'varchar', nullable: false })
   email: string;
@@ -58,4 +55,7 @@ export class User {
     (certificatedImage) => certificatedImage.user,
   )
   certificatedImages: CertificatedImage[];
+
+  @OneToMany(() => UserMission, (userMission) => userMission.mission)
+  userMissions: UserMission[];
 }
