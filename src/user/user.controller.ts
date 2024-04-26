@@ -5,6 +5,8 @@ import {
   Get,
   Patch,
   Post,
+  Render,
+  Req,
   Res,
   UploadedFile,
   UseGuards,
@@ -21,10 +23,14 @@ import { UserInfo } from 'src/utils/userInfo.decorator';
 import { User } from './entities/user.entity';
 import { WithdrawDto } from './dto/withdraw.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
+import { PlannerService } from 'src/planner/planner.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly plannerService: PlannerService,
+  ) {}
 
   @Post('emailAuth')
   async sendVerification(@Body() emailAuthDto: EmailAuthDto) {
@@ -41,7 +47,7 @@ export class UserController {
   async login(@Body() loginDto: LoginDto, @Res() res: any) {
     const token = await this.userService.login(loginDto);
     res.cookie('authorization', `Bearer ${token.accessToken}`, {
-      maxAge: 10000,
+      maxAge: 43200000,
       httpOnly: true,
     });
     res.cookie('refreshToken', `${token.refreshToken}`, {
@@ -74,8 +80,13 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profileInfo')
-  profileInfo(@UserInfo() user: User) {
-    return this.userService.profileInfo(user.user_id);
+  @Render('mypage.ejs')
+  async profileInfo(@UserInfo() user: User, @Req() req: Request) {
+    const userInfo = await this.userService.profileInfo(user.user_id);
+    const data = await this.plannerService.mission(user.user_id);
+    console.log('-----2222312------->', userInfo);
+    console.log('---------dt---->', data);
+    return { userInfo, data, isLoggedIn: req['isLoggedIn'] };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -83,5 +94,23 @@ export class UserController {
   async withdraw(@UserInfo() user: User, @Body() withdrawDto: WithdrawDto) {
     await this.userService.withdraw(user.user_id, withdrawDto);
     return { message: '회원탈퇴가 되었습니다.' };
+  }
+
+  @Get('sign-in')
+  @Render('log-in.ejs')
+  async getSignIn(@Req() req: Request) {
+    return { isLoggedIn: req['isLoggedIn'] };
+  }
+
+  @Get('sign-up')
+  @Render('register.ejs')
+  async getSignUp(@Req() req: Request) {
+    return { isLoggedIn: req['isLoggedIn'] };
+  }
+
+  @Get('setProfile')
+  @Render('profile.ejs')
+  async setProfile(@Req() req: Request) {
+    return { isLoggedIn: req['isLoggedIn'] };
   }
 }

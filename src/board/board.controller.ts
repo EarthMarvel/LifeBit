@@ -39,7 +39,6 @@ export class BoardController {
   async searchBoards(
     @Query() searchBoardDto: SearchBoardDto,
   ): Promise<Boards[]> {
-    console.log('test');
     return this.boardService.searchBoards(searchBoardDto);
   }
 

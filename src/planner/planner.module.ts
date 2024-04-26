@@ -10,14 +10,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Planner, Task, Mission, User]),
-  JwtModule.registerAsync({
-    useFactory: (config: ConfigService) => ({
-      secret: config.get<string>('JWT_SECRET_KEY'),
+  imports: [
+    TypeOrmModule.forFeature([Planner, Task, Mission, User]),
+    JwtModule.registerAsync({
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET_KEY'),
+      }),
+      inject: [ConfigService],
     }),
-    inject: [ConfigService],
-  }),],
+  ],
   providers: [PlannerService],
   controllers: [PlannerController],
+  exports: [PlannerService],
 })
 export class PlannerModule {}

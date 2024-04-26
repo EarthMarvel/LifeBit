@@ -16,6 +16,7 @@ import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 import { Point } from 'src/point/entity/point.entity';
 import { MissionService } from 'src/mission/mission.service';
 import { Mission } from 'src/mission/entities/mission.entity';
+import { PlannerModule } from 'src/planner/planner.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { Mission } from 'src/mission/entities/mission.entity';
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([User, Mission, Point, CertificatedImage]),
+    PlannerModule,
   ],
   providers: [UserService, EmailService, S3Service, PointService],
   controllers: [UserController],
