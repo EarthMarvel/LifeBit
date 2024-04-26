@@ -35,6 +35,9 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   image: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  description: string;
+
   @Column({ nullable: true })
   providerId: string;
 

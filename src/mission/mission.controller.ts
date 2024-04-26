@@ -132,15 +132,18 @@ export class MissionController {
       }
 
       // 3. 데이터 로딩이 완료되었으므로 EJS 템플릿을 렌더링하며 미션 데이터를 전달
-      res.render('missionDetailPage', {
-        challengeTitle: mission.title, // 챌린지 제목
-        challengeCategory: mission.category, // 챌린지 카테고리
-        challengePeriod: `${mission.startDate.toISOString().substring(0, 10)} - ${mission.endDate.toISOString().substring(0, 10)}`,
-        challengeCapacity: mission.numberPeople,
-        challengeDescription: mission.description,
-        // participants: mission.participants || ['짱구', '철수', '맹구', '수지'], // 참가자 목록이 있는 경우 전달
-        missionId: mission.missionId, // 미션 ID를 전달
-      });
+      res.render(
+        '/Users/_woo_s.j/Desktop/workspace/earth-marvel/views/missionDetailPage.ejs',
+        {
+          challengeTitle: mission.title, // 챌린지 제목
+          challengeCategory: mission.category, // 챌린지 카테고리
+          challengePeriod: `${mission.startDate.toISOString().substring(0, 10)} - ${mission.endDate.toISOString().substring(0, 10)}`,
+          challengeCapacity: mission.numberPeople,
+          challengeDescription: mission.description,
+          // participants: mission.participants || ['짱구', '철수', '맹구', '수지'], // 참가자 목록이 있는 경우 전달
+          missionId: mission.missionId, // 미션 ID를 전달
+        },
+      );
     } catch (error) {
       // 4. 에러 처리
       res.status(500).send(`Error: ${error.message}`);

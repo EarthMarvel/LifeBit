@@ -7,7 +7,12 @@ import {
 import { TaskDto } from './dto/task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Planner } from './entity/planner.entity';
-import { DataSource, EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { Task } from './entity/task.entity';
 import { PlannerDto } from './dto/update.planner.dto';
 import { User } from 'src/user/entities/user.entity';
@@ -28,20 +33,19 @@ export class PlannerService {
     private readonly dataSouce: DataSource, //커넥션 풀에서 커넥션(-> 트랜잭션) 가져오기
   ) {}
 
-
-  // //프론트 테스트 용도 
+  // //프론트 테스트 용도
   //   async myPage(userId : number, startDate?: Date) {
 
   //     const user = await this.userRepository.findOne({ where: { user_id : userId } });
   //     const exist = await this.plannerRepository.findOneBy({ user });
-  
+
   //     //플래너가 없을 경우 새로 생성
   //     if (!exist) {
   //       return await this.plannerRepository.save({
   //         user,
   //       });
   //     }
-  
+
   //     //할 일 조회
   //     let query = await this.taskRepository
   //         .createQueryBuilder('task')
@@ -54,27 +58,26 @@ export class PlannerService {
   //         ])
   //         .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
   //         .where('planner.userId = :userId', { userId: user.user_id });
-  
-  
+
   //       if (startDate) {
   //           query = query.andWhere('task.startDate = :startDate', { startDate });
   //       }
-  
+
   //       // 현재 날짜를 기준으로 작업을 필터링
   //       if (!startDate) {
   //           query = query
   //               .andWhere('task.startDate = CURDATE()');
   //       }
-  
+
   //     const today_task = await query.getMany();
-  
+
   //     //플래너 정보 조회
   //     const planner_info = await this.plannerRepository
   //       .createQueryBuilder('planner')
-  //       .select(['planner.description', 'planner.plannerId']) 
+  //       .select(['planner.description', 'planner.plannerId'])
   //       .where('planner.userId = :userId', { userId: user.user_id })
-  //       .getOne(); 
-  
+  //       .getOne();
+
   //     return {
   //       today_task,
   //       planner_info,
@@ -86,8 +89,7 @@ export class PlannerService {
    * @param userId
    * @returns
    */
-  async myPage(user : User, startDate?: Date) {
-
+  async myPage(user: User, startDate?: Date) {
     const exist = await this.plannerRepository.findOneBy({ user });
 
     //플래너가 없을 경우 새로 생성
@@ -99,43 +101,40 @@ export class PlannerService {
 
     //할 일 조회
     let query = await this.taskRepository
-        .createQueryBuilder('task')
-        .select([
-          'task.todo',
-          'task.startDate',
-          'task.taskId',
-          'task.authSum',
-          'task.checkYn',
-        ])
-        .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
-        .where('planner.userId = :userId', { userId: user.user_id });
+      .createQueryBuilder('task')
+      .select([
+        'task.todo',
+        'task.startDate',
+        'task.taskId',
+        'task.authSum',
+        'task.checkYn',
+      ])
+      .innerJoin(Planner, 'planner', 'task.plannerId = planner.planner_id')
+      .where('planner.userId = :userId', { userId: user.user_id });
 
+    if (startDate) {
+      query = query.andWhere('task.startDate = :startDate', { startDate });
+    }
 
-      if (startDate) {
-          query = query.andWhere('task.startDate = :startDate', { startDate });
-      }
-
-      // 현재 날짜를 기준으로 작업을 필터링
-      if (!startDate) {
-          query = query
-              .andWhere('task.startDate = CURDATE()');
-      }
+    // 현재 날짜를 기준으로 작업을 필터링
+    if (!startDate) {
+      query = query.andWhere('task.startDate = CURDATE()');
+    }
 
     const today_task = await query.getMany();
 
     //플래너 정보 조회
     const planner_info = await this.plannerRepository
       .createQueryBuilder('planner')
-      .select(['planner.description', 'planner.plannerId']) 
+      .select(['planner.description', 'planner.plannerId'])
       .where('planner.userId = :userId', { userId: user.user_id })
-      .getOne(); 
+      .getOne();
 
     return {
       today_task,
       planner_info,
     };
   }
-
 
   /**
    * 플래너 정보 수정
@@ -162,7 +161,7 @@ export class PlannerService {
    */
   async postTodo(taskDto: TaskDto, plannerId: number) {
     const planner = await this.plannerRepository.findOneBy({ plannerId });
-    
+
     if (!planner) {
       throw new NotFoundException('존재하지 않는 플래너입니다.');
     }
@@ -285,10 +284,23 @@ export class PlannerService {
 
   async mission(userId: number) {
     const missions = await this.missionRepository
-    .createQueryBuilder('mission')
-    .select(['mission.missionId', 'mission.category', 'mission.title', 'mission.description', 'mission.startDate', 'mission.endDate', 'mission.numberPeople', 'mission.thumbnailUrl', 'mission.type', 'mission.authSum'])
-    .where(`mission.mission_id IN (select mission_mission_id from user_missions_mission where user_user_id = ${userId})`)
-    .getRawMany();
+      .createQueryBuilder('mission')
+      .select([
+        'mission.missionId',
+        'mission.category',
+        'mission.title',
+        'mission.description',
+        'mission.startDate',
+        'mission.endDate',
+        'mission.numberPeople',
+        'mission.thumbnailUrl',
+        'mission.type',
+        'mission.authSum',
+      ])
+      .where(
+        `mission.mission_id IN (select mission_mission_id from user_missions_mission where user_user_id = ${userId})`,
+      )
+      .getRawMany();
 
     return missions;
   }

@@ -26,28 +26,16 @@ export class MissionService {
     createMissionDto: CreateMissionDto,
     userId: number,
     file: Express.Multer.File,
-  ): Promise<{ mission: Mission; message: string }> {
-    // 새로운 미션 객체 생성
-    const mission = new Mission();
+  ) {
+    const savedMission = this.missionRepository.create(createMissionDto);
 
-    // 입력 데이터 DTO에서 미션 객체로 복사
-    mission.title = createMissionDto.title;
-    mission.category = createMissionDto.category;
-    mission.startDate = createMissionDto.startDate;
-    mission.endDate = createMissionDto.endDate;
-    mission.numberPeople = createMissionDto.numberPeople;
-    mission.description = createMissionDto.description;
+    console.log('savedMission : ' + savedMission);
 
-    // userId를 User 객체로 조회
-    const user = await this.userRepository.findOne({
-      where: { user_id: userId },
-    });
-    if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
-    }
+    savedMission.creatorId = userId;
 
-    // 미션 객체를 데이터베이스에 저장
-    const savedMission = await this.missionRepository.save(mission);
+    console.log('savedMission.creatorId : ' + savedMission.creatorId);
+
+    await this.missionRepository.save(savedMission);
 
     // 미션 생성자의 아이디와 미션의 아이디를 UserMission 엔티티에 추가
     await this.addUserMission(savedMission.missionId, userId);

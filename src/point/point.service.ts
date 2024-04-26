@@ -46,14 +46,22 @@ export class PointService {
     await this.userRepository.save(user); // 변경된 사용자 정보 저장
   }
 
-  /*
   async allPointView() {
-    await this.pointRepository.find({
+    const allPoint = await this.pointRepository.find({
+      relations: ['user'],
       order: {
         value: 'DESC',
       },
-      take: 100,
+      take: 10,
     });
+
+    const formattedPoints = allPoint.map((point) => ({
+      id: point.id,
+      value: point.value,
+      createdAt: point.createdAt,
+      nickName: point.user.nickName,
+      image: point.user.image,
+    }));
+    return formattedPoints;
   }
-  */
 }

@@ -4,17 +4,10 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { CheckLoggedIn } from './utils/login.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('ejs');
-
-  //
-  const path = require('path');
-  app.useStaticAssets(path.join(__dirname, '/../src', 'public'));
-  //
 
   app.use(cookieParser());
   app.useGlobalPipes(
@@ -22,6 +15,11 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.use(new CheckLoggedIn().use);
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('ejs');
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
 
   await app.listen(3000);
 }

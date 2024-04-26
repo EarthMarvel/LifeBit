@@ -60,7 +60,6 @@ export class BoardService {
       ...createBoardDto,
       thumbnail: file.filename,
     });
-    console.log(file);
     await this.s3Service.putObject(file);
   }
 

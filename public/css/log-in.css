@@ -1,0 +1,90 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+body {
+  width: 100%;
+}
+
+#wrap {
+  width: 492px;
+  height: 953px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0 16px 200px;
+}
+
+#header {
+  width: 100%;
+  height: 80px;
+  padding: 120px 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+#contents {
+  width: 100%;
+}
+
+#nomalLogin {
+  width: 100%;
+  padding: 60px 0 0;
+}
+
+#loginForm {
+  width: 100%;
+}
+
+.email,
+.password {
+  width: 100%;
+  height: 68px;
+}
+
+#email,
+#password {
+  width: 100%;
+  height: 56px;
+  border-radius: 3px;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  padding: 18px 12px;
+}
+
+#submitBtn {
+  width: 100%;
+  height: 60px;
+  margin: 10px 0 7px 0;
+  background-color: black;
+  color: aliceblue;
+  font-size: 18px;
+  border-radius: 3px;
+}
+
+p {
+  font-size: 14px;
+  text-align: center;
+}
+
+#socialLogin {
+  padding: 30px 0 0;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  height: 40px;
+  border: 2px solid gray;
+  background-color: #fff;
+}
+
+.btn:hover {
+  background-color: #f1f3f5;
+}
