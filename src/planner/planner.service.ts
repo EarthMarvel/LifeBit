@@ -297,11 +297,15 @@ export class PlannerService {
         'mission.type',
         'mission.authSum',
       ])
-      .where(
-        `mission.mission_id IN (select mission_mission_id from user_missions_mission where user_user_id = ${userId})`,
-      )
+      .where((qb: SelectQueryBuilder<any>) => {
+        const subQuery = qb
+          .subQuery()
+          .select('mission_mission_id')
+          .from('user_missions_mission', 'umm')
+          .where('umm.User_user_id = :userId', { userId })
+          .getQuery();
+        return `mission.mission_id IN ${subQuery}`;
+      })
       .getRawMany();
-
-    return missions;
   }
 }

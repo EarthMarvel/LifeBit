@@ -84,8 +84,6 @@ export class UserController {
   async profileInfo(@UserInfo() user: User, @Req() req: Request) {
     const userInfo = await this.userService.profileInfo(user.user_id);
     const data = await this.plannerService.mission(user.user_id);
-    console.log('-----2222312------->', userInfo);
-    console.log('---------dt---->', data);
     return { userInfo, data, isLoggedIn: req['isLoggedIn'] };
   }
 

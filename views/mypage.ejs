@@ -71,14 +71,21 @@
           <div class="text-center">
             <h2>User Information</h2>
             <div id="imagebox">
-                <% if (userInfo) { %>
+                <% if (userInfo.image) { %>
                     <img alt="<%= userInfo.nickName %>" src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= userInfo.image %>" />
+                <% } else { %>
+                    <img alt="<%= userInfo.nickName %>" src="https://life-bit.s3.ap-northeast-2.amazonaws.com/default.jpg" />
                 <% } %>
             </div>
             <div id="userInfo">
                 <p>이름 : <%= userInfo.name %></p>
                 <p>닉네임 : <%= userInfo.nickName %></p>
                 <p>자기 소개 : <%= userInfo.description %></p>
+                <% if(userInfo.point) { %>
+                <p>포인트 : <%= userInfo.point.totalValue  %>점</p>
+                <% } else { %>
+                <p>포인트 : 0점</p>
+                <% } %>
             </div>
             <button
               type="button"
