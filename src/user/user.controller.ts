@@ -83,8 +83,8 @@ export class UserController {
   @Render('mypage.ejs')
   async profileInfo(@UserInfo() user: User, @Req() req: Request) {
     const userInfo = await this.userService.profileInfo(user.user_id);
-    const data = await this.plannerService.mission(user.user_id);
-    return { userInfo, data, isLoggedIn: req['isLoggedIn'] };
+    // const data = await this.plannerService.mission(user.user_id);
+    return { userInfo, /*data,*/ isLoggedIn: req['isLoggedIn'] };
   }
 
   @UseGuards(JwtAuthGuard)
