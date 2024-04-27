@@ -45,6 +45,10 @@ export class Mission {
   @Column({ type: 'int', nullable: false })
   numberPeople: number;
 
+  // thumbnail
+  @Column({ type: 'varchar', nullable: true })
+  thumbnail: string;
+
   // type
   // @Column({ type: 'enum', enum: MissionType, nullable: false })
   // type: MissionType;

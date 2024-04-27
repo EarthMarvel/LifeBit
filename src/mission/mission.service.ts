@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Mission } from './entities/mission.entity';
@@ -7,6 +12,9 @@ import { UserMission } from 'src/user-mission/entities/user-mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { DataSource, Repository } from 'typeorm';
+import { S3Service } from 'src/user/s3.service';
+import { extname } from 'path';
+import { number } from 'joi';
 
 @Injectable()
 export class MissionService {
@@ -19,40 +27,94 @@ export class MissionService {
     private pointRepository: Repository<Point>,
     @InjectRepository(UserMission)
     private userMissionRepository: Repository<UserMission>,
+    private readonly s3Service: S3Service,
     private dataSource: DataSource,
   ) {}
 
   async create(
+    user_id: number,
     createMissionDto: CreateMissionDto,
-    userId: number,
     file: Express.Multer.File,
-  ) {
-    const savedMission = this.missionRepository.create(createMissionDto);
+  ): Promise<{ mission?: Mission; message: string }> {
+    try {
+      // 사용자 검색
+      const user = await this.userRepository.findOne({
+        where: { user_id },
+      });
+      if (!user) {
+        throw new BadRequestException(
+          `사용자를 찾을 수 없습니다: user_id=${user_id}`,
+        );
+      }
 
-    console.log('savedMission : ' + savedMission);
+      // 미션 객체 생성
+      const savedMission = this.missionRepository.create(createMissionDto);
+      savedMission.creatorId = user.user_id;
 
-    savedMission.creatorId = userId;
+      // 파일 처리 및 검증
+      if (file) {
+        await this.validateAndUploadFile(savedMission, file);
+      } else {
+        throw new BadRequestException('파일이 존재하지 않습니다.');
+      }
 
-    console.log('savedMission.creatorId : ' + savedMission.creatorId);
+      // 미션 저장
+      await this.missionRepository.save(savedMission);
 
-    await this.missionRepository.save(savedMission);
+      return {
+        mission: savedMission,
+        message: '미션이 성공적으로 등록되었습니다.',
+      };
+    } catch (error) {
+      console.error(`Error in create method: ${error.message}`);
+      throw new BadRequestException(
+        `미션 생성에 실패했습니다: ${error.message}`,
+      );
+    }
+  }
 
-    // 미션 생성자의 아이디와 미션의 아이디를 UserMission 엔티티에 추가
-    await this.addUserMission(savedMission.missionId, userId);
+  private async validateAndUploadFile(savedMission, file: Express.Multer.File) {
+    if (!file || !file.originalname || !file.buffer) {
+      throw new BadRequestException('파일이 유효하지 않습니다.');
+    }
 
-    // 응답 준비
-    return { mission: savedMission, message: '미션 생성 완료' };
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    const fileExt = extname(file.originalname).toLowerCase();
+
+    if (!allowedExtensions.includes(fileExt)) {
+      throw new BadRequestException(
+        '올바른 JPG, JPEG, PNG, GIF 파일이 아닙니다.',
+      );
+    }
+
+    try {
+      // 파일을 S3에 업로드
+      await this.s3Service.putObject(file);
+      savedMission.thumbnail = file.filename;
+    } catch (error) {
+      console.error(`S3 파일 업로드 중 오류: ${error.message}`);
+      throw new InternalServerErrorException(
+        '파일 업로드 중 오류가 발생했습니다.',
+      );
+    }
   }
 
   async findOne(missionId: number): Promise<Mission> {
+    // missionId 값 검증
+    if (missionId === null || isNaN(missionId)) {
+      throw new BadRequestException(`Invalid mission ID: ${missionId}`);
+    }
+
     const mission = await this.missionRepository.findOne({
       where: { missionId },
     });
 
+    // 미션이 존재하지 않을 경우 예외 던지기
     if (!mission) {
       throw new NotFoundException(`Mission with ID ${missionId} not found`);
     }
 
+    // 미션 반환
     return mission;
   }
 

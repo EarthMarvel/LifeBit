@@ -282,6 +282,7 @@ export class PlannerService {
     return todayKoreanTime;
   }
 
+  /*
   async mission(userId: number) {
     const missions = await this.missionRepository
       .createQueryBuilder('mission')
@@ -308,4 +309,5 @@ export class PlannerService {
       
       return missions;
   }
+  */
 }
