@@ -4,8 +4,6 @@ import { PointController } from './point.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Point } from './entity/point.entity';
 import { User } from 'src/user/entities/user.entity';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { Point } from './entity/point.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Point, User])],

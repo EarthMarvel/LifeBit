@@ -14,7 +14,7 @@
     crossorigin="anonymous"
   />
 
-  <link rel="stylesheet" href="../public/css/index-style.css" />
+  <link rel="stylesheet" href="../public/css/boards.css" />
 </head>
 <body>
   <div class="header">
@@ -42,7 +42,12 @@
             class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
           >
             <li>
-              <a href="#" class="nav-link px-2 text-info">Life Bit</a>
+              <a
+                  href="#"
+                  class="nav-link px-2 text-info"
+                  onclick="location.href='http://localhost:3000/boards'"
+                  >Life Bit</a
+                >
             </li>
           </ul>
 
@@ -75,16 +80,17 @@
 
         <div class="search">
           <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-            <input
-              type="search"
-              class="form-control form-control-dark text-bg-dark"
-              placeholder="검색"
-              aria-label="Search"
-            />
+            <input 
+              type="text"
+              id="searchInput"
+              placeholder="검색어를 입력하세요"
+              onkeydown="handleKeyPress(event)"
+            >
+            <button type="button" onclick="handleSearchButtonClick()">검색</button>
           </form>
         </div>
 
-        <button onclick="openclose()" type="button" class="btn btn-dark">
+        <button onclick="location.href='http://localhost:3000/boards/create'" type="button" class="btn btn-dark">
           게시물 등록
         </button>
       </div>
@@ -93,19 +99,61 @@
 
   <div class="mycards">
     <div id="card" class="row row-cols-1 row-cols-md-4 g-4">
-      <% for (let i = 0; i < 4; i++) { %>
+      <% for (let i = 0; i < boards.length; i++) { %>
       <div class="col">
-        <div class="card h-100">
-          <img src="" class="card-img-top" alt="..." />
+        <div class="card h-100" onclick="redirectToPage(event)" data-board-id="<%= boards[i].boardId %>">
+          <img src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= boards[i].thumbnail %>" class="card-img-top" alt="..." />
           <div class="card-body">
-            <h5 class="card-title">게시물 제목</h5>
-            <p class="card-text">게시물 내용</p>
-            <p class="card-text">❤️</p>
+            <h5 class="card-title"><%= boards[i].title %></h5>
+            <p class="card-text"><%= boards[i].content %></p>
+            <p class="card-text"><%= boards[i].category %></p>
+            <p class="card-text">❤️<%= boards[i].likedCount %></p>
           </div>
         </div>
       </div>
       <% } %>
     </div>
   </div>
+
+  
+<script>
+  function redirectToPage(event) {
+  const boardId = event.currentTarget.getAttribute('data-board-id');
+  if (boardId) {
+    window.location.href = `http://localhost:3000/boards/view/${boardId}`;
+  } else {
+    console.log('boardId를 가져올 수 없습니다.');
+  }
+}
+
+function handleSearchButtonClick() {
+  var query = document.getElementById('searchInput').value.toLowerCase(); // 검색어를 가져옵니다.
+  search(query); // 검색어와 함께 검색 함수를 호출합니다.
+}
+
+function handleKeyPress(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // 폼 제출을 방지합니다.
+    var query = document.getElementById('searchInput').value.toLowerCase(); // 검색어를 가져옵니다.
+    search(query); // 검색어와 함께 검색 함수를 호출합니다.
+  }
+}
+
+function search(query) {
+  var cards = document.getElementsByClassName('card');
+  var cardContainer = document.getElementById('card'); // 카드들을 감싸는 부모 요소를 찾습니다.
+  var newCardContainer = document.createElement('div'); // 새로운 카드 컨테이너를 생성합니다.
+  for (var i = 0; i < cards.length; i++) {
+    var title = cards[i].getElementsByClassName('card-title')[0].innerText.toLowerCase();
+    var content = cards[i].getElementsByClassName('card-text')[0].innerText.toLowerCase();
+    if (title.includes(query) || content.includes(query)) {
+      newCardContainer.appendChild(cards[i].cloneNode(true)); // 검색어가 포함된 카드는 새로운 카드 컨테이너에 추가합니다.
+    }
+  }
+  // 기존 카드 컨테이너를 새로운 카드 컨테이너로 교체합니다.
+  cardContainer.innerHTML = newCardContainer.innerHTML;
+}
+</script>
+  
 </body>
 </html>

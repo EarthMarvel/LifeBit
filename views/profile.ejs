@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/profile.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <form id="setInfoForm" class="card" data-v0-t="card">
+      <div class="space-y-1.5 flex flex-col items-center justify-center p-4">
+        <h3
+          class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight"
+        >
+          프로필 이미지 설정
+        </h3>
+        <!-- 프로필 이미지 컨테이너 -->
+        <div class="profile-image-container">
+          <img
+            id="profile-image"
+            src="path/to/default/image.jpg"
+            class="profile-image"
+          />
+        </div>
+        <input id="file-input" type="file" accept="image/*" class="sr-only" />
+        <h3
+          class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight"
+        >
+          프로필 설정
+        </h3>
+        <p class="text-sm text-muted-foreground">
+          나에게 알맞게 프로필을 설정합니다.
+        </p>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="flex flex-col space-y-2">
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="username"
+          >
+            닉네임
+          </label>
+          <input
+            class="input-field"
+            id="username"
+            placeholder="2-10자 이내여야 합니다."
+          />
+        </div>
+        <div class="flex flex-col space-y-2">
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="status-message"
+          >
+            소개글
+          </label>
+          <textarea
+            class="input-field"
+            id="status-message"
+            placeholder="자신만의 상태 메시지를 다른 사용자에게 전달해보세요"
+          ></textarea>
+        </div>
+      </div>
+      <div class="items-center p-6 flex justify-center">
+        <button type="submit" class="submit-button">저장하기</button>
+      </div>
+    </form>
+
+    <!-- 자바스크립트 코드 -->
+    <script>
+      $(document).ready(function () {
+        $('#file-input').change(function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              $('#profile-image').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+
+      $('#setInfoForm').submit((event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('file', $('#file-input')[0].files[0]);
+        formData.append('nickName', $('#username').val());
+        formData.append('description', $('#status-message').val());
+
+        $.ajax({
+          url: 'http://localhost:3000/user/profile',
+          method: 'PATCH',
+          processData: false,
+          contentType: false,
+          data: formData,
+          success: (data) => {
+            alert('프로필 설정이 완료되었습니다.');
+            window.location.href = 'http://localhost:3000/user/profileInfo';
+          },
+          error: (jqXHR, textStatus, errorThrown) => {
+            const errorMessage = jqXHR.responseJSON
+              ? jqXHR.responseJSON.message
+              : '프로필 설정에 실패하였습니다.';
+            alert(errorMessage);
+            console.log(errorMessage);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

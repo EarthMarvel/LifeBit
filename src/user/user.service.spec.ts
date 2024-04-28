@@ -191,7 +191,10 @@ describe('UserService', () => {
   describe('profile', () => {
     it('should upload new image when user does not have an existing image', async () => {
       const user_id = 1;
-      const profileDto: ProfileDto = { nickName: 'TestUser' };
+      const profileDto: ProfileDto = {
+        nickName: 'TestUser',
+        description: 'hahah',
+      };
       const file: Express.Multer.File = {
         fieldname: 'test_field',
         originalname: 'test_file.jpg',
@@ -220,7 +223,10 @@ describe('UserService', () => {
     it('should update user profile and save file to S3 when valid file is provided', async () => {
       const user_id = 1;
       const user = { user_id, image: 'old_image.jpg', nickName: 'TestUSer' };
-      const profileDto: ProfileDto = { nickName: 'TestUser' };
+      const profileDto: ProfileDto = {
+        nickName: 'TestUser',
+        description: 'hahah',
+      };
       const file: Express.Multer.File = {
         fieldname: 'test_field',
         originalname: 'test_file.jpg',
@@ -247,7 +253,10 @@ describe('UserService', () => {
     });
     it('should throw BadRequestException when no file is provided', async () => {
       const user_id = 1;
-      const profileDto: ProfileDto = { nickName: 'TestUser' };
+      const profileDto: ProfileDto = {
+        nickName: 'TestUser',
+        description: 'hahah',
+      };
 
       await expect(
         userService.profile(user_id, profileDto, null),
@@ -255,7 +264,10 @@ describe('UserService', () => {
     });
     it('should throw BadRequestException when an invalid file extension is provided', async () => {
       const user_id = 1;
-      const profileDto: ProfileDto = { nickName: 'TestUser' };
+      const profileDto: ProfileDto = {
+        nickName: 'TestUser',
+        description: 'hahah',
+      };
       const file: Express.Multer.File = {
         fieldname: 'test_field',
         originalname: 'test_file.txt',

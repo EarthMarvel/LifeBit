@@ -117,7 +117,7 @@ export class UserService {
     await this.cacheManager.set(email, refreshToken, { ttl: 604800000 });
 
     return {
-      accessToken: this.jwtService.sign(payload, { expiresIn: '10s' }),
+      accessToken: this.jwtService.sign(payload, { expiresIn: '12h' }),
       refreshToken,
     };
   }
@@ -135,7 +135,7 @@ export class UserService {
   ) {
     const user = await this.userRepository.findOne({ where: { user_id } });
 
-    const { nickName } = profileDto;
+    const { nickName, description } = profileDto;
 
     if (file) {
       const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
@@ -151,6 +151,7 @@ export class UserService {
         await this.s3Service.deleteObject(user.image);
       }
       user.nickName = nickName;
+      user.description = description;
       user.image = file.filename;
 
       await this.userRepository.save(user);
@@ -160,15 +161,12 @@ export class UserService {
   }
 
   // 프로필 조회
-  profileInfo(user_id: number) {
-    // return this.userRepository.findOne({
-    //   where: { user_id },
-    //   select: ['image', 'nickName'],
-    // });
-    const user = this.userRepository.findOne({
+  async profileInfo(user_id: number) {
+    const user = await this.userRepository.findOne({
       where: { user_id },
-      select: ['image', 'nickName'],
+      select: ['image', 'name', 'nickName', 'description'],
     });
+    console.log('-------11---->', user);
     if (!user) {
       throw new NotFoundException('해당 사용자를 찾지 못했습니다.');
     }

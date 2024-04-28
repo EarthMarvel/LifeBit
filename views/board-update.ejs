@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>게시물 수정</title>
+    <title>게시물 생성</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -14,7 +14,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="../public/css/index-style.css" />
+    <link rel="stylesheet" href="/css/boards.css" />
   </head>
   <body>
     <div class="header">
@@ -42,7 +42,12 @@
               class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
             >
               <li>
-                <a href="#" class="nav-link px-2 text-info">Life Bit</a>
+                <a
+                  href="#"
+                  class="nav-link px-2 text-info"
+                  onclick="location.href='http://localhost:3000/boards'"
+                  >Life Bit</a
+                >
               </li>
             </ul>
 
@@ -76,71 +81,102 @@
       </div>
     </div>
 
-    <div class="mypostingbox" id="postingbox">
-      <div class="form-floating mb-3">
-        <input
-          type="email"
-          class="form-control"
-          id="image"
-          placeholder="게시물 이미지"
-          name="image"
-          value="<%= image %>"
+    <form class="mypostingbox" id="postingbox">
+      <div class="profile-image-container">
+        <img
+          id="profile-image"
+          src="path/to/default/image.jpg"
+          class="profile-image"
         />
-        <label for="image">게시물 이미지</label>
       </div>
+      <input id="file-input" type="file" accept="image/*" class="sr-only" />
 
       <div class="form-floating mb-3">
         <input
-          type="email"
+          type="text"
           class="form-control"
           id="title"
           placeholder="게시물 제목"
           name="title"
-          value="<%= title %>"
         />
-        <label for="title">게시물 제목</label>
+        <label for="title">게시물 제목 수정</label>
       </div>
 
       <div class="form-floating mb-3">
-        <input
-          type="email"
+        <textarea
+          type="text"
           class="form-control"
           id="content"
           placeholder="게시물 내용"
           name="content"
-          value="<%= content %>"
-        />
-        <label for="content">게시물 내용</label>
+        >
+        </textarea>
+        <label for="content">게시물 내용 수정</label>
       </div>
 
-      <button onclick="makeCard()" type="button" class="btn btn-dark">
-        수정하기
-      </button>
-    </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="category"
+          placeholder="게시물 카테고리"
+          name="category"
+        />
+        <label for="content">게시물 카테고리 수정</label>
+      </div>
+      <button type="submit" class="btn btn-dark">수정하기</button>
+    </form>
 
     <script>
-      function makeCard() {
-        let image = $('#image').val();
-        let title = $('#title').val();
-        let content = $('#content').val();
+      $(document).ready(function () {
+        $('#file-input').change(function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              $('#profile-image').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
 
-        let temp_html = `
-      <div class="col">
-        <div class="card h-100">
-          <img
-            src="${image}"
-            class="card-img-top"
-            alt="..."
-          />
-          <div class="card-body">
-            <h5 class="card-title">${title}</h5>
-            <p class="card-text">${content}</p>
-            <p class="card-text">❤️</p>
-          </div>
-        </div>
-      </div>`;
-        $('#card').append(temp_html);
-      }
+      $('#postingbox').submit((event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('file', $('#file-input')[0].files[0]);
+        formData.append('title', $('#title').val());
+        formData.append('content', $('#content').val());
+        formData.append('category', $('#category').val());
+
+        var currentUrl = window.location.href;
+        var boardId = null;
+        var urlParts = currentUrl.split('/');
+        var index = urlParts.indexOf('view');
+        if (index !== -1 && index < urlParts.length - 1) {
+          boardId = urlParts[index + 1];
+        }
+
+        $.ajax({
+          url: `http://localhost:3000/boards/${boardId}`,
+          method: 'PATCH',
+          processData: false,
+          contentType: false,
+          data: formData,
+          success: (data) => {
+            alert('게시물 수정이 완료되었습니다.');
+            window.location.href = 'http://localhost:3000/boards';
+          },
+          error: (jqXHR, textStatus, errorThrown) => {
+            const errorMessage = jqXHR.responseJSON
+              ? jqXHR.responseJSON.message
+              : '게시물 수정에 실패하였습니다.';
+            alert(errorMessage);
+            console.log(errorMessage);
+          },
+        });
+      });
     </script>
   </body>
 </html>

@@ -30,11 +30,7 @@ export class MissionService {
   ) {
     const mission = this.missionRepository.create(createMissionDto);
 
-    console.log('mission : ' + mission);
-
     mission.creatorId = userId;
-
-    console.log('mission : creatorId : ' + mission.creatorId);
 
     await this.missionRepository.save(mission);
 

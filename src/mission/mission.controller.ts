@@ -37,7 +37,6 @@ export class MissionController {
     @Req() req: any,
   ) {
     const user = req.user; // 인증된 사용자 정보 사용
-    console.log('req.user.user_id : ' + req.user.user_id);
     // 파일 정보(file)와 나머지 데이터(createMissionDto)를 서비스에 전달
     return await this.missionService.create(
       createMissionDto,

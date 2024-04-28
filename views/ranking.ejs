@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/ranking.css" />
+  </head>
+  <body>
+    <div class="bg-gray-100 p-10">
+      <header class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold">Life-Bit</h1>
+        <input
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          placeholder="Search"
+        />
+      </header>
+      <main class="grid grid-cols-3 gap-8">
+        <section class="col-span-2">
+          <h2 class="text-lg font-semibold mb-4">Ranking</h2>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="space-y-2 bg-gold p-4 rounded-md">
+              <div class="flex items-center space-x-2">
+                <span
+                  class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full"
+                >
+                <% if (usersPoint) { %>
+                  <img class="aspect-square h-full w-full" alt="<%= usersPoint[0].nickName %>" src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= usersPoint[0].image %>" />
+                <% } else { %>
+                  <img class="aspect-square h-full w-full" alt="2nd place" src="/placeholder.svg?height=100&amp;width=100" />
+                <% } %>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold"><%= usersPoint[0].nickName %> - 1등</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-200">
+                    <%= usersPoint[0].point %>점
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-2 bg-silver p-4 rounded-md">
+              <div class="flex items-center space-x-2">
+                <span
+                  class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full"
+                >
+                <% if (usersPoint) { %>
+                  <img class="aspect-square h-full w-full" alt="<%= usersPoint[1].nickName %>" src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= usersPoint[1].image %>" />
+                <% } else { %>
+                  <img class="aspect-square h-full w-full" alt="2nd place" src="/placeholder.svg?height=100&amp;width=100" />
+                <% } %>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold"><%= usersPoint[1].nickName %> - 2등</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-200">
+                    <%= usersPoint[1].point %>점
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-2 bg-bronze p-4 rounded-md">
+              <div class="flex items-center space-x-2">
+                <span
+                  class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full"
+                >
+                <% if (usersPoint[2]) { %>
+                  <img class="aspect-square h-full w-full" alt="<%= usersPoint[2].nickName %>" src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= usersPoint[2].image %>" />
+                <% } else { %>
+                  <img class="aspect-square h-full w-full" alt="3rd place" src="/placeholder.svg?height=100&amp;width=100" />
+                <% } %>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold"><%= usersPoint[2].nickName %> - 3등</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-200">
+                    <%= usersPoint[2].point %>점
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h2 class="text-lg font-semibold mb-4">Raw Rankings</h2>
+          <ol class="space-y-1">
+            <% if (usersPoint[0]) { %>
+            <li>1등 - <%= usersPoint[0].nickName %></li>
+            <% } %>
+            <% if (usersPoint[1]) { %>
+            <li>2등 - <%= usersPoint[1].nickName %></li>
+            <% } %>
+            <% if (usersPoint[2]) { %>
+            <li>3등 - <%= usersPoint[2].nickName %></li>
+            <% } %>
+            <% if (usersPoint[3]) { %>
+            <li>4등 - <%= usersPoint[3].nickName %></li>
+            <% } %>
+            <% if (usersPoint[4]) { %>
+            <li>5등 - <%= usersPoint[4].nickName %></li>
+            <% } %>
+            <% if (usersPoint[5]) { %>
+            <li>6등 - <%= usersPoint[5].nickName %></li>
+            <% } %>
+            <% if (usersPoint[6]) { %>
+            <li>7등 - <%= usersPoint[6].nickName %></li>
+            <% } %>
+            <% if (usersPoint[7]) { %>
+            <li>8등 - <%= usersPoint[7].nickName %></li>
+            <% } %>
+            <% if (usersPoint[8]) { %>
+            <li>9등 - <%= usersPoint[8].nickName %></li>
+            <% } %>
+            <% if (usersPoint[9]) { %>
+            <li>10등 - <%= usersPoint[9].nickName %></li>
+            <% } %>
+          </ol>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

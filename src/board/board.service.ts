@@ -13,7 +13,7 @@ import { LikeGateway } from '../socket/likes.gateway';
 import { S3Service } from 'src/user/s3.service';
 import { extname } from 'path';
 import _ from 'lodash';
-import Like from './entities/likes.entity';
+import { Like } from './entities/likes.entity';
 
 @Injectable()
 export class BoardService {
@@ -31,10 +31,10 @@ export class BoardService {
     return await this.boardRepository.find();
   }
 
-  // 게시물 단건 조회
+  // 게시물 상세 조회
   async findOneBoards(boardId: number): Promise<Boards> {
     if (isNaN(boardId) || boardId === null) {
-      throw new BadRequestException('유효한 boardId를 입력해주세요.');
+      throw new BadRequestException('유효한 boardId를 입력해주세요.aaa');
     }
     const board = await this.boardRepository.findOne({
       where: { boardId: boardId },

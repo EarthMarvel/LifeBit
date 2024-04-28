@@ -52,7 +52,7 @@ export class VisionService {
       });
 
       console.log('initial : point.user : ' + point.user);
-      console.log('initial : point.id : ' + point.id);
+      // console.log('initial : point.id : ' + point.id);
       console.log('initial : point.user.user_id :' + point.user.user_id);
 
       if (!user.point) {
@@ -93,7 +93,7 @@ export class VisionService {
       });
 
       console.log('currentPoint : ' + currentPoint);
-      console.log('currentPoint.id : ' + currentPoint.id);
+      // console.log('currentPoint.id : ' + currentPoint.id);
 
       if (!currentPoint) {
         throw new Error('currentPoint not found');

@@ -14,7 +14,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="../public/css/index-style.css" />
+    <link rel="stylesheet" href="../public/css/boards.css" />
   </head>
   <body>
     <div class="header">
@@ -42,7 +42,12 @@
               class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
             >
               <li>
-                <a href="#" class="nav-link px-2 text-info">Life Bit</a>
+                <a
+                  href="#"
+                  class="nav-link px-2 text-info"
+                  onclick="location.href='http://localhost:3000/boards'"
+                  >Life Bit</a
+                >
               </li>
             </ul>
 
@@ -68,11 +73,78 @@
     <div class="main">
       <div class="p-5 mb-4 bg-body-tertiary rounded-3">
         <div class="container-fluid py-5">
-          <img src="<%= imageBase64 %>" class="boardImage" alt="..." />
-          <h1 class="display-5 fw-bold">게시물 상세 페이지 제목</h1>
-          <p class="content"><%= content %></p>
+          <img
+            src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= board.thumbnail %>"
+            class="boardImage"
+            alt="..."
+          />
+          <h1 class="display-5 fw-bold"><%= board.title %></h1>
+          <p class="content"><%= board.content %></p>
+          <button type="button" class="btn btn-dark">좋아요!</button>
+          <p class="content">❤️<%= board.likedCount %></p>
+          <p class="content">카테고리: <%= board.category %></p>
         </div>
       </div>
     </div>
+<% if(currentUserId && board.userId === currentUserId) { %>
+  <form id="bottuomBtn">
+    <button
+      onclick="redirectToPage(event)"
+      type="button"
+      class="btn btn-dark"
+    >
+      게시물 수정
+    </button>
+
+    <button type="submit" class="btn btn-dark">게시물 삭제</button>
+  </form>
+    <% } %>
+    <script>
+      // 조건문 걸어서 작성자만 수정하기 버튼 보이게
+
+      function redirectToPage(event) {
+        var currentUrl = window.location.href;
+        var boardId = null;
+        var urlParts = currentUrl.split('/');
+        var index = urlParts.indexOf('view');
+        if (index !== -1 && index < urlParts.length - 1) {
+          boardId = urlParts[index + 1];
+        }
+        if (boardId) {
+          window.location.href = `http://localhost:3000/boards/view/${boardId}/update`;
+        } else {
+          console.log('boardId를 가져올 수 없습니다.');
+        }
+      }
+
+      $('#bottuomBtn').submit((event) => {
+        event.preventDefault();
+        var currentUrl = window.location.href;
+        var boardId = null;
+        var urlParts = currentUrl.split('/');
+        var index = urlParts.indexOf('view');
+        if (index !== -1 && index < urlParts.length - 1) {
+          boardId = urlParts[index + 1];
+        }
+
+        $.ajax({
+          url: `http://localhost:3000/boards/${boardId}`,
+          method: 'DELETE',
+          contentType: 'application/json',
+          data: JSON.stringify(),
+          success: (data) => {
+            alert('게시물 삭제가 완료되었습니다.');
+            window.location.href = 'http://localhost:3000/boards';
+          },
+          error: (jqXHR, textStatus, errorThrown) => {
+            const errorMessage = jqXHR.responseJSON
+              ? jqXHR.responseJSON.message
+              : '게시물 삭제에 실패하였습니다.';
+            alert(errorMessage);
+            console.log(errorMessage);
+          },
+        });
+      });
+    </script>
   </body>
 </html>

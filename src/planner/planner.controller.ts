@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   Render,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -55,9 +56,13 @@ export class PlannerController {
    */
   @Get('/planner')
   @Render('planner.ejs')
-  async myPage(@UserInfo() user: User, @Res() res: Response) {
+  async myPage(
+    @UserInfo() user: User,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
     const data = await this.plannerService.myPage(user);
-    return { data };
+    return { data, isLoggedIn: req['isLoggedIn'] };
   }
 
   /**
@@ -195,4 +200,13 @@ export class PlannerController {
     console.log(data);
     return { data };
   }
+
+  // @Get('/mypage')
+  // @Render('mypage.ejs')
+  // async mission(@Req() req: Request) {
+  //   const userId = 1;
+  //   const data = await this.plannerService.mission(userId);
+  //   console.log(data);
+  //   return { data, isLoggedIn: req['isLoggedIn'] };
+  // }
 }
