@@ -80,6 +80,7 @@ export class MissionController {
       return { mission: createdMission };
     } catch (error) {
       console.error(`Error in createMission method: ${error.message}`);
+      console.error(`Uploaded file info: ${file && file.originalname}`);
       throw new BadRequestException(
         `미션 생성에 실패했습니다: ${error.message}`,
       );
@@ -100,6 +101,7 @@ export class MissionController {
   }
 
   @Get('/:missionId')
+  @Render('missionDetailPage.ejs')
   async findMissionById(@Param('missionId') missionId: number) {
     try {
       if (missionId === null || isNaN(missionId)) {

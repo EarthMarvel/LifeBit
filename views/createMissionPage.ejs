@@ -1,6 +1,14 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Mission</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <style>
       /* 전체 스타일 */
       body {
@@ -53,13 +61,11 @@
       }
 
       /* 폼 및 버튼 스타일 */
-      .form-field,
-      button {
+      .form-field {
         margin-bottom: 16px;
       }
 
-      button,
-      .submit-btn {
+      .btn {
         background-color: #e54d47;
         color: white;
         border-radius: 12px;
@@ -69,8 +75,7 @@
         cursor: pointer;
       }
 
-      button:hover,
-      .submit-btn:hover {
+      .btn:hover {
         background-color: #ff6f61;
       }
 
@@ -91,7 +96,7 @@
       }
 
       /* 이미지 업로드 스타일 */
-      .image-upload-container {
+      .img-upload {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -99,57 +104,32 @@
         margin-bottom: 16px;
       }
 
-      .img-thumbnail {
+      .thumbnail {
         width: 200px;
         height: 200px;
         object-fit: cover;
         border-radius: 12px;
-      }
-
-      .no-image {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-      }
-
-      #chooseFileBtn {
-        padding: 10px 20px;
-        background-color: #e54d47;
-        color: white;
-        font-weight: bold;
-        border-radius: 12px;
-      }
-
-      #chooseFileBtn:hover {
-        background-color: #ff6f61;
       }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
-
   <body>
+    <header>
+      <h1>미션 생성</h1>
+      <span>로그인/회원가입</span>
+    </header>
     <div class="container">
       <div class="card">
-        <header>
-          <h1>미션 생성</h1>
-          <span>로그인/회원가입</span>
-        </header>
-        <div class="row g-4">
-          <div class="image-upload-container">
+        <form id="missionForm">
+          <div class="img-upload">
             <img
-              src="src/public/default.png"
-              class="img-thumbnail"
-              id="imagePreview"
+              id="thumbnailPreview"
+              src="https://static.thenounproject.com/png/4595376-200.png"
+              class="thumbnail"
               alt="이미지 미리보기"
             />
-            <input
-              type="file"
-              id="thumbnail"
-              accept="image/*"
-              style="display: none"
-            />
-            <button id="chooseFileBtn">파일 선택</button>
+            <input type="file" id="fileInput" accept="image/*" />
           </div>
-
           <div class="form-field">
             <label for="title" class="form-label">[미션] 제목</label>
             <input
@@ -159,7 +139,6 @@
               placeholder="미션 제목을 입력하세요."
             />
           </div>
-
           <div class="form-field">
             <label for="category" class="form-label">[미션] 카테고리</label>
             <select id="category" class="form-select">
@@ -174,29 +153,17 @@
               <option value="Selfhelp">자기계발</option>
             </select>
           </div>
-
           <div class="form-field">
-            <label for="challengePeriod" class="form-label"
-              >[챌린지] 기간</label
-            >
-            <input
-              type="date"
-              id="challengeStartDate"
-              class="form-control"
-              placeholder="시작 날짜를 선택하세요"
-            />
-            <input
-              type="date"
-              id="challengeEndDate"
-              class="form-control"
-              placeholder="종료 날짜를 선택하세요"
-            />
-            <div id="challengeWarning" class="text-danger"></div>
+            <label for="startDate" class="form-label">[챌린지] 시작 날짜</label>
+            <input type="date" id="startDate" class="form-control" />
           </div>
-
           <div class="form-field">
-            <label for="amount" class="form-label">[정원]</label>
-            <select id="amount" class="form-select">
+            <label for="endDate" class="form-label">[챌린지] 종료 날짜</label>
+            <input type="date" id="endDate" class="form-control" />
+          </div>
+          <div class="form-field">
+            <label for="participants" class="form-label">[정원]</label>
+            <select id="participants" class="form-select">
               <option value="">선택하세요</option>
               <option value="5">5명</option>
               <option value="10">10명</option>
@@ -210,7 +177,6 @@
               <option value="50">50명</option>
             </select>
           </div>
-
           <div class="form-field">
             <label for="description" class="form-label">[설명]</label>
             <textarea
@@ -220,127 +186,69 @@
               rows="3"
             ></textarea>
           </div>
-
-          <button class="submit-btn" id="submitBtn">등록하기</button>
-        </div>
+          <button type="submit" id="submitBtn" class="btn">등록하기</button>
+        </form>
       </div>
     </div>
-
     <script>
-      // 입력 데이터 유효성 검사
-      function validateInputs() {
-        // 다른 입력 필드 검사 ...
-        const numberPeopleInput = document
-          .getElementById('amount')
-          .value.trim();
-
-        // `numberPeople` 유효성 검사
-        if (!numberPeopleInput) {
-          alert('정원을 입력하세요.');
-          return false;
-        }
-
-        // 정수인지 확인
-        const numberPeopleValue = parseInt(numberPeopleInput, 10);
-        if (isNaN(numberPeopleValue) || numberPeopleValue <= 0) {
-          alert('정원을 올바르게 입력하세요.');
-          return false;
-        }
-
-        // 모든 유효성 검사 통과 시 true 반환
-        return true;
-      }
-
-      // 파일 선택 버튼 클릭 시 파일 선택창 열기
-      document
-        .getElementById('chooseFileBtn')
-        .addEventListener('click', function () {
-          document.getElementById('thumbnail').click();
-        });
-
-      // 이미지 미리보기 업데이트
-      document
-        .getElementById('thumbnail')
-        .addEventListener('change', function (event) {
-          const file = event.target.files[0];
+      // 파일 선택 시 이미지 미리보기 업데이트
+      $('#fileInput').change(function (event) {
+        const file = event.target.files[0];
+        if (file) {
           const reader = new FileReader();
-
           reader.onload = function (e) {
-            document.getElementById('imagePreview').src = e.target.result;
+            $('#thumbnailPreview').attr('src', e.target.result);
           };
+          reader.readAsDataURL(file);
+        }
+      });
 
-          if (file) {
-            reader.readAsDataURL(file);
-          } else {
-            document.getElementById('imagePreview').src =
-              'src/public/default.png';
-          }
-        });
+      // 미션 등록 버튼 클릭 시
+      $('#missionForm').submit(function (event) {
+        event.preventDefault();
 
-      // 등록하기 버튼 클릭 시 데이터 제출
-      document
-        .getElementById('submitBtn')
-        .addEventListener('click', function (event) {
-          event.preventDefault();
+        const formData = new FormData();
+        const fileInput = document.querySelector('#fileInput');
 
-          // 입력 유효성 검사 수행
-          if (!validateInputs()) {
-            return;
-          }
+        // 파일 입력 요소 유효성 검사
+        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+          formData.append('thumbnail', fileInput.files[0]);
+        } else {
+          alert('파일을 선택해주세요.');
+          return;
+        }
 
-          const formData = new FormData();
-          formData.append(
-            'title',
-            document.getElementById('title').value.trim(),
-          );
-          formData.append(
-            'category',
-            document.getElementById('category').value,
-          );
-          formData.append(
-            'description',
-            document.getElementById('description').value.trim(),
-          );
-          formData.append(
-            'thumbnail',
-            document.getElementById('thumbnail').files[0],
-          );
-          formData.append(
-            'startDate',
-            document.getElementById('challengeStartDate').value,
-          );
-          formData.append(
-            'endDate',
-            document.getElementById('challengeEndDate').value,
-          );
-          formData.append(
-            'numberPeople',
-            document.getElementById('amount').value,
-          ); // 'amount'를 'numberPeople'로 변경
+        // 다른 입력 필드 데이터를 formData에 추가
+        formData.append('title', $('#title').val().trim());
+        formData.append('category', $('#category').val());
+        formData.append('startDate', $('#startDate').val());
+        formData.append('endDate', $('#endDate').val());
+        formData.append('numberPeople', $('#participants').val());
+        formData.append('description', $('#description').val().trim());
 
-          fetch('/mission/create', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/, '$1')}`, // 쿠키에서 authorization 토큰을 추출하여 헤더에 추가
-            },
-
-            body: formData,
+        // 미션 생성 요청 전송
+        fetch('/mission/create', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/, '$1')}`,
+          },
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert('미션이 성공적으로 생성되었습니다.');
+            } else {
+              alert(`미션 생성에 실패했습니다: ${data.message}`);
+            }
           })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.success) {
-                alert('미션이 성공적으로 생성되었습니다.');
-              } else {
-                alert(`미션 생성에 실패했습니다: ${data.message}`);
-              }
-            })
-            .catch((error) => {
-              console.error('미션 생성 중 에러가 발생했습니다:', error);
-              alert(
-                '미션 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-              );
-            });
-        });
+          .catch((error) => {
+            console.error('미션 생성 중 오류가 발생했습니다:', error);
+            alert(
+              '미션 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          });
+      });
     </script>
   </body>
 </html>

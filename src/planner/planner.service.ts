@@ -282,7 +282,6 @@ export class PlannerService {
     return todayKoreanTime;
   }
 
-  /*
   async mission(userId: number) {
     const missions = await this.missionRepository
       .createQueryBuilder('mission')
@@ -306,8 +305,7 @@ export class PlannerService {
         return `mission.mission_id IN ${subQuery}`;
       })
       .getRawMany();
-      
-      return missions;
+
+    return missions;
   }
-  */
 }

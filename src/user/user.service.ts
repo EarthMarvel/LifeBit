@@ -147,6 +147,10 @@ export class UserService {
         throw new BadRequestException('올바른 JPEG, PNG, GIF 파일이 아닙니다.');
       }
 
+      console.log('Profile : file : ' + file);
+      console.log('Profile : file.path : ' + file.path);
+      console.log('Profile : fileExt : ' + fileExt);
+
       await this.s3Service.putObject(file);
 
       if (user.image) {

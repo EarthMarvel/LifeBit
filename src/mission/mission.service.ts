@@ -52,14 +52,48 @@ export class MissionService {
       savedMission.creatorId = user.user_id;
 
       // 파일 처리 및 검증
+      /*
       if (file) {
         await this.validateAndUploadFile(savedMission, file);
       } else {
         throw new BadRequestException('파일이 존재하지 않습니다.');
       }
+      */
 
-      // 미션 저장
-      await this.missionRepository.save(savedMission);
+      const { title, category, startDate, endDate, numberPeople, description } =
+        createMissionDto;
+
+      if (file) {
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+        const fileExt = extname(file.originalname).toLowerCase();
+        if (!allowedExtensions.includes(fileExt)) {
+          throw new BadRequestException(
+            '올바른 JPG, JPEG, PNG, GIF 파일이 아닙니다.',
+          );
+        }
+
+        console.log('createMission : file : ' + file);
+        console.log('createMission : file.path : ' + file.path);
+        console.log('createMission : fileExt : ' + fileExt);
+
+        await this.s3Service.putObject(file);
+
+        if (savedMission.thumbnail) {
+          await this.s3Service.deleteObject(savedMission.thumbnail);
+        }
+
+        savedMission.title = title;
+        savedMission.category = category;
+        savedMission.startDate = startDate;
+        savedMission.endDate = endDate;
+        savedMission.numberPeople = numberPeople;
+        savedMission.description = description;
+        savedMission.thumbnail = file.filename;
+
+        // 미션 저장
+        await this.missionRepository.save(savedMission);
+      }
 
       return {
         mission: savedMission,
@@ -73,31 +107,73 @@ export class MissionService {
     }
   }
 
-  private async validateAndUploadFile(savedMission, file: Express.Multer.File) {
-    if (!file || !file.originalname || !file.buffer) {
-      throw new BadRequestException('파일이 유효하지 않습니다.');
+  // mission.service.ts
+
+  /*
+  // validateAndUploadFile 메서드 수정
+  private async validateAndUploadFile(
+    savedMission: Mission,
+    file: Express.Multer.File,
+  ) {
+    // 파일 유효성 검사
+    if (!file) {
+      throw new BadRequestException('파일 객체가 없습니다.');
+    }
+
+    // 파일 이름의 존재 여부 검사
+    if (!file.originalname) {
+      throw new BadRequestException('파일 이름이 유효하지 않습니다.');
+    }
+
+    // 파일 버퍼의 존재 여부 검사
+    if (!file.buffer) {
+      throw new BadRequestException('파일 버퍼가 유효하지 않습니다.');
+    }
+
+    // 파일 경로의 존재 여부 검사
+    if (!file.path) {
+      // 에러 메시지를 더 구체적으로 작성
+      throw new BadRequestException(
+        `파일 경로가 유효하지 않습니다: 파일 경로가 비어있습니다.`,
+      );
     }
 
     const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    const maxFileSize = 5 * 1024 * 1024; // 5MB로 제한
     const fileExt = extname(file.originalname).toLowerCase();
 
     if (!allowedExtensions.includes(fileExt)) {
       throw new BadRequestException(
-        '올바른 JPG, JPEG, PNG, GIF 파일이 아닙니다.',
+        `지원되지 않는 파일 형식입니다. JPG, JPEG, PNG, GIF 형식만 허용됩니다. 현재 파일 형식: ${fileExt}`,
+      );
+    }
+
+    if (file.size > maxFileSize) {
+      throw new BadRequestException(
+        `파일 크기가 너무 큽니다. 최대 허용 크기는 ${maxFileSize}바이트입니다. 현재 크기: ${file.size}바이트`,
       );
     }
 
     try {
-      // 파일을 S3에 업로드
+      // S3 파일 업로드 시도
       await this.s3Service.putObject(file);
       savedMission.thumbnail = file.filename;
+
+      // 파일 업로드 성공 시 로그
+      console.log(`S3 파일 업로드 성공: ${file.originalname}`);
     } catch (error) {
+      // 상세 로깅
       console.error(`S3 파일 업로드 중 오류: ${error.message}`);
+      console.error(`업로드된 파일 정보: ${JSON.stringify(file)}`);
+      console.error(`파일 경로: ${file.path}`);
+
+      // 에러 처리
       throw new InternalServerErrorException(
-        '파일 업로드 중 오류가 발생했습니다.',
+        `S3 파일 업로드 중 오류가 발생했습니다: ${error.message}`,
       );
     }
   }
+  */
 
   async findOne(missionId: number): Promise<Mission> {
     // missionId 값 검증
