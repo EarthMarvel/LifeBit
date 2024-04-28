@@ -293,13 +293,17 @@ export class PlannerService {
         'mission.startDate',
         'mission.endDate',
         'mission.numberPeople',
-        'mission.thumbnailUrl',
-        'mission.type',
         'mission.authSum',
       ])
-      .where(
-        `mission.mission_id IN (select mission_mission_id from user_missions_mission where user_user_id = ${userId})`,
-      )
+      .where((qb: SelectQueryBuilder<any>) => {
+        const subQuery = qb
+          .subQuery()
+          .select('missionId')
+          .from('user_mission', 'umm')
+          .where('umm.userId = :userId', { userId })
+          .getQuery();
+        return `mission.mission_id IN ${subQuery}`;
+      })
       .getRawMany();
 
     return missions;

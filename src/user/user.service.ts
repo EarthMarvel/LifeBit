@@ -80,6 +80,8 @@ export class UserService {
       email,
       password: hashPassword,
       name,
+      createdMissions: [], // createMissions를 빈 배열로 초기화
+      participatingMissions: [], // participatingMissions를 빈 배열로 초기화
     });
 
     const newPoint = await this.pointService.createInitialPoint();
@@ -145,6 +147,10 @@ export class UserService {
         throw new BadRequestException('올바른 JPEG, PNG, GIF 파일이 아닙니다.');
       }
 
+      console.log('Profile : file : ' + file);
+      console.log('Profile : file.path : ' + file.path);
+      console.log('Profile : fileExt : ' + fileExt);
+
       await this.s3Service.putObject(file);
 
       if (user.image) {
@@ -162,11 +168,19 @@ export class UserService {
 
   // 프로필 조회
   async profileInfo(user_id: number) {
-    const user = await this.userRepository.findOne({
-      where: { user_id },
-      select: ['image', 'name', 'nickName', 'description'],
-    });
-    console.log('-------11---->', user);
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.point', 'point')
+      .select([
+        'user.image',
+        'user.name',
+        'user.nickName',
+        'user.description',
+        'point.totalValue',
+      ])
+      .where('user.user_id = :user_id', { user_id })
+      .getOne();
+
     if (!user) {
       throw new NotFoundException('해당 사용자를 찾지 못했습니다.');
     }
@@ -215,6 +229,7 @@ export class UserService {
       name: fullName,
       providerId,
     });
+
     return newUser;
   }
 
@@ -225,6 +240,19 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('해당 사용자를 찾을 수 없습니다.');
     }
+    return user;
+  }
+
+  // 사용자 이메일을 기반으로 사용자를 조회하는 함수
+  async getUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    // 사용자가 존재하지 않는 경우 예외를 던집니다.
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    // 조회된 사용자를 반환합니다.
     return user;
   }
 }

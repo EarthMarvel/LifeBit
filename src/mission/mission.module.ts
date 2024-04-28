@@ -5,14 +5,24 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Mission } from './entities/mission.entity';
 import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from 'src/user/user.module';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 import { VisionModule } from 'src/vision/vision.module';
+import { UserMission } from 'src/user-mission/entities/user-mission.entity';
+import { UserMissionRepository } from 'src/user-mission/user-mission.repository';
+import { MulterModule } from '@nestjs/platform-express';
+import { multerOptionsFactory } from 'src/utils/multer.options.factory';
+import { S3Service } from 'src/user/s3.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Mission, CertificatedImage]),
+    TypeOrmModule.forFeature([
+      Mission,
+      CertificatedImage,
+      UserMission,
+      UserMissionRepository,
+    ]),
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET_KEY'),
@@ -21,9 +31,14 @@ import { VisionModule } from 'src/vision/vision.module';
     }),
     UserModule,
     VisionModule,
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: multerOptionsFactory,
+      inject: [ConfigService],
+    }),
   ],
-  providers: [MissionService],
+  providers: [MissionService, S3Service],
   controllers: [MissionController],
-  exports: [MissionService],
+  exports: [MissionService, S3Service, TypeOrmModule.forFeature([Mission])],
 })
 export class MissionModule {}
