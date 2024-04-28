@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시물 생성</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="/css/boards.css" />
+  </head>
+  <body>
+    <div class="header">
+      <header class="p-3 text-bg-dark">
+        <div class="container">
+          <div
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+          >
+            <a
+              href="/"
+              class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
+            >
+              <svg
+                class="bi me-2"
+                width="40"
+                height="32"
+                role="img"
+                aria-label="Bootstrap"
+              >
+                <use xlink:href="#bootstrap"></use>
+              </svg>
+            </a>
+
+            <ul
+              class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+            >
+              <li>
+                <a
+                  href="#"
+                  class="nav-link px-2 text-info"
+                  onclick="location.href='http://localhost:3000/boards'"
+                  >Life Bit</a
+                >
+              </li>
+            </ul>
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+              <input
+                type="search"
+                class="form-control form-control-dark text-bg-dark"
+                placeholder="검색"
+                aria-label="Search"
+              />
+            </form>
+
+            <div class="text-end">
+              <button type="button" class="btn btn-outline-light me-2">
+                Login
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+    </div>
+
+    <div class="main">
+      <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+        <div class="container-fluid py-5">
+          <h1 class="display-5 fw-bold">Life Bit 게시판</h1>
+          <p class="col-md-8 fs-4">
+            누가 누가 어떤 갓생을 살고 있는지 공유하자!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <form class="mypostingbox" id="postingbox">
+      <div class="profile-image-container">
+        <img
+          id="profile-image"
+          src="path/to/default/image.jpg"
+          class="profile-image"
+        />
+      </div>
+      <input id="file-input" type="file" accept="image/*" class="sr-only" />
+
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          placeholder="게시물 제목"
+          name="title"
+        />
+        <label for="title">게시물 제목</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <textarea
+          type="text"
+          class="form-control"
+          id="content"
+          placeholder="게시물 내용"
+          name="content"
+        >
+        </textarea>
+        <label for="content">게시물 내용</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="category"
+          placeholder="게시물 카테고리"
+          name="category"
+        />
+        <label for="content">게시물 카테고리</label>
+      </div>
+      <button type="submit" class="btn btn-dark">등록하기</button>
+    </form>
+
+    <script>
+      $(document).ready(function () {
+        $('#file-input').change(function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              $('#profile-image').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+
+      $('#postingbox').submit((event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('file', $('#file-input')[0].files[0]);
+        formData.append('title', $('#title').val());
+        formData.append('content', $('#content').val());
+        formData.append('category', $('#category').val());
+
+        $.ajax({
+          url: 'http://localhost:3000/boards',
+          method: 'POST',
+          processData: false,
+          contentType: false,
+          data: formData,
+          success: (data) => {
+            alert('게시물 생성이 완료되었습니다.');
+            window.location.href = 'http://localhost:3000/boards';
+          },
+          error: (jqXHR, textStatus, errorThrown) => {
+            const errorMessage = jqXHR.responseJSON
+              ? jqXHR.responseJSON.message
+              : '게시물 생성에 실패하였습니다.';
+            alert(errorMessage);
+            console.log(errorMessage);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

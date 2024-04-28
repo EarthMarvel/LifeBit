@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,12 +8,10 @@ import {
   Patch,
   Post,
   Query,
-  Req,
+  Render,
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  //   Req,
-  //   UseGuards,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create_board.dto';
@@ -29,9 +28,12 @@ export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   // 게시물 전체 조회
+  // 메인 페이지
   @Get('')
+  @Render('board-main.ejs')
   async getAllBoards() {
-    return await this.boardService.getAllBoards();
+    const boards = await this.boardService.getAllBoards();
+    return { boards };
   }
 
   // 게시물 검색
@@ -42,10 +44,21 @@ export class BoardController {
     return this.boardService.searchBoards(searchBoardDto);
   }
 
-  // 게시물 단건 조회
-  @Get('/:boardId')
-  async findOneBoards(@Param('boardId') boardId: number) {
-    return await this.boardService.findOneBoards(boardId);
+  // 게시물 상세 조회
+  // 상세 페이지
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/view/:boardId')
+  @Render('board-Detail.ejs')
+  async findOneBoards(
+    @Param('boardId') boardId: number,
+    @UserInfo() user: User,
+  ) {
+    if (isNaN(boardId) || boardId === null) {
+      throw new BadRequestException('유효한 boardId를 입력해주세요.');
+    }
+    const currentUserId = user.user_id;
+    const board = await this.boardService.findOneBoards(boardId);
+    return { board, currentUserId };
   }
 
   // 게시물 생성
@@ -55,8 +68,11 @@ export class BoardController {
   async createBoard(
     @Body() createBoardDto: CreateBoardDto,
     @UploadedFile() file: Express.Multer.File,
+    @UserInfo() user: User,
   ) {
-    await this.boardService.createBoard(createBoardDto, file);
+    const userId = user.user_id;
+    await this.boardService.createBoard(createBoardDto, file, userId);
+
     return { message: '게시물 생성 완료' };
   }
 
@@ -101,6 +117,14 @@ export class BoardController {
       like,
     };
   }
-}
 
-// pr용 주석
+  // 게시물 생성 페이지
+  @Get('create')
+  @Render('board-create.ejs')
+  getCreateBoardPage() {}
+
+  // 게시물 수정 페이지
+  @Get('/view/:boardId/update')
+  @Render('board-update.ejs')
+  getUpdateBoardPage() {}
+}

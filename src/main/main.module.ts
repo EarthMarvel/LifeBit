@@ -5,8 +5,8 @@ import { MainService } from './main.service';
 import { MainController } from './main.controller';
 
 @Module({
-    imports : [TypeOrmModule.forFeature([Mission])],
-    providers: [MainService],
-    controllers: [MainController],
+  imports: [TypeOrmModule.forFeature([Mission])],
+  providers: [MainService],
+  controllers: [MainController],
 })
 export class MainModule {}

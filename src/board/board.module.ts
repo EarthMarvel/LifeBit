@@ -3,7 +3,7 @@ import { BoardService } from './board.service';
 import { BoardController } from './board.controller';
 import { Boards } from './entities/board.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SocketModule } from './socket/socket.module';
+import { SocketModule } from '../socket/socket.module';
 import { UserModule } from 'src/user/user.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';

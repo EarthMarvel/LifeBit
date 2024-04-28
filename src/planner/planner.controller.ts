@@ -192,6 +192,15 @@ export class PlannerController {
   /**
    * 내 미션 확인
    */
+  @Get('/mypage')
+  @Render('mypage.ejs')
+  async mission() {
+    const userId = 1;
+    const data = await this.plannerService.mission(userId);
+    console.log(data);
+    return { data };
+  }
+
   // @Get('/mypage')
   // @Render('mypage.ejs')
   // async mission(@Req() req: Request) {
