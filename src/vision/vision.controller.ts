@@ -13,6 +13,7 @@ import { CertificateImageCategoryDto } from './dto/certificateImageCategory.dto'
 import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 import { GetUser } from 'src/user/dto/getUser.dto';
 import { User } from 'src/user/entities/user.entity';
+import { ValidationPipe } from '@nestjs/common';
 
 @Controller('vision') // 이 경로로 요청이 오면 이 컨트롤러가 처리하도록 설정
 export class VisionController {
@@ -25,7 +26,8 @@ export class VisionController {
   async certificateImageCategory(
     @GetUser() user: User, // 사용자 인증 정보를 요청 객체에서 직접 추출
     @UploadedFile() file: Express.Multer.File,
-    @Body() certificateImageCategoryDto: CertificateImageCategoryDto,
+    @Body(ValidationPipe)
+    certificateImageCategoryDto: CertificateImageCategoryDto,
   ) {
     if (!file) {
       throw new BadRequestException('file must be provided');
@@ -38,8 +40,8 @@ export class VisionController {
     const isCategoryMatched = await this.visionService.certificateImageCategory(
       file.buffer, // multer로 받은 파일의 buffer를 사용합니다.
       category,
-      +missionId,
-      +userId,
+      missionId,
+      userId,
     );
 
     return { isCategoryMatched };
