@@ -45,7 +45,7 @@
               <a
                   href="#"
                   class="nav-link px-2 text-info"
-                  onclick="location.href='http://localhost:3000/boards'"
+                  onclick="location.href='/boards'"
                   >Life Bit</a
                 >
             </li>
@@ -90,7 +90,7 @@
           </form>
         </div>
 
-        <button onclick="location.href='http://localhost:3000/boards/create'" type="button" class="btn btn-dark">
+        <button onclick="location.href='/boards/create'" type="button" class="btn btn-dark">
           게시물 등록
         </button>
       </div>
@@ -120,7 +120,7 @@
   function redirectToPage(event) {
   const boardId = event.currentTarget.getAttribute('data-board-id');
   if (boardId) {
-    window.location.href = `http://localhost:3000/boards/view/${boardId}`;
+    window.location.href = `/boards/view/${boardId}`;
   } else {
     console.log('boardId를 가져올 수 없습니다.');
   }

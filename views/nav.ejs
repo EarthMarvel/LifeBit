@@ -38,7 +38,10 @@
               <a class="nav-link" href="/main">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Challenge</a>
+              <a class="nav-link" href="/mission/main">Challenge</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/boards">Board</a>
             </li>
             <% if (isLoggedIn)  {%>
               <li class="nav-item">
@@ -67,7 +70,7 @@
             .then(response => {
               if (response.ok) {
                 alert('로그아웃 성공')
-                window.location.href = 'http://localhost:3000/main'; // 응답 성공 시 리다이렉트
+                window.location.href = '/main'; // 응답 성공 시 리다이렉트
               } else {
                 alert('Logout failed.');
               }

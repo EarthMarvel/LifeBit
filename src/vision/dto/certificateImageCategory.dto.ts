@@ -4,11 +4,9 @@ import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 export class CertificateImageCategoryDto {
   @IsNotEmpty()
   @IsString()
-  missionId: string;
+  missionId: number;
 
   @IsNotEmpty()
-  @IsEnum(Category, {
-    message: 'Category must be a valid enum value',
-  })
-  category: Category;
+  @IsString()
+  category: string;
 }

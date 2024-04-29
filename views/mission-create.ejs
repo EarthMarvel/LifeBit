@@ -1,0 +1,239 @@
+<!-- mission-create.ejs -->
+<!doctype html>
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <meta charset="UTF-8" />
+    <title>Create Mission</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* 전체 스타일 */
+      body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1a1a1a; /* 어두운 배경색 */
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+      }
+
+      /* 중앙 정렬 */
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* 전체 높이 */
+        padding: 20px;
+      }
+
+      /* 카드 스타일 */
+      .card {
+        background-color: #2a2a2a; /* 약간 더 밝은 회색 배경 */
+        border-radius: 12px; /* 부드러운 모서리 */
+        padding: 24px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 그림자 효과 */
+      }
+
+      /* 폼 필드 스타일 */
+      .form-field {
+        margin-bottom: 16px;
+      }
+
+      .form-label {
+        display: block;
+        font-weight: bold;
+        color: #e54d47; /* 레드 오렌지 색상 */
+        margin-bottom: 4px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background-color: #3a3a3a; /* 어두운 배경 */
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+      }
+
+      /* 이미지 미리보기 */
+      .img-upload {
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      #thumbnailPreview {
+        width: 150px; /* 미리보기 이미지 크기 */
+        height: 150px; /* 미리보기 이미지 크기 */
+        object-fit: cover;
+        border-radius: 12px; /* 부드러운 모서리 */
+        margin-bottom: 8px;
+      }
+
+      /* 등록 버튼 스타일 */
+      #submitBtn {
+        width: 100%;
+        padding: 12px;
+        background-color: #e54d47; /* 레드 오렌지 색상 */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #submitBtn:hover {
+        background-color: #ff6f61; /* 밝은 레드 오렌지 색상 */
+      }
+
+      /* 반응형 스타일 */
+      @media (max-width: 768px) {
+        .card {
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <form id="missionForm" enctype="multipart/form-data">
+          <!-- 이미지 업로드 섹션 -->
+          <div class="img-upload">
+            <img
+              id="thumbnailPreview"
+              src="/default-thumbnail.png"
+              class="thumbnail"
+              alt="이미지 미리보기"
+            />
+            <input type="file" id="fileInput" accept="image/*" />
+          </div>
+
+          <!-- 다른 입력 필드들 -->
+          <div class="form-field">
+            <label for="title" class="form-label">미션 제목</label>
+            <input
+              type="text"
+              id="title"
+              class="form-control"
+              placeholder="미션 제목을 입력하세요."
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="category" class="form-label">카테고리</label>
+            <input
+              type="text"
+              id="category"
+              class="form-control"
+              placeholder="카테고리를 입력하세요."
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="startDate" class="form-label">시작 날짜</label>
+            <input type="date" id="startDate" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="endDate" class="form-label">종료 날짜</label>
+            <input type="date" id="endDate" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="participants" class="form-label">참가자 수</label>
+            <input type="number" id="participants" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="description" class="form-label">설명</label>
+            <textarea
+              id="description"
+              class="form-control"
+              placeholder="미션 설명을 작성해주세요."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn btn-primary">
+            등록하기
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // 이미지 미리보기 로직
+      $('#fileInput').change(function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            $('#thumbnailPreview').attr('src', e.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      const allowedCategories = [
+        'Sports',
+        'Cooking',
+        'Music',
+        'Art',
+        'Travel',
+        'Photography',
+        'Workout',
+        'Reading',
+        'Study',
+        'Selfhelp',
+      ];
+
+      // 폼 제출 로직
+      $('#missionForm').submit(function (event) {
+        event.preventDefault();
+
+        const category = $('#category').val();
+
+        // 카테고리 유효성 검사
+        if (!allowedCategories.includes(category)) {
+          alert(
+            '올바르지 않은 카테고리입니다. 유효한 카테고리: Sports, Cooking, Music, Art, Travel, Photography, Workout, Reading, Study, Selfhelp',
+          );
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('thumbnail', $('#fileInput')[0].files[0]);
+        formData.append('title', $('#title').val());
+        formData.append('category', $('#category').val());
+        formData.append('startDate', $('#startDate').val());
+        formData.append('endDate', $('#endDate').val());
+        formData.append('numberPeople', $('#participants').val());
+        formData.append('description', $('#description').val());
+
+        fetch('/mission/create', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/, '$1')}`,
+          },
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.mission) {
+              alert('미션이 성공적으로 생성되었습니다.');
+              window.location.href = '/mission/main';
+            }
+          })
+          .catch((error) => {
+            console.error('미션 생성 중 오류가 발생했습니다:', error);
+            alert(
+              '미션 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          });
+      });
+    </script>
+  </body>
+</html>

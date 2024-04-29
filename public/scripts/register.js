@@ -6,7 +6,7 @@ $('#registerForm').submit((event) => {
   };
 
   $.ajax({
-    url: 'http://localhost:3000/user/emailAuth',
+    url: '/user/emailAuth',
     method: 'POST',
     contentType: 'application/json',
     data: JSON.stringify(formData),
@@ -35,13 +35,13 @@ $('#bottomBtnForm').submit((event) => {
   };
 
   $.ajax({
-    url: 'http://localhost:3000/user/register',
+    url: '/user/register',
     method: 'POST',
     contentType: 'application/json',
     data: JSON.stringify(formData),
     success: (data) => {
       alert('회원가입이 완료되었습니다.');
-      window.location.href = 'http://localhost:3000/user/sign-in';
+      window.location.href = '/user/sign-in';
     },
     error: (jqXHR, textStatus, errorThrown) => {
       const errorMessage = jqXHR.responseJSON

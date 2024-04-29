@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>미션 수정</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* 전체 스타일 */
+      body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1a1a1a; /* 어두운 배경색 */
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+      }
+
+      /* 중앙 정렬 */
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* 전체 높이 */
+        padding: 20px;
+      }
+
+      /* 카드 스타일 */
+      .card {
+        background-color: #2a2a2a; /* 약간 더 밝은 회색 배경 */
+        border-radius: 12px; /* 부드러운 모서리 */
+        padding: 24px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 그림자 효과 */
+      }
+
+      /* 헤더 스타일 */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        border-bottom: 2px solid #e54d47; /* 레드 오렌지 색상 하이라이트 */
+      }
+
+      header h1 {
+        font-size: 2.2rem; /* 폰트 크기 조정 */
+        font-weight: bold;
+        color: #e54d47; /* 레드 오렌지 색상 */
+      }
+
+      header span {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+        padding: 4px 12px; /* 글자 간 간격 조정 */
+        border-radius: 4px;
+        background-color: #e54d47; /* 레드 오렌지 배경색 */
+      }
+
+      /* 섹션 스타일 */
+      .grid {
+        display: flex;
+        flex-direction: column; /* 수직 정렬 */
+        gap: 24px; /* 카드 간 간격 조정 */
+      }
+
+      .p-6 {
+        padding: 24px; /* 패딩 조정 */
+      }
+
+      .border {
+        border: 1px solid #ccc;
+      }
+
+      .rounded-lg {
+        border-radius: 12px; /* 부드러운 모서리 */
+      }
+
+      .shadow {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 카드 스타일 */
+      .card {
+        padding: 16px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #2a2a2a; /* 어두운 회색 배경 */
+        display: flex;
+        flex-direction: column; /* 플렉스 레이아웃 */
+        gap: 12px; /* 요소 간 간격 */
+        max-width: 100%; /* 카드 너비 제한 */
+      }
+
+      /* 타이포그래피 */
+      h2 {
+        font-size: 1.8rem; /* 제목 폰트 크기 조정 */
+        font-weight: bold;
+        color: #e54d47; /* 레드 오렌지 색상 */
+        margin-bottom: 16px;
+      }
+
+      span {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+      }
+
+      p {
+        line-height: 1.6;
+        font-size: 1rem;
+        color: #e0e0e0; /* 밝은 텍스트 색상 */
+      }
+
+      /* 챌린지 참여자 목록 */
+      /* 프로필 이미지에 대한 수정된 스타일 */
+      .mission-teammate img {
+        width: 100px; /* 프로필 이미지를 작게 조정 */
+        height: 100px; /* 프로필 이미지를 작게 조정 */
+        object-fit: cover; /* 이미지가 컨테이너에 맞게 잘려서 표시되도록 함 */
+      }
+
+      /* .mission-teammates 컨테이너 수정 */
+      .mission-teammates {
+        display: flex; /* 플렉스 컨테이너로 설정 */
+        justify-content: space-between; /* 요소를 가로로 정렬 */
+        gap: 12px; /* 요소 간 간격 설정 */
+        flex-wrap: wrap; /* 요소들이 영역을 벗어나지 않도록 줄 바꿈되게 함 */
+      }
+
+      /* 챌린지 참여자 카드 */
+      .mission-teammate span {
+        text-align: center; /* 텍스트를 가운데 정렬 */
+      }
+
+      img {
+        border-radius: 50%; /* 원형 이미지 */
+        margin-bottom: 8px; /* 이미지 하단 마진 */
+      }
+
+      .mission-teammate span {
+        margin-top: 4px;
+        display: block;
+      }
+
+      /* 반응형 스타일 */
+      @media (max-width: 768px) {
+        /* 모바일에서의 세로 정렬 */
+        .grid {
+          flex-direction: column;
+        }
+
+        /* 모바일에서 카드의 너비 조정 */
+        .card {
+          max-width: 100%;
+          margin-bottom: 24px;
+        }
+      }
+
+      /* 버튼 스타일 */
+      .back-btn,
+      .submit-btn {
+        background-color: #e54d47; /* 더 강렬한 레드 오렌지 색상 */
+        color: white;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .back-btn:hover,
+      .submit-btn:hover {
+        background-color: #ff6f61; /* 레드 오렌지 색상 */
+      }
+
+      /* 미리보기 이미지 */
+      #previewImage {
+        width: 200px; /* 고정된 너비 */
+        height: 200px; /* 고정된 높이 */
+        display: none; /* 디폴트로 미리보기 이미지를 숨깁니다 */
+        object-fit: cover; /* 이미지 정렬 방식 */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <form id="missionForm" enctype="multipart/form-data">
+          <!-- 이미지 업로드 섹션 -->
+          <div class="img-upload">
+            <img
+              id="thumbnailPreview"
+              src="/default-thumbnail.png"
+              class="thumbnail"
+              alt="이미지 미리보기"
+            />
+            <input type="file" id="fileInput" accept="image/*" />
+          </div>
+
+          <!-- 다른 입력 필드들 -->
+          <div class="form-field">
+            <label for="title" class="form-label">미션 제목</label>
+            <input type="text" id="title" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="category" class="form-label">카테고리</label>
+            <input type="text" id="category" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="startDate" class="form-label">시작 날짜</label>
+            <input type="date" id="startDate" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="endDate" class="form-label">종료 날짜</label>
+            <input type="date" id="endDate" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="participants" class="form-label">참가자 수</label>
+            <input type="number" id="participants" class="form-control" />
+          </div>
+
+          <div class="form-field">
+            <label for="description" class="form-label">설명</label>
+            <textarea id="description" class="form-control" rows="3"></textarea>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn btn-primary">
+            수정하기
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+      // 현재 URL에서 missionId 추출
+      function getMissionIdFromUrl() {
+        const url = window.location.pathname;
+        const parts = url.split('/');
+        return parseInt(parts[parts.length - 1], 10);
+      }
+
+      // 미션 ID 추출
+      const missionId = getMissionIdFromUrl();
+
+      // 미션 정보 가져오기
+      function fetchMissionInfo() {
+        fetch(`/mission/${missionId}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/, '$1')}`,
+          },
+        })
+          .then((response) => {
+            // 응답 헤더의 Content-Type 확인
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+              // 응답이 JSON 형식인 경우 파싱
+              return response.json();
+            } else {
+              // JSON 형식이 아닌 경우 HTML 파싱
+              return response.text().then((text) => {
+                // HTML 파싱
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+
+                // HTML에서 필요한 데이터를 추출
+                const thumbnailElement = doc.querySelector('#thumbnailPreview');
+                const titleElement = doc.querySelector('#title');
+                const categoryElement = doc.querySelector('#category');
+                const startDateElement = doc.querySelector('#startDate');
+                const endDateElement = doc.querySelector('#endDate');
+                const participantsElement = doc.querySelector('#participants');
+                const descriptionElement = doc.querySelector('#description');
+
+                // 추출한 데이터를 JSON 객체로 구성
+                const mission = {
+                  thumbnail: thumbnailElement
+                    ? thumbnailElement.src
+                    : '/default-thumbnail.png',
+                  title: titleElement ? titleElement.value : '',
+                  category: categoryElement ? categoryElement.value : '',
+                  startDate: startDateElement ? startDateElement.value : '',
+                  endDate: endDateElement ? endDateElement.value : '',
+                  numberPeople: participantsElement
+                    ? participantsElement.value
+                    : '',
+                  description: descriptionElement
+                    ? descriptionElement.value
+                    : '',
+                };
+
+                return { mission };
+              });
+            }
+          })
+          .then((data) => {
+            if (data.mission) {
+              // `jQuery`를 사용하여 화면에 미션 정보를 미리 채워줍니다.
+              $('#thumbnailPreview').attr(
+                'src',
+                data.mission.thumbnail || '/default-thumbnail.png',
+              );
+              $('#title').val(data.mission.title);
+              $('#category').val(data.mission.category);
+              $('#startDate').val(data.mission.startDate);
+              $('#endDate').val(data.mission.endDate);
+              $('#participants').val(data.mission.numberPeople);
+              $('#description').val(data.mission.description);
+            } else {
+              console.error('미션 정보를 가져오는 데 실패했습니다.');
+              alert('미션 정보를 가져오는 데 실패했습니다.');
+            }
+          })
+          .catch((error) => {
+            console.error(
+              '미션 정보를 가져오는 중 오류가 발생했습니다:',
+              error,
+            );
+            alert(
+              '미션 정보를 가져오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          });
+      }
+
+      // 페이지 로드 시 미션 정보 가져오기
+      $(document).ready(function () {
+        fetchMissionInfo();
+      });
+
+      // 폼 제출 로직
+      $('#missionForm').submit(function (event) {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('thumbnail', $('#fileInput')[0].files[0]);
+        formData.append('title', $('#title').val());
+        formData.append('category', $('#category').val());
+        formData.append('startDate', $('#startDate').val());
+        formData.append('endDate', $('#endDate').val());
+        formData.append('numberPeople', $('#participants').val());
+        formData.append('description', $('#description').val());
+
+        fetch(`/mission/${missionId}`, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/, '$1')}`,
+          },
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert('미션이 성공적으로 수정되었습니다.');
+              window.location.href = `/mission/view/${missionId}`;
+            } else {
+              console.error('미션 수정에 실패했습니다:', data.error);
+              alert('미션 수정에 실패했습니다. 다시 시도해주세요.');
+            }
+          })
+          .catch((error) => {
+            console.error('미션 수정 중 오류가 발생했습니다:', error);
+            alert(
+              '미션 수정 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          });
+      });
+    </script>
+  </body>
+</html>

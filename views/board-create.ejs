@@ -45,7 +45,7 @@
                 <a
                   href="#"
                   class="nav-link px-2 text-info"
-                  onclick="location.href='http://localhost:3000/boards'"
+                  onclick="location.href='/boards'"
                   >Life Bit</a
                 >
               </li>
@@ -151,14 +151,14 @@
         formData.append('category', $('#category').val());
 
         $.ajax({
-          url: 'http://localhost:3000/boards',
+          url: '/boards',
           method: 'POST',
           processData: false,
           contentType: false,
           data: formData,
           success: (data) => {
             alert('게시물 생성이 완료되었습니다.');
-            window.location.href = 'http://localhost:3000/boards';
+            window.location.href = '/boards';
           },
           error: (jqXHR, textStatus, errorThrown) => {
             const errorMessage = jqXHR.responseJSON
