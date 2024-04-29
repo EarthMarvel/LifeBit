@@ -80,7 +80,9 @@
           />
           <h1 class="display-5 fw-bold"><%= board.title %></h1>
           <p class="content"><%= board.content %></p>
-          <button type="button" class="btn btn-dark">좋아요!</button>
+          <form id="likeBtn">
+          <button id="likeButton" type="submit" class="btn btn-dark">좋아요!</button>
+        </form>
           <p class="content">❤️<%= board.likedCount %></p>
           <p class="content">카테고리: <%= board.category %></p>
         </div>
@@ -99,9 +101,8 @@
     <button type="submit" class="btn btn-dark">게시물 삭제</button>
   </form>
     <% } %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
     <script>
-      // 조건문 걸어서 작성자만 수정하기 버튼 보이게
-
       function redirectToPage(event) {
         var currentUrl = window.location.href;
         var boardId = null;
@@ -145,6 +146,53 @@
           },
         });
       });
+
+      $('#likeBtn').submit((event) => {
+        event.preventDefault();
+        var currentUrl = window.location.href;
+        var boardId = null;
+        var urlParts = currentUrl.split('/');
+        var index = urlParts.indexOf('view');
+        if (index !== -1 && index < urlParts.length - 1) {
+          boardId = urlParts[index + 1];
+        }
+
+      // const socket = io();
+      document.getElementById('likeBtn').addEventListener('click', async function() {
+      const message = '좋아요가 눌렸습니다!';
+      // socket.emit('like', { message });
+      const response = await fetch(`http://localhost:3000/boards/${boardId}/like`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        boardId: boardId
+      })
+    });
+  });
+  // socket.on('like', (data) => {
+  //     alert(data.message);
+  //   });
+
+      $.ajax({
+        url: `http://localhost:3000/boards/${boardId}/like`,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(),
+        success: (data) => {
+          alert('좋아요!');
+          window.location.href = `http://localhost:3000/boards/view/${boardId}`;
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+          const errorMessage = jqXHR.responseJSON
+          ? jqXHR.responseJSON.message
+          : '게시물 좋아요에 실패하였습니다.';
+          alert(errorMessage);
+          console.log(errorMessage);
+        },
+      });
+    });
     </script>
   </body>
 </html>
