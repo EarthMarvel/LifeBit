@@ -161,7 +161,7 @@
       document.getElementById('likeBtn').addEventListener('click', async function() {
       const message = '좋아요가 눌렸습니다!';
       // socket.emit('like', { message });
-      const response = await fetch(`http://localhost:3000/boards/${boardId}/like`, {
+      const response = await fetch(`/boards/${boardId}/like`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -176,13 +176,13 @@
   //   });
 
       $.ajax({
-        url: `http://localhost:3000/boards/${boardId}/like`,
+        url: `/boards/${boardId}/like`,
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(),
         success: (data) => {
           alert('좋아요!');
-          window.location.href = `http://localhost:3000/boards/view/${boardId}`;
+          window.location.href = `/boards/view/${boardId}`;
         },
         error: (jqXHR, textStatus, errorThrown) => {
           const errorMessage = jqXHR.responseJSON
