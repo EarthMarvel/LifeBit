@@ -27,11 +27,9 @@ export class Boards extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   content: string;
 
-  // 이미지
   @Column({ type: 'varchar', nullable: true, default: '' })
   thumbnail: string;
 
-  // 좋아요 기능
   @Column({ type: 'bigint', nullable: true, default: 0 })
   likedCount: number;
 
