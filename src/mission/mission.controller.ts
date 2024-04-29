@@ -35,7 +35,7 @@ export class MissionController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/createMission')
-  @Render('createMissionPage.ejs')
+  @Render('mission-create.ejs')
   createMissionPage() {
     return {
       image: '/LifeBit.png',
@@ -81,13 +81,11 @@ export class MissionController {
     } catch (error) {
       console.error(`Error in createMission method: ${error.message}`);
       console.error(`Uploaded file info: ${file && file.originalname}`);
-      throw new BadRequestException(
-        `미션 생성에 실패했습니다: ${error.message}`,
-      );
     }
   }
 
-  @Get()
+  @Get('/main')
+  @Render('mission-main.ejs')
   async getMissionList() {
     try {
       const missionList = await this.missionService.findAll();
@@ -101,7 +99,7 @@ export class MissionController {
   }
 
   @Get('/:missionId')
-  @Render('missionDetailPage.ejs')
+  @Render('mission-detail.ejs')
   async findMissionById(@Param('missionId') missionId: number) {
     try {
       if (missionId === null || isNaN(missionId)) {
@@ -114,16 +112,7 @@ export class MissionController {
         throw new NotFoundException('Mission not found');
       }
 
-      return {
-        challengeTitle: mission.title,
-        challengeCategory: mission.category,
-        challengePeriod: `${mission.startDate.toISOString().substring(0, 10)} - ${mission.endDate.toISOString().substring(0, 10)}`,
-        challengeStartDate: mission.startDate,
-        challengeEndDate: mission.endDate,
-        challengeNumberPeople: mission.numberPeople,
-        challengeDescription: mission.description,
-        missionId: mission.missionId,
-      };
+      return mission;
     } catch (error) {
       if (
         error instanceof BadRequestException ||
@@ -136,23 +125,6 @@ export class MissionController {
     }
   }
 
-  @Put('/:missionId')
-  async update(
-    @Param('missionId') missionId: number,
-    @Body() updateMissionDto: UpdateMissionDto,
-    @Req() req: any,
-  ) {
-    try {
-      return await this.missionService.update(
-        req.userId,
-        +missionId,
-        updateMissionDto,
-      );
-    } catch (error) {
-      throw new InternalServerErrorException(`${error}`);
-    }
-  }
-
   @Delete('/:missionId')
   async delete(@Param('missionId') missionId: number, @Req() req: any) {
     try {
@@ -160,6 +132,65 @@ export class MissionController {
       return await this.missionService.remove(+missionId, userId);
     } catch (error) {
       throw new InternalServerErrorException(`${error}`);
+    }
+  }
+
+  // 미션 수정 페이지를 렌더링하고 미션 정보를 수정하는 엔드포인트
+  //@UseGuards(JwtAuthGuard)
+  @Get('/update/:missionId')
+  @Render('mission-update.ejs')
+  async getMissionUpdatePage(
+    @Param('missionId') missionId: number,
+  ): Promise<any> {
+    try {
+      // 미션 ID를 통해 미션 정보를 가져옵니다.
+      const mission = await this.missionService.findOne(missionId);
+
+      // 미션 정보를 객체 형태로 구성하여 반환합니다.
+      return {
+        mission: {
+          missionId: mission.missionId,
+          category: mission.category,
+          startDate: mission.startDate.toISOString().split('T')[0],
+          endDate: mission.endDate.toISOString().split('T')[0],
+          numberPeople: mission.numberPeople,
+          authSum: mission.authSum,
+          creatorId: mission.creatorId,
+          title: mission.title,
+          description: mission.description,
+          thumbnail: mission.thumbnail,
+        },
+      };
+    } catch (error) {
+      console.error(`Error getting mission info: ${error.message}`);
+      throw new InternalServerErrorException(
+        '미션 정보를 가져오는 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  @Put('/:missionId')
+  async update(
+    @Param('missionId') missionId: number,
+    @Body() updateMissionDto: UpdateMissionDto,
+    @Req() req: any,
+  ) {
+    try {
+      const updatedMission = await this.missionService.update(
+        req.userId,
+        +missionId,
+        updateMissionDto,
+      );
+
+      return {
+        message: '미션 수정 완료',
+        mission: updatedMission,
+      };
+    } catch (error) {
+      console.error(`Error updating mission: ${error.message}`);
+      throw new InternalServerErrorException(
+        '미션 수정 중 오류가 발생했습니다.',
+      );
     }
   }
 }
