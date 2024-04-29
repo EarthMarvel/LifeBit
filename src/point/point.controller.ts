@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, Req } from '@nestjs/common';
 import { PointService } from './point.service';
 
 @Controller('')
@@ -7,8 +7,9 @@ export class PointController {
 
   @Get('ranking')
   @Render('ranking.ejs')
-  async getRanking() {
+  async getRanking(@Req() req: Request) {
     const usersPoint = await this.pointService.allPointView();
-    return { usersPoint };
+    console.log(usersPoint);
+    return { usersPoint, isLoggedIn: req['isLoggedIn'] };
   }
 }
