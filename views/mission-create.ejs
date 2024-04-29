@@ -177,9 +177,32 @@
         }
       });
 
+      const allowedCategories = [
+        'Sports',
+        'Cooking',
+        'Music',
+        'Art',
+        'Travel',
+        'Photography',
+        'Workout',
+        'Reading',
+        'Study',
+        'Selfhelp',
+      ];
+
       // 폼 제출 로직
       $('#missionForm').submit(function (event) {
         event.preventDefault();
+
+        const category = $('#category').val();
+
+        // 카테고리 유효성 검사
+        if (!allowedCategories.includes(category)) {
+          alert(
+            '올바르지 않은 카테고리입니다. 유효한 카테고리: Sports, Cooking, Music, Art, Travel, Photography, Workout, Reading, Study, Selfhelp',
+          );
+          return;
+        }
 
         const formData = new FormData();
         formData.append('thumbnail', $('#fileInput')[0].files[0]);
