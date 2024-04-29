@@ -45,7 +45,7 @@
                 <a
                   href="#"
                   class="nav-link px-2 text-info"
-                  onclick="location.href='http://localhost:3000/boards'"
+                  onclick="location.href='/boards'"
                   >Life Bit</a
                 >
               </li>
@@ -111,7 +111,7 @@
           boardId = urlParts[index + 1];
         }
         if (boardId) {
-          window.location.href = `http://localhost:3000/boards/view/${boardId}/update`;
+          window.location.href = `/boards/view/${boardId}/update`;
         } else {
           console.log('boardId를 가져올 수 없습니다.');
         }
@@ -128,13 +128,13 @@
         }
 
         $.ajax({
-          url: `http://localhost:3000/boards/${boardId}`,
+          url: `/${boardId}`,
           method: 'DELETE',
           contentType: 'application/json',
           data: JSON.stringify(),
           success: (data) => {
             alert('게시물 삭제가 완료되었습니다.');
-            window.location.href = 'http://localhost:3000/boards';
+            window.location.href = '/boards';
           },
           error: (jqXHR, textStatus, errorThrown) => {
             const errorMessage = jqXHR.responseJSON

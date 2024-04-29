@@ -87,14 +87,14 @@
         formData.append('description', $('#status-message').val());
 
         $.ajax({
-          url: 'http://localhost:3000/user/profile',
+          url: '/user/profile',
           method: 'PATCH',
           processData: false,
           contentType: false,
           data: formData,
           success: (data) => {
             alert('프로필 설정이 완료되었습니다.');
-            window.location.href = 'http://localhost:3000/user/profileInfo';
+            window.location.href = '/user/profileInfo';
           },
           error: (jqXHR, textStatus, errorThrown) => {
             const errorMessage = jqXHR.responseJSON
