@@ -162,7 +162,9 @@
         <!-- Calendar -->
         <div class="col-md-8">
             <h2 id="currentMonthYear"></h2>
-            <span id="plannerDescription"><%= data.planner_info.description%></span>
+            <% if (data.today_task && data.today_task.length > 0) { %>
+                <span id="plannerDescription"><%= data.planner_info.description%></span>
+            <% }%>
             <button id="editDescriptionBtnNN">edit</button>
             <input type="hidden" name="plannerId" value=<%= data.planner_info.plannerId %>
             
@@ -417,54 +419,58 @@
             
             // 기존의 할 일 목록을 테이블의 tbody로 참조
             const scheduleTableBody = document.querySelector('#scheduleTable tbody');
-            scheduleTableBody.innerHTML = ''; // 기존 목록 초기화
-            
-            // 새로운 할 일 목록 추가
-            responseData.data.today_task.forEach(item => {
-                const newRow = document.createElement('tr');
-                newRow.classList.add('taskList-row');
+            if (scheduleTableBody) {
+                scheduleTableBody.innerHTML = ''; // 기존 목록 초기화
 
-                // 각 항목을 생성하고 셀에 추가
-                const taskCell = document.createElement('td');
-                taskCell.textContent = item.todo;
-                newRow.appendChild(taskCell);
+                // 새로운 할 일 목록 추가
+                responseData.data.today_task.forEach(item => {
+                    const newRow = document.createElement('tr');
+                    newRow.classList.add('taskList-row');
 
-                const taskIdInput = document.createElement('input');
-                taskIdInput.setAttribute('type', 'hidden');
-                taskIdInput.classList.add('task_id');
-                taskIdInput.value = item.taskId;
-                newRow.appendChild(taskIdInput);
+                    // 각 항목을 생성하고 셀에 추가
+                    const taskCell = document.createElement('td');
+                    taskCell.textContent = item.todo;
+                    newRow.appendChild(taskCell);
 
-                const checkboxCell = document.createElement('td');
-                const checkboxInput = document.createElement('input');
-                checkboxInput.classList.add('form-check-input');
-                checkboxInput.setAttribute('type', 'checkbox');
-                checkboxInput.value = item.taskId;
-                checkboxInput.id = `taskCheckbox${item.taskId}`;
-                checkboxCell.appendChild(checkboxInput);
-                newRow.appendChild(checkboxCell);
+                    const taskIdInput = document.createElement('input');
+                    taskIdInput.setAttribute('type', 'hidden');
+                    taskIdInput.classList.add('task_id');
+                    taskIdInput.value = item.taskId;
+                    newRow.appendChild(taskIdInput);
 
-                const editButtonCell = document.createElement('td');
-                const editButton = document.createElement('button');
-                editButton.setAttribute('type', 'button');
-                editButton.classList.add('btn', 'btn-warning', 'btn-sm', 'editTaskBtn');
-                editButton.setAttribute('data-task-id', item.taskId);
-                editButton.textContent = 'Edit';
-                editButtonCell.appendChild(editButton);
-                newRow.appendChild(editButtonCell);
+                    const checkboxCell = document.createElement('td');
+                    const checkboxInput = document.createElement('input');
+                    checkboxInput.classList.add('form-check-input');
+                    checkboxInput.setAttribute('type', 'checkbox');
+                    checkboxInput.value = item.taskId;
+                    checkboxInput.id = `taskCheckbox${item.taskId}`;
+                    checkboxCell.appendChild(checkboxInput);
+                    newRow.appendChild(checkboxCell);
 
-                const deleteButtonCell = document.createElement('td');
-                const deleteButton = document.createElement('button');
-                deleteButton.setAttribute('type', 'button');
-                deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'deleteTaskBtn');
-                deleteButton.setAttribute('data-task-id', item.taskId);
-                deleteButton.textContent = 'Delete';
-                deleteButtonCell.appendChild(deleteButton);
-                newRow.appendChild(deleteButtonCell);
+                    const editButtonCell = document.createElement('td');
+                    const editButton = document.createElement('button');
+                    editButton.setAttribute('type', 'button');
+                    editButton.classList.add('btn', 'btn-warning', 'btn-sm', 'editTaskBtn');
+                    editButton.setAttribute('data-task-id', item.taskId);
+                    editButton.textContent = 'Edit';
+                    editButtonCell.appendChild(editButton);
+                    newRow.appendChild(editButtonCell);
 
-                // 테이블에 새로운 행 추가
-                scheduleTableBody.appendChild(newRow);
-            });
+                    const deleteButtonCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.setAttribute('type', 'button');
+                    deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'deleteTaskBtn');
+                    deleteButton.setAttribute('data-task-id', item.taskId);
+                    deleteButton.textContent = 'Delete';
+                    deleteButtonCell.appendChild(deleteButton);
+                    newRow.appendChild(deleteButtonCell);
+
+                    // 테이블에 새로운 행 추가
+                    scheduleTableBody.appendChild(newRow);
+                });
+            }
+
+           
         } catch (error) {
             console.error('Error:', error);
         }
