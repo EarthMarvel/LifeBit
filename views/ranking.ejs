@@ -4,14 +4,8 @@
     <link rel="stylesheet" href="/css/ranking.css" />
   </head>
   <body>
+    <%- include('nav.ejs'); -%>
     <div class="bg-gray-100 p-10">
-      <header class="flex items-center justify-between mb-8">
-        <h1 class="text-3xl font-bold">Life-Bit</h1>
-        <input
-          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder="Search"
-        />
-      </header>
       <main class="grid grid-cols-3 gap-8">
         <section class="col-span-2">
           <h2 class="text-lg font-semibold mb-4">Ranking</h2>
@@ -30,7 +24,7 @@
                 <div>
                   <p class="text-sm font-semibold"><%= usersPoint[0].nickName %> - 1등</p>
                   <p class="text-xs text-gray-500 dark:text-gray-200">
-                    <%= usersPoint[0].point %>점
+                    <%= usersPoint[0].value %>점
                   </p>
                 </div>
               </div>
@@ -49,7 +43,7 @@
                 <div>
                   <p class="text-sm font-semibold"><%= usersPoint[1].nickName %> - 2등</p>
                   <p class="text-xs text-gray-500 dark:text-gray-200">
-                    <%= usersPoint[1].point %>점
+                    <%= usersPoint[1].value %>점
                   </p>
                 </div>
               </div>
@@ -68,7 +62,7 @@
                 <div>
                   <p class="text-sm font-semibold"><%= usersPoint[2].nickName %> - 3등</p>
                   <p class="text-xs text-gray-500 dark:text-gray-200">
-                    <%= usersPoint[2].point %>점
+                    <%= usersPoint[2].value %>점
                   </p>
                 </div>
               </div>
