@@ -26,8 +26,8 @@ import { VisionModule } from './vision/vision.module';
 import { CertificatedImage } from './vision/entity/certificatedImage.entity';
 import { Like } from './board/entities/likes.entity';
 import { ChatGateway } from './socket/chat.gateway';
-import { UserMission } from './user-mission/entities/user-mission.entity';
-import { UserMissionModule } from './user-mission/user-mission.module';
+// import { UserMission } from './user-mission/entities/user-mission.entity';
+// import { UserMissionModule } from './user-mission/user-mission.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -49,7 +49,7 @@ const typeOrmModuleOptions = {
       Mission,
       Like,
       CertificatedImage,
-      UserMission,
+      //UserMission,
     ],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
@@ -88,7 +88,7 @@ const typeOrmModuleOptions = {
     MainModule,
     SchedulerModule,
     VisionModule,
-    UserMissionModule,
+    //UserMissionModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

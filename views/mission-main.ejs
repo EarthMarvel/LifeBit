@@ -138,13 +138,14 @@
   </style>
 </head>
 <body>
+
   <div class="container">
-    <!-- 헤더 -->
+    
     <header class="p-3 bg-dark text-white">
       <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-between">
-          <a href="/" class="navbar-brand text-white">
-            <h1>미션</h1>
+          <a href="/main" class="navbar-brand text-white">
+            <h1>LifeBit</h1>
           </a>
           <div class="d-flex">
             <button
@@ -153,13 +154,6 @@
               onclick="window.location.href='/main'"
             >
               메인으로
-            </button>
-            <button
-              type="button"
-              class="btn btn-light me-2"
-              onclick="window.location.href='/login'"
-            >
-              로그인
             </button>
             <button
               type="button"
@@ -172,7 +166,8 @@
         </div>
       </div>
     </header>
-
+  
+  
     <!-- 본문 -->
     <main class="my-4">
       <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -207,6 +202,34 @@
 
   <!-- 스크립트 -->
   <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+// 페이지가 로드될 때 로그인/로그아웃 링크를 업데이트하는 함수 호출
+updateLoginLogoutLink();
+
+function updateLoginLogoutLink() {
+  const loginLink = document.getElementById('loginLink');
+
+  // 쿠키에서 토큰 값을 가져옴, 쿠키 이름을 'authorization'으로 가정
+  const token = getCookie('authorization');
+
+    // 토큰 값이 있는지 확인하여 로그인/로그아웃 링크를 업데이트
+    if (token) {
+      loginLink.innerHTML = '<a class="nav-link" href="#">Logout</a>';
+    } else {
+      loginLink.innerHTML =
+        '<a class="nav-link" href="/user/sign-in">Login</a>';
+    }
+} 
+
+  // 쿠키에서 지정된 이름의 쿠키 값을 가져오는 함수
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+});
+    
     function viewMission(missionId) {
       window.location.href = `/mission/${missionId}`;
     }
