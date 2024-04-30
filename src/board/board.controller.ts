@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   Render,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -31,9 +32,9 @@ export class BoardController {
   // 메인 페이지
   @Get('')
   @Render('board-main.ejs')
-  async getAllBoards() {
+  async getAllBoards(@Req() req: Request) {
     const boards = await this.boardService.getAllBoards();
-    return { boards };
+    return { boards, isLoggedIn: req['isLoggedIn'] };
   }
 
   // 게시물 검색

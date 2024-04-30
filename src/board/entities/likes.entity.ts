@@ -19,7 +19,7 @@ export class Like {
   @Column({ type: 'bigint', name: 'userId', nullable: true })
   userId: number;
 
-  @ManyToOne(() => Boards, (boards) => boards.likes)
+  @ManyToOne(() => Boards, (boards) => boards.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'boardId', referencedColumnName: 'boardId' })
   boards: Boards;
 
