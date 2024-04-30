@@ -7,14 +7,14 @@ $('#loginForm').submit((event) => {
   };
 
   $.ajax({
-    url: 'http://localhost:3000/user/log-in',
+    url: '/user/log-in',
     method: 'POST',
     contentType: 'application/json',
     data: JSON.stringify(formData),
     success: (data) => {
       // 응답이 성공적인 경우
       alert('로그인에 성공하였습니다.');
-      window.location.href = 'http://localhost:3000/main';
+      window.location.href = '/main';
     },
     error: (jqXHR, textStatus, errorThrown) => {
       // 요청이 실패했을 때의 처리

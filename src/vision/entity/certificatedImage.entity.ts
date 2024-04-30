@@ -22,7 +22,7 @@ export class CertificatedImage {
   isCertificated: boolean;
 
   @Column({ default: '' })
-  category: Category;
+  category: String;
 
   @ManyToOne(() => Mission, (mission) => mission.certificatedImages)
   @JoinColumn({ name: 'missionId' })

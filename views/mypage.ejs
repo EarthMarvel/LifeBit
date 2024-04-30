@@ -50,7 +50,6 @@
                 <div class="challenge-card">
                     <div class="card">
                         <div class="card-body">
-                            <img src="<%= mission.mission_thumbnail_url %>" alt="Mission Thumbnail">
                             <h5 class="card-title"><%= mission.mission_title %></h5>
                             <p class="card-text"><%= mission.mission_description %></p>
                             <p>
@@ -91,7 +90,7 @@
               type="button"
               class="btn btn-primary"
               id="editUserInfoBtn"
-              onclick="location.href='http://localhost:3000/user/setProfile'"
+              onclick="location.href='/user/setProfile'"
             >
               정보 수정
             </button>

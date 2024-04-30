@@ -1,10 +1,9 @@
-import { Inject, Injectable, Logger } from '@nestjs/common'; // Logger 추가
+import { Injectable, Logger } from '@nestjs/common';
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CertificatedImage } from './entity/certificatedImage.entity';
 import { Mission } from 'src/mission/entities/mission.entity';
-import { Category } from 'src/mission/types/category';
 import { User } from 'src/user/entities/user.entity';
 import { Point } from 'src/point/entity/point.entity';
 import { PointService } from 'src/point/point.service';
@@ -12,7 +11,7 @@ import { PointService } from 'src/point/point.service';
 @Injectable()
 export class VisionService {
   private client: ImageAnnotatorClient;
-  private readonly logger = new Logger(VisionService.name); // 로그를 위한 Logger 인스턴스 생성
+  private readonly logger = new Logger(VisionService.name);
 
   constructor(
     @InjectRepository(CertificatedImage)
@@ -28,88 +27,104 @@ export class VisionService {
     this.client = new ImageAnnotatorClient();
   }
 
-  // 이미지 라벨을 감지하고, 주어진 카테고리와 일치하는지 검증
+  // 이미지 라벨 감지 및 인증 결과 반환
   async certificateImageCategory(
     fileBuffer: Buffer,
-    category: Category,
+    category: string,
     missionId: number,
     userId: number,
-  ) {
-    console.log('before try : userId : ' + userId);
+  ): Promise<boolean> {
     try {
-      const user = await this.userRepository.findOne({
-        where: { user_id: userId },
-        relations: ['point'],
-      });
+      // 사용자 및 미션 조회
+      const user = await this.getUser(userId);
+      const mission = await this.getMission(missionId);
 
-      if (!user) {
-        throw new Error('User not found');
+      // 포인트 조회 및 생성
+      const currentPoint = await this.getOrCreatePoint(user);
+
+      // 이미지 라벨 감지
+      const labels = await this.detectLabels(fileBuffer);
+
+      // 카테고리 관련 라벨 조회
+      const relatedLabels = this.getRelatedLabelsByCategory(category);
+
+      // 인증 여부 확인
+      const isCategoryMatched = this.isCategoryMatched(labels, relatedLabels);
+
+      // 인증 결과 저장
+      await this.saveCertificateImage(
+        isCategoryMatched,
+        user,
+        mission,
+        category,
+      );
+
+      // 인증 성공 시 포인트 업데이트
+      if (isCategoryMatched) {
+        await this.updateUserPoints(userId);
       }
 
-      const point = await this.pointRepository.findOne({
-        where: { user: { user_id: userId } },
-        relations: ['user'],
-      });
+      return isCategoryMatched;
+    } catch (error) {
+      this.logger.error(`certificateImageCategory 오류: ${error.message}`);
+      throw new Error(`certificatedImageCategory 실패: ${error.message}`);
+    }
+  }
 
-      console.log('initial : point.user : ' + point.user);
-      // console.log('initial : point.id : ' + point.id);
-      console.log('initial : point.user.user_id :' + point.user.user_id);
+  // 사용자 조회
+  private async getUser(userId: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { user_id: userId },
+      relations: ['point'],
+    });
 
-      if (!user.point) {
-        // 새 Point 객체 생성
-        const newPoint = new Point();
-        newPoint.totalValue = 0; // 초기 totalValue 설정
-        newPoint.value = 0; // 초기 value 설정
+    if (!user) {
+      throw new Error('User not found');
+    }
 
-        // user와 새로운 Point 객체 연결
-        user.point = newPoint;
+    return user;
+  }
 
-        // 데이터베이스에 새 Point 객체 저장
-        await this.pointRepository.save(newPoint);
-        // 변경된 user 객체도 저장할 수 있음 (user 엔티티에 따라 다름)
-        await this.userRepository.save(user);
-      }
+  // 미션 조회
+  private async getMission(missionId: number): Promise<Mission> {
+    const mission = await this.missionRepository.findOneBy({ missionId });
 
-      const mission = await this.missionRepository.findOneBy({
-        missionId,
-      });
+    if (!mission) {
+      throw new Error('Mission not found');
+    }
 
-      if (!mission) {
-        throw new Error('Mission not found');
-      }
+    return mission;
+  }
 
-      console.log('mission.category : ' + mission.category);
+  // 포인트 조회 및 생성
+  private async getOrCreatePoint(user: User): Promise<Point> {
+    let point = await this.pointRepository.findOne({
+      where: { user: { user_id: user.user_id } },
+    });
 
-      if (mission.category === category) {
-        console.log('mission.category === category');
-      } else {
-        console.log('mission.category : ' + mission.category);
-        console.log('category : ' + category);
-      }
+    if (!point) {
+      point = new Point();
+      point.totalValue = 0;
+      point.value = 0;
+      point.user = user;
+      await this.pointRepository.save(point);
+      user.point = point;
+      await this.userRepository.save(user);
+    }
 
-      const currentPoint = await this.pointRepository.findOne({
-        where: { user: { user_id: userId } }, // 수정된 부분
-        relations: ['user'],
-      });
+    return point;
+  }
 
-      console.log('currentPoint : ' + currentPoint);
-      // console.log('currentPoint.id : ' + currentPoint.id);
+  // 이미지 라벨 감지
+  private async detectLabels(fileBuffer: Buffer): Promise<string[]> {
+    const [result] = await this.client.labelDetection(fileBuffer);
+    return result.labelAnnotations.map((label) => label.description);
+  }
 
-      if (!currentPoint) {
-        throw new Error('currentPoint not found');
-      }
-
-      // mission.category와 category는 다를 수 있다.
-      // category를 입력값으로 받을 게 아니라 .. mission.category를 사용해야 한다.
-      // 근데 드롭다운으로 받는 걸 category에 string으로 넣어주면 될 거 같음 이건 프론트랑 연결할 때 생각해보자
-
-      // 이미지 라벨 감지를 위해 fileBuffer 사용
-      const [result] = await this.client.labelDetection(fileBuffer);
-
-      const labels = result.labelAnnotations.map((label) => label.description);
-
-      // ** Sports 카테고리와 관련된 라벨 목록
-      const sportsRelatedLabels = [
+  // 카테고리 관련 라벨 목록 조회
+  private getRelatedLabelsByCategory(category: string): string[] {
+    const categoryLabelMap = {
+      Sports: [
         'Football',
         'Basketball',
         'Soccer',
@@ -144,10 +159,8 @@ export class VisionService {
         'Race',
         'Match',
         'Event',
-      ];
-
-      // ** COOKING 카테고리와 관련된 라벨 목록
-      const cookingRelatedLabels = [
+      ],
+      Cooking: [
         'Cooking',
         'Baking',
         'Grilling',
@@ -197,10 +210,8 @@ export class VisionService {
         'BBQ',
         'Sushi',
         'Pastry',
-      ];
-
-      // ** MUSIC 카테고리와 관련된 라벨 목록
-      const musicRelatedLabels = [
+      ],
+      Music: [
         'Guitar',
         'Piano',
         'Drum',
@@ -235,10 +246,8 @@ export class VisionService {
         'Music Album',
         'Music Score',
         'Concert Ticket',
-      ];
-
-      // ** ART 카테고리와 관련된 라벨 목록
-      const artRelatedLabels = [
+      ],
+      Art: [
         'Paintbrush',
         'Easel',
         'Palette',
@@ -278,10 +287,8 @@ export class VisionService {
         'Art Studio',
         'Art School',
         'Exhibition Hall',
-      ];
-
-      // ** TRAVEL 카테고리와 관련된 라벨 목록
-      const travelRelatedLabels = [
+      ],
+      Travel: [
         'Landmark',
         'National Park',
         'Beach',
@@ -334,10 +341,8 @@ export class VisionService {
         'Botanical Garden',
         'Zoo',
         'Aquarium',
-      ];
-
-      // ** PHOTOGRAPHY 카테고리와 관련된 라벨 목록
-      const photographyRelatedLabels = [
+      ],
+      Photography: [
         'Camera',
         'Lens',
         'Tripod',
@@ -373,10 +378,8 @@ export class VisionService {
         'Photo Album',
         'Gallery',
         'Frame',
-      ];
-
-      // ** Workout 카테고리와 관련된 라벨 목록
-      const workoutRelatedLabels = [
+      ],
+      Workout: [
         'Exercise Equipment',
         'Gym',
         'Fitness Center',
@@ -387,10 +390,8 @@ export class VisionService {
         'Weight Lifting',
         'Cycling',
         'Sport',
-      ];
-
-      // ** Reading 카테고리와 관련된 라벨 목록
-      const readingRelatedLabels = [
+      ],
+      Reading: [
         'Book',
         'Reading Glasses',
         'Library',
@@ -401,10 +402,8 @@ export class VisionService {
         'Study or Studying',
         'Literature',
         'Text',
-      ];
-
-      // ** Study 카테고리와 관련된 라벨 목록
-      const studyRelatedLabels = [
+      ],
+      Study: [
         'Book',
         'Notebook',
         'Pen/Pencil',
@@ -415,10 +414,8 @@ export class VisionService {
         'Classroom',
         'Textbook',
         'Educational Material',
-      ];
-
-      // ** Selfhelp 카테고리와 관련된 라벨 목록
-      const selfhelpRelatedLabels = [
+      ],
+      Selfhelp: [
         'Educational Material',
         'Online Course',
         'Tutorial',
@@ -431,107 +428,39 @@ export class VisionService {
         'Motivational Quotes',
         'Art',
         'Writing',
-      ];
+      ],
+    };
+    return categoryLabelMap[category] || [];
+  }
 
-      var relatedLabels = [];
+  // 인증 여부 확인
+  private isCategoryMatched(
+    labels: string[],
+    relatedLabels: string[],
+  ): boolean {
+    return labels.some((label) => relatedLabels.includes(label));
+  }
 
-      switch (category) {
-        case 'Sports':
-          relatedLabels = sportsRelatedLabels;
-          break;
-        case 'Cooking':
-          relatedLabels = cookingRelatedLabels;
-          break;
-        case 'Music':
-          relatedLabels = musicRelatedLabels;
-          break;
-        case 'Art':
-          relatedLabels = artRelatedLabels;
-          break;
-        case 'Travel':
-          relatedLabels = travelRelatedLabels;
-          break;
-        case 'Photography':
-          relatedLabels = photographyRelatedLabels;
-          break;
-        case 'Workout':
-          relatedLabels = workoutRelatedLabels;
-          break;
-        case 'Reading':
-          relatedLabels = readingRelatedLabels;
-          break;
-        case 'Study':
-          relatedLabels = studyRelatedLabels;
-          break;
-        case 'Selfhelp':
-          relatedLabels = selfhelpRelatedLabels;
-          break;
-      }
+  // 인증 결과 저장
+  private async saveCertificateImage(
+    isCategoryMatched: boolean,
+    user: User,
+    mission: Mission,
+    category: string,
+  ): Promise<void> {
+    const certificateImage = this.certificatedImageRepository.create({
+      certificatedAt: new Date(),
+      isCertificated: isCategoryMatched,
+      user,
+      mission,
+      category,
+    });
 
-      // ** 감지된 라벨 중에서 Workout 카테고리와 관련된 라벨이 하나라도 있는지 확인
-      const isCategoryMatched = labels.some((label) =>
-        relatedLabels.includes(label),
-      );
+    await this.certificatedImageRepository.save(certificateImage);
+  }
 
-      // ** 인증 성공 여부에 따라 다른 작업 수행
-      if (isCategoryMatched) {
-        // 인증 성공 로직
-        console.log('인증 성공 : ', labels.join(', '));
-
-        // 사용자의 현재 포인트 가져오기 또는 새로 생성
-        let userPoint = await this.pointRepository.findOne({
-          where: { user: { user_id: userId } },
-        });
-
-        console.log('userPoint : ' + userPoint);
-        console.log('userId : ' + userId);
-
-        // if (!userPoint) {
-        //   userPoint = this.pointRepository.create({
-        //     user: user, // User 엔티티 인스턴스 자체를 할당
-        //     totalValue: 0,
-        //     value: 0,
-        //   });
-        // }
-
-        // 포인트 업데이트
-        this.pointService.plusPoint(100, userId);
-
-        await this.pointRepository.save(userPoint);
-
-        console.log(
-          `사용자 ID ${user.user_id}의 포인트 업데이트 성공: totalValue에 100 추가, value를 100으로 설정`,
-        );
-      } else {
-        // 인증 실패 로직
-        console.log('인증 실패 : ', labels.join(', '));
-      }
-
-      const certificatedImage = this.certificatedImageRepository.create({
-        certificatedAt: new Date(),
-        isCertificated: isCategoryMatched,
-        user: user, // 사용자 엔티티 연결
-        mission: mission, // 미션 엔티티 연결
-        category: category, // 카테고리 연결
-      });
-
-      // CertificatedImage 테이블에 결과 저장
-      await this.certificatedImageRepository.save(certificatedImage);
-
-      // 함수 마지막에 총 포인트 값을 반환
-      const updatedUser = await this.userRepository.findOne({
-        where: { user_id: userId },
-      });
-
-      return {
-        requestedCategory: category,
-        detectedLabels: labels,
-        isCategoryMatched,
-        Point,
-      };
-    } catch (error) {
-      this.logger.error(`detectLabels 오류: ${error.message}`);
-      throw new Error(`Label Detection 실패: ${error.message}`);
-    }
+  // 사용자 포인트 업데이트
+  private async updateUserPoints(userId: number): Promise<void> {
+    await this.pointService.plusPoint(100, userId);
   }
 }

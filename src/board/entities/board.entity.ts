@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -16,6 +17,9 @@ import { Like } from './likes.entity';
 export class Boards extends BaseEntity {
   @PrimaryGeneratedColumn()
   boardId: number;
+
+  @Column({ type: 'bigint', name: 'userId', nullable: true })
+  userId: number;
 
   @Column({ type: 'varchar', nullable: false })
   title: string;
@@ -41,6 +45,7 @@ export class Boards extends BaseEntity {
   category: Category;
 
   @ManyToOne(() => User, (user) => user.boards)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'user_id' })
   users: User;
 
   @OneToMany(() => Like, (like) => like.boards)
