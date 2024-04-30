@@ -50,14 +50,14 @@ export class PointService {
     const allPoint = await this.pointRepository.find({
       relations: ['user'],
       order: {
-        value: 'DESC',
+        totalValue: 'DESC',
       },
       take: 10,
     });
 
     const formattedPoints = allPoint.map((point) => ({
       id: point.id,
-      value: point.value,
+      value: point.totalValue,
       createdAt: point.createdAt,
       nickName: point.user.nickName,
       image: point.user.image,

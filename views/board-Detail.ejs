@@ -15,6 +15,12 @@
     />
 
     <link rel="stylesheet" href="../public/css/boards.css" />
+
+    <style>
+      .header {
+        background-color: black;
+      }
+    </style>
   </head>
   <body>
     <div class="header">
@@ -50,20 +56,6 @@
                 >
               </li>
             </ul>
-
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-              <input
-                type="search"
-                class="form-control form-control-dark text-bg-dark"
-                placeholder="검색"
-                aria-label="Search"
-              />
-            </form>
-
-            <div class="text-end">
-              <button type="button" class="btn btn-outline-light me-2">
-                Login
-              </button>
             </div>
           </div>
         </div>
@@ -129,13 +121,13 @@
         }
 
         $.ajax({
-          url: `/${boardId}`,
+          url: `http://localhost:3000/boards/${boardId}`,
           method: 'DELETE',
           contentType: 'application/json',
           data: JSON.stringify(),
           success: (data) => {
             alert('게시물 삭제가 완료되었습니다.');
-            window.location.href = '/boards';
+            window.location.href = 'http://localhost:3000/boards';
           },
           error: (jqXHR, textStatus, errorThrown) => {
             const errorMessage = jqXHR.responseJSON

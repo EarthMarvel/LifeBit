@@ -5,6 +5,7 @@ body {
 .bg-gray-100 {
   background-color: #f7f7f7; /* 연한 회색 배경색 */
   padding: 10px;
+  margin-top: 60px;
 }
 
 /* 헤더 스타일링 */
