@@ -51,6 +51,13 @@
             <button type="button" class="btn btn-secondary category">Sports</button>
             <button type="button" class="btn btn-secondary category">Cooking</button>
             <button type="button" class="btn btn-secondary category">Music</button>
+            <button type="button" class="btn btn-secondary category">Art</button>
+            <button type="button" class="btn btn-secondary category">Travel</button>
+            <button type="button" class="btn btn-secondary category">Photography</button>
+            <button type="button" class="btn btn-secondary category">Workout</button>
+            <button type="button" class="btn btn-secondary category">Reading</button>
+            <button type="button" class="btn btn-secondary category">Study</button>
+            <button type="button" class="btn btn-secondary category">Selfhelp</button>
         </div>
 
     <% data.forEach(mission => { %>
@@ -59,7 +66,8 @@
             <h5 class="card-title"><%= mission.title %></h5>
             <p class="card-text"><%= mission.description %></p>
             <p class="card-text">#<%= mission.category %></p>
-            <a href="#" class="btn btn-primary">Let's Start</a>
+            <a href="/mission/<%= mission.missionId %>" class="btn btn-primary">Let's Start</a>
+
         </div>
     </div>
     <% }); %>
@@ -93,7 +101,7 @@ function searchTitle(event) {
 
 function searchCategory(event) {
     event.preventDefault(); 
-    
+
     var category = event.target.innerText;
 
     fetch(`/main/search?category=${category}`)
@@ -113,30 +121,6 @@ function searchCategory(event) {
 
 // 페이지가 로드되면 이벤트 핸들러를 추가
 document.addEventListener('DOMContentLoaded', function() {
-
-     // 페이지가 로드될 때 로그인/로그아웃 링크를 업데이트하는 함수 호출
-     updateLoginLogoutLink();
-
-    function updateLoginLogoutLink() {
-        const loginLink = document.getElementById('loginLink');
-
-        // 쿠키에서 토큰 값을 가져옴, 쿠키 이름을 'authorization'으로 가정
-        const token = getCookie('authorization');
-
-        // 토큰 값이 있는지 확인하여 로그인/로그아웃 링크를 업데이트
-        if (token) {
-            loginLink.innerHTML = '<a class="nav-link" href="#">Logout</a>';
-        } else {
-            loginLink.innerHTML = '<a class="nav-link" href="/user/sign-in">Login</a>';
-        }
-    }
-
-    // 쿠키에서 지정된 이름의 쿠키 값을 가져오는 함수
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
 
     document.addEventListener('submit', function(event) {
         if (event.target.matches('.search-bar')) { // 검색 폼이 제출되었는지 확인
