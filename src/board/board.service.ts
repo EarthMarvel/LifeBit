@@ -141,8 +141,6 @@ export class BoardService {
       },
     });
 
-    // if (likedUser) {
-    //   await this.likeRepository.delete(likedUser);
     if (likedUser) {
       // 좋아요 삭제
       await this.likeRepository.delete({ boardId, userId });
@@ -158,7 +156,7 @@ export class BoardService {
       board.likedCount++;
 
       // 좋아요 알림 발송
-      this.socketGateway.LikeNotification(boardId, userId);
+      this.socketGateway.sendLikeNotification(boardId, userId);
     }
 
     await this.boardRepository.save(board);
