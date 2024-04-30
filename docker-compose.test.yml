@@ -23,9 +23,9 @@ services:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_USERNAME: root
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PASSWORD: 1234
       DB_NAME: ${DB_NAME}
-      DB_SYNC: ${DB_SYNC}
+      DB_SYNC: true
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       SERVERPOT: ${SERVERPOT}
       PASSWORD_HASH_ROUNDS: 12
