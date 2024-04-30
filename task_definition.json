@@ -1,0 +1,201 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "lifebit",
+            "image": "120342520927.dkr.ecr.ap-northeast-2.amazonaws.com/lifebit:8",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "lifebit-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:AWS_ACCESS_KEY_ID::"
+                },
+                {
+                    "name": "AWS_BUCKET_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:AWS_BUCKET_NAME::"
+                },
+                {
+                    "name": "AWS_BUCKET_REGION",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:AWS_BUCKET_REGION::"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:AWS_SECRET_ACCESS_KEY::"
+                },
+                {
+                    "name": "DB_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:DB_HOST::"
+                },
+                {
+                    "name": "DB_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:DB_NAME::"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:DB_PASSWORD::"
+                },
+                {
+                    "name": "DB_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:DB_PORT::"
+                },
+                {
+                    "name": "DB_SYNC",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:DB_SYNC::"
+                },
+                {
+                    "name": "DB_USERNAME",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:DB_USERNAME::"
+                },
+                {
+                    "name": "GOOGLE_CALLBACK_URL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:GOOGLE_CALLBACK_URL::"
+                },
+                {
+                    "name": "GOOGLE_CLIENT_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:GOOGLE_CLIENT_ID::"
+                },
+                {
+                    "name": "GOOGLE_CLIENT_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:GOOGLE_CLIENT_SECRET::"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:JWT_SECRET::"
+                },
+                {
+                    "name": "JWT_SECRET_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:JWT_SECRET_KEY::"
+                },
+                {
+                    "name": "KAKAO_CALLBACK_URL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:KAKAO_CALLBACK_URL::"
+                },
+                {
+                    "name": "KAKAO_CLIENT_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:KAKAO_CLIENT_SECRET::"
+                },
+                {
+                    "name": "KAKAO_CLINET_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:KAKAO_CLINET_ID::"
+                },
+                {
+                    "name": "MAILER_EMAIL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:MAILER_EMAIL::"
+                },
+                {
+                    "name": "MAILER_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:MAILER_PASSWORD::"
+                },
+                {
+                    "name": "MAILER_TYPE",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:MAILER_TYPE::"
+                },
+                {
+                    "name": "NAVER_CALLBACK_URL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:NAVER_CALLBACK_URL::"
+                },
+                {
+                    "name": "NAVER_CLIENT_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:NAVER_CLIENT_SECRET::"
+                },
+                {
+                    "name": "NAVER_CLINET_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:NAVER_CLINET_ID::"
+                },
+                {
+                    "name": "PASSWORD_HASH_ROUNDS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:PASSWORD_HASH_ROUNDS::"
+                },
+                {
+                    "name": "PORT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:PORT::"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:REDIS_HOST::"
+                },
+                {
+                    "name": "REDIS_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:REDIS_PORT::"
+                },
+                {
+                    "name": "SERVERPOT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:120342520927:secret:pleaseplease-secrets-ZtHDE8:SERVERPOT::"
+                }
+            ],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/lifebit",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "lifebit",
+    "executionRoleArn": "arn:aws:iam::120342520927:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.secrets.asm.environment-variables"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "tags": []
+}
