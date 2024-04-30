@@ -3,11 +3,11 @@ import {
   IsString,
   IsNumber,
   IsDate,
-  IsEnum,
+  IsDateString,
+  ValidateNested,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { Category } from '../types/category';
-import { User } from '../../user/entities/user.entity';
 
 export class UpdateMissionDto {
   @IsNotEmpty()
@@ -19,23 +19,19 @@ export class UpdateMissionDto {
   category: string;
 
   @IsNotEmpty()
-  @IsDate()
-  @Transform(({ value }) => new Date(value))
-  startDate: Date;
+  @IsDateString()
+  startDate: string; // Date로 변경하지 않고, string으로 검증 후 컨트롤러에서 처리
 
   @IsNotEmpty()
-  @IsDate()
-  @Transform(({ value }) => new Date(value))
-  endDate: Date;
+  @IsDateString()
+  endDate: string; // Date로 변경하지 않고, string으로 검증 후 컨트롤러에서 처리
 
-  @Type(() => Number)
   @IsNotEmpty()
   @IsNumber()
+  @Type(() => Number)
   numberPeople: number;
 
   @IsNotEmpty()
   @IsString()
   description: string;
-
-  // DTO에는 participants 목록을 추가하지 않았습니다.
 }

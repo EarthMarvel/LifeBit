@@ -150,9 +150,7 @@ export class MissionController {
       } else if (error instanceof UnauthorizedException) {
         throw new UnauthorizedException('해당 미션을 삭제할 권한이 없습니다.');
       } else {
-        throw new InternalServerErrorException(
-          `미션 삭제 중 오류가 발생했습니다: ${error.message}`,
-        );
+        throw new InternalServerErrorException(error.message);
       }
     }
   }
@@ -199,22 +197,39 @@ export class MissionController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
+      // 요청에서 userId를 추출합니다.
+      const userId = req.userId;
+
+      // 서비스 레이어의 update 메서드를 사용하여 미션을 수정합니다.
       const updatedMission = await this.missionService.update(
-        req.userId,
+        userId,
         +missionId,
         updateMissionDto,
         file,
       );
 
+      // 수정된 미션 정보를 JSON 응답으로 반환합니다.
       return {
         message: '미션 수정 완료',
         mission: updatedMission,
       };
     } catch (error) {
+      // 오류 메시지를 로깅합니다.
       console.error(`Error updating mission: ${error.message}`);
-      throw new InternalServerErrorException(
-        '미션 수정 중 오류가 발생했습니다.',
-      );
+
+      // 오류 종류에 따라 예외를 처리합니다.
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException('잘못된 요청 데이터입니다.');
+      } else if (error instanceof NotFoundException) {
+        throw new NotFoundException('미션을 찾을 수 없습니다.');
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('권한이 부족합니다.');
+      } else {
+        // 그 외의 예외는 내부 서버 오류로 간주합니다.
+        throw new InternalServerErrorException(
+          '미션 수정 중 오류가 발생했습니다.',
+        );
+      }
     }
   }
 }
