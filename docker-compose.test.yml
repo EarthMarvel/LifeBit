@@ -25,7 +25,7 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: 1234
       DB_NAME: ${DB_NAME}
-      DB_SYNC: true
+      DB_SYNC: ${DB_SYNC}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       SERVERPOT: ${SERVERPOT}
       PASSWORD_HASH_ROUNDS: 12
