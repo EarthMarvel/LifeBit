@@ -93,7 +93,7 @@
     <button type="submit" class="btn btn-dark">게시물 삭제</button>
   </form>
     <% } %>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
       function redirectToPage(event) {
         var currentUrl = window.location.href;
@@ -139,6 +139,8 @@
         });
       });
 
+      // -----------------------------------------------------------
+
       $('#likeBtn').submit((event) => {
         event.preventDefault();
         var currentUrl = window.location.href;
@@ -149,10 +151,17 @@
           boardId = urlParts[index + 1];
         }
 
-      // const socket = io();
+        const socket = io();
+        socket.on('likeNotification', function(data) {
+        console.log('좋아요 알림 받음:', data);
+        const { boardId, userId } = data;
+        // 받은 알림을 처리하는 로직
+        const alertMessage = `게시물 ${boardId}에 대한 좋아요 알림: 유저${userId}님이 좋아요를 눌렀습니다.`;
+        alert(alertMessage);
+        // 또는 화면에 알림을 표시하는 등의 작업을 수행할 수 있습니다.
+        });
+
       document.getElementById('likeBtn').addEventListener('click', async function() {
-      // const message = '좋아요가 눌렸습니다!';
-      // socket.emit('like', { message });
       const response = await fetch(`/boards/${boardId}/like`, {
       method: 'POST',
       headers: {
@@ -163,9 +172,6 @@
       })
     });
   });
-  // socket.on('like', (data) => {
-  //     alert(data.message);
-  //   });
 
       $.ajax({
         url: `/boards/${boardId}/like`,
@@ -173,7 +179,7 @@
         contentType: 'application/json',
         data: JSON.stringify(),
         success: (data) => {
-          alert('좋아요!');
+        //   alert('좋아요!');
           window.location.href = `/boards/view/${boardId}`;
         },
         error: (jqXHR, textStatus, errorThrown) => {
