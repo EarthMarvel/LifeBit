@@ -183,41 +183,88 @@
           }
         });
 
-      // 폼 제출 로직
+      // 폼 제출 이벤트 리스너
       document
         .getElementById('missionForm')
         .addEventListener('submit', function (event) {
           event.preventDefault();
 
-          // formData 초기화
+          // formData 생성
           const formData = new FormData();
-          const fileInput = document.getElementById('fileInput');
-          const titleInput = document.getElementById('title');
-          const categoryInput = document.getElementById('category');
-          const startDateInput = document.getElementById('startDate');
-          const endDateInput = document.getElementById('endDate');
-          const numberPeopleInput = document.getElementById('numberPeople');
-          const descriptionInput = document.getElementById('description');
 
-          // 이미지 처리
-          if (fileInput.files[0]) {
-            formData.append('thumbnail', fileInput.files[0]);
+          // 입력 필드의 값을 formData에 추가
+          const title =
+            document.getElementById('title').value || '<%= mission.title %>';
+          if (title.trim() === '') {
+            alert('미션 제목을 입력해야 합니다.');
+            return;
+          }
+          formData.append('title', title);
+
+          const category =
+            document.getElementById('category').value ||
+            '<%= mission.category %>';
+          if (category.trim() === '') {
+            alert('카테고리를 입력해야 합니다.');
+            return;
+          }
+          formData.append('category', category);
+
+          const startDate =
+            document.getElementById('startDate').value ||
+            '<%= mission.startDate %>';
+          const endDate =
+            document.getElementById('endDate').value ||
+            '<%= mission.endDate %>';
+
+          // 날짜 형식 검증 및 변환
+          const isStartDateValid = !isNaN(new Date(startDate).getTime());
+          const isEndDateValid = !isNaN(new Date(endDate).getTime());
+          if (!isStartDateValid) {
+            alert('시작 날짜가 올바른 형식이 아닙니다.');
+            return;
+          }
+          if (!isEndDateValid) {
+            alert('종료 날짜가 올바른 형식이 아닙니다.');
+            return;
+          }
+          formData.append('startDate', new Date(startDate).toISOString());
+          formData.append('endDate', new Date(endDate).toISOString());
+
+          // 참가자 수의 숫자 검증 및 변환
+          let numberPeople =
+            document.getElementById('numberPeople').value ||
+            '<%= mission.numberPeople %>';
+          numberPeople = parseInt(numberPeople, 10);
+          if (isNaN(numberPeople)) {
+            alert('참가자 수가 올바른 숫자가 아닙니다.');
+            return;
+          }
+          formData.append('numberPeople', numberPeople);
+
+          const description =
+            document.getElementById('description').value ||
+            '<%= mission.description %>';
+          if (description.trim() === '') {
+            alert('설명을 입력해야 합니다.');
+            return;
+          }
+          formData.append('description', description);
+
+          // 이미지 파일이 업로드되면 formData에 추가
+          const fileInput = document.getElementById('fileInput');
+          const file = fileInput.files[0];
+          if (file) {
+            formData.append('thumbnail', file);
           } else {
-            // 사용자가 이미지를 선택하지 않았을 경우 기존 썸네일 사용
-            const thumbnailSrc =
-              document.getElementById('thumbnailPreview').src;
-            formData.append('thumbnail', thumbnailSrc);
+            // 기존 썸네일 URL을 사용
+            formData.append(
+              'thumbnail',
+              'https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= mission.thumbnail %>',
+            );
           }
 
-          // 입력 데이터 추가
-          formData.append('title', titleInput.value);
-          formData.append('category', categoryInput.value);
-          formData.append('startDate', startDateInput.value);
-          formData.append('endDate', endDateInput.value);
-          formData.append('numberPeople', numberPeopleInput.value);
-          formData.append('description', descriptionInput.value);
-
-          // 서버 요청
+          // 서버로 PUT 요청 보내기
           const missionId = '<%= mission.missionId %>';
           fetch(`/mission/${missionId}`, {
             method: 'PUT',
@@ -226,15 +273,18 @@
             },
             body: formData,
           })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.message === '미션 수정 완료') {
+            .then((response) => {
+              if (response.ok) {
                 alert('미션이 성공적으로 수정되었습니다.');
                 window.location.href = `/mission/${missionId}`;
+              } else {
+                response.json().then((data) => {
+                  alert(`미션 수정 중 오류: ${data.message}`);
+                });
               }
             })
             .catch((error) => {
-              console.error('미션 수정 중 오류가 발생했습니다:', error);
+              console.error('미션 수정 요청 중 오류:', error);
               alert(
                 '미션 수정 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
               );
