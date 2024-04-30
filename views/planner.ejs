@@ -236,7 +236,10 @@
                         </tbody>
                     </table>
                 <% } else { %>
-                    <p>No tasks for today.</p>
+                    <table id="scheduleTable">
+                        <tbody>
+                        </tbody>
+                    </table>
                 <% } %>
             </div>
         </div>
@@ -444,6 +447,10 @@
                     checkboxInput.setAttribute('type', 'checkbox');
                     checkboxInput.value = item.taskId;
                     checkboxInput.id = `taskCheckbox${item.taskId}`;
+                    // 서버에서 가져온 작업의 상태에 따라 체크 여부 설정
+                    if (item.checkYn) {
+                        checkboxInput.checked = true;
+                    }
                     checkboxCell.appendChild(checkboxInput);
                     newRow.appendChild(checkboxCell);
 
@@ -469,7 +476,6 @@
                     scheduleTableBody.appendChild(newRow);
                 });
             }
-
            
         } catch (error) {
             console.error('Error:', error);
@@ -532,15 +538,14 @@
 
 
     // "Edit" 버튼 클릭 시 이벤트 리스너 추가
-    document.querySelectorAll('.editTaskBtn').forEach(button => {
-        button.addEventListener('click', async function() {
-            // 해당 작업의 ID 가져오기
-            const taskId = this.dataset.taskId;
-            
-            // 여기서 필요한 작업 데이터를 가져와서 수정
-            const taskDescription = prompt('Enter new task description:');
-            
-            // 서버로 수정 요청
+    // Edit 버튼 클릭 이벤트 위임
+    document.querySelector('.container').addEventListener('click', async function(event) {
+        if (event.target.classList.contains('editTaskBtn')) {
+            const taskId = event.target.dataset.taskId;
+            console.log("버튼이 클릭되었습니다: " + taskId);
+
+            const taskDescription = prompt('새로운 작업 설명을 입력하세요:');
+
             try {
                 const response = await fetch(`/my/todo?taskId=${taskId}`, {
                     method: 'PUT',
@@ -549,67 +554,63 @@
                     },
                     body: JSON.stringify({ todo: taskDescription })
                 });
-                
-                // 서버 응답 처리
+
                 const responseData = await response.json();
                 console.log(responseData);
                 location.reload();
-                // 필요한 처리 수행
             } catch (error) {
-                console.error('Error:', error);
+                console.error('오류:', error);
             }
-        });
+        }
     });
 
 
     // "Delete" 버튼 클릭 시 이벤트 리스너 추가
-    document.querySelectorAll('.deleteTaskBtn').forEach(button => {
-        button.addEventListener('click', async function() {
-            // 해당 작업의 ID 가져오기
-            const taskId = this.dataset.taskId;
+    // Delete 버튼 클릭 이벤트 위임
+    document.querySelector('.container').addEventListener('click', async function(event) {
+        if (event.target.classList.contains('deleteTaskBtn')) {
+            const taskId = event.target.dataset.taskId;
             
-            // 삭제 확인 다이얼로그 표시
-            const confirmDelete = confirm('Are you sure you want to delete this task?');
+            const confirmDelete = confirm('이 작업을 삭제하시겠습니까?');
             
-            // 사용자가 확인을 눌렀을 때만 삭제 요청 보내기
             if (confirmDelete) {
                 try {
                     const response = await fetch(`/my/todo?taskId=${taskId}`, {
                         method: 'DELETE'
                     });
                     
-                    // 서버 응답 처리
                     const responseData = await response.json();
                     console.log(responseData);
                     location.reload();
-                    // 필요한 처리 수행
                 } catch (error) {
-                    console.error('Error:', error);
+                    console.error('오류:', error);
                 }
             }
-        });
+        }
     });
 
 
+
     // 체크박스 클릭 시 이벤트 리스너 추가
-    document.querySelectorAll('.form-check-input').forEach(checkbox => {
-        checkbox.addEventListener('change', async function() {
-            // 해당 작업의 ID 가져오기
-            const taskId = this.value;
+    // 체크박스 클릭 이벤트 위임
+    document.querySelector('.event-list').addEventListener('change', async function(event) {
+        if (event.target.classList.contains('form-check-input')) {
+            const taskId = event.target.value;
             
             try {
                 const response = await fetch(`/my/todo/check?taskId=${taskId}`, {
                     method: 'POST'
                 });
                 
-                // 서버 응답 처리
                 const responseData = await response.json();
-        
+                console.log("너왜그래진짜" + response);
+                // 서버 응답 처리
             } catch (error) {
                 console.error('Error:', error);
             }
-        });
+        }
     });
+
 
     //플래너 설명 수정
     document.getElementById('editDescriptionBtnNN').addEventListener('click', async function() {
