@@ -55,8 +55,8 @@ export class Task {
   @Column({ type: 'date' })
   authDate: Date;
 
-  @Column({type : 'boolean', default: false})
-  authYn : boolean;
+  @Column({ type: 'boolean', default: false })
+  authYn: boolean;
 
   @Column({ type: 'boolean', default: false }) // 기본값은 false
   checkYn: boolean;
