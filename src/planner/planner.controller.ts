@@ -26,28 +26,6 @@ import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 export class PlannerController {
   constructor(private readonly plannerService: PlannerService) {}
 
-  //  //테스트 용도
-  //  //날짜 없이 task 조회 (오늘 task 조회)
-  //  @Get('/planner')
-  //     @Render('planner.ejs')
-  //     async myPage(@Res() res : Response) {
-
-  //     const userId = 1;
-  //     const data = await this.plannerService.myPage(userId);
-  //     return { data };
-  // }
-
-  // //날짜에 해당하는 task 조회
-  // @Get('/plannerWithDate')
-  // async myPageWithDate(@Res() res: Response, @Query('startDate') startDate: Date) {
-
-  //     const userId = 1;
-  //     return res.status(HttpStatus.CREATED).json({
-  //         message : "일정을 조회했습니다.",
-  //         data : await this.plannerService.myPage(userId, startDate,)
-  //    });
-  // }
-
   /**
    * 날짜 없이 task 조회 (오늘 task 조회)
    * @param user
@@ -179,34 +157,4 @@ export class PlannerController {
     });
   }
 
-  // /**
-  //  * 내 미션 확인 (테스트용)
-  //  */
-  // @Get('/mission')
-  // async mission(@UserInfo() user: User) {
-
-  //     const data = await this.plannerService.mission(user);
-  //     return { data };
-  // }
-
-  /**
-   * 내 미션 확인
-   */
-  @Get('/mypage')
-  @Render('mypage.ejs')
-  async mission() {
-    const userId = 1;
-    const data = await this.plannerService.mission(userId);
-    console.log(data);
-    return { data };
-  }
-
-  // @Get('/mypage')
-  // @Render('mypage.ejs')
-  // async mission(@Req() req: Request) {
-  //   const userId = 1;
-  //   const data = await this.plannerService.mission(userId);
-  //   console.log(data);
-  //   return { data, isLoggedIn: req['isLoggedIn'] };
-  // }
 }
