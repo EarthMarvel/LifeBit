@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWO RD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_SYNC: ${DB_SYNC}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SERVERPOT: ${SERVERPOT}
+      PASSWORD_HASH_ROUNDS: 12
+      JWT_SECRET: ''
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: ${PORT}
+      MAILER_TYPE: ${MAILER_TYPE}
+      MAILER_EMAIL: ${MAILER_EMAIL}
+      MAILER_PASSWORD: ${MAILER_PASSWORD}
+      AWS_BUCKET_REGION: ${AWS_BUCKET_REGION}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL}
+      NAVER_CLINET_ID: ${NAVER_CLINET_ID}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
+      NAVER_CALLBACK_URL: ${NAVER_CALLBACK_URL}
+      KAKAO_CLINET_ID: ${KAKAO_CLINET_ID}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
+      KAKAO_CALLBACK_URL: ${KAKAO_CALLBACK_URL}
+    command: npm run test
+    depends_on:
+      - mysql
+      - redis
+      
