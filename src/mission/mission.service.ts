@@ -3,12 +3,13 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Mission } from './entities/mission.entity';
 import { Point } from 'src/point/entity/point.entity';
-import { UserMission } from 'src/user-mission/entities/user-mission.entity';
+// import { UserMission } from 'src/user-mission/entities/user-mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { DataSource, Repository } from 'typeorm';
@@ -25,8 +26,8 @@ export class MissionService {
     private missionRepository: Repository<Mission>,
     @InjectRepository(Point)
     private pointRepository: Repository<Point>,
-    @InjectRepository(UserMission)
-    private userMissionRepository: Repository<UserMission>,
+    //@InjectRepository(UserMission)
+    //private userMissionRepository: Repository<UserMission>,
     private readonly s3Service: S3Service,
     private dataSource: DataSource,
   ) {}
@@ -204,32 +205,92 @@ export class MissionService {
   }
 
   async remove(id: number, userId: number) {
+    // 미션을 조회하여 가져옵니다.
     const mission = await this.findOne(id);
 
     /*
-    if (mission.user_id !== userId) {
+    // 권한 검증: 사용자 ID와 미션의 생성자 ID가 일치하지 않으면 권한이 없음
+    if (mission.creatorId !== userId) {
       throw new UnauthorizedException('해당 미션을 삭제할 권한이 없습니다.');
     }
     */
 
-    const result = await this.missionRepository.delete(id);
-    return { result, message: 'Mission 삭제 완료' };
+    // 이제 `mission` 테이블에서 미션을 삭제
+    const missionDeleteResult = await this.missionRepository.delete(id);
+
+    // `mission` 데이터 삭제 결과를 확인
+    if (missionDeleteResult.affected === 0) {
+      throw new NotFoundException(
+        `미션 삭제 실패: ID ${id}에 해당하는 미션을 찾을 수 없습니다.`,
+      );
+    }
+
+    // 미션 삭제가 완료된 경우 결과와 메시지를 반환
+    return {
+      result: missionDeleteResult,
+      message: '미션 삭제 완료',
+    };
   }
 
-  async update(userId: number, id: number, updateMissionDto: UpdateMissionDto) {
-    const mission = await this.findOne(id);
+  async update(
+    user_id: number,
+    id: number,
+    updateMissionDto: UpdateMissionDto,
+    file: Express.Multer.File,
+  ): Promise<{ mission?: Mission; message: string }> {
+    // 사용자 검색
+    const user = await this.userRepository.findOne({
+      where: { user_id },
+    });
+    if (!user) {
+      throw new BadRequestException(
+        `사용자를 찾을 수 없습니다: user_id=${user_id}`,
+      );
+    }
+
+    const currentMission = await this.findOne(id);
 
     console.log('userInfo : ' + User.name); // null
 
-    /*
-    if (mission.user_id !== userId) {
-      throw new UnauthorizedException('해당 미션을 수정할 권한이 없습니다.');
-    }
-    */
+    const { title, category, startDate, endDate, numberPeople, description } =
+      updateMissionDto;
 
-    this.missionRepository.merge(mission, updateMissionDto);
-    const updatedMission = await this.missionRepository.save(mission);
-    return { updatedMission, message: '미션이 정상적으로 수정되었습니다.' };
+    const savedMission = currentMission;
+
+    if (file) {
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+      const fileExt = extname(file.originalname).toLowerCase();
+      if (!allowedExtensions.includes(fileExt)) {
+        throw new BadRequestException(
+          '올바른 JPG, JPEG, PNG, GIF 파일이 아닙니다.',
+        );
+      }
+
+      await this.s3Service.putObject(file);
+
+      if (currentMission.thumbnail) {
+        await this.s3Service.deleteObject(savedMission.thumbnail);
+      }
+
+      savedMission.title = title;
+      savedMission.category = category;
+      savedMission.startDate = startDate;
+      savedMission.endDate = endDate;
+      savedMission.numberPeople = numberPeople;
+      savedMission.description = description;
+      savedMission.thumbnail = file.filename;
+
+      // 미션 저장
+      await this.missionRepository.save(savedMission);
+    }
+
+    this.missionRepository.save(savedMission);
+    //const updatedMission = await this.missionRepository.save(mission);
+    return {
+      mission: savedMission,
+      message: '미션이 정상적으로 수정되었습니다.',
+    };
   }
 
   // 이메일로 User 엔티티 조회
@@ -248,6 +309,7 @@ export class MissionService {
   }
 
   // UserMission 추가
+  /*
   async addUserMission(missionId: number, userId: number): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { user_id: userId },
@@ -263,11 +325,12 @@ export class MissionService {
       throw new NotFoundException(`Mission with ID ${missionId} not found`);
     }
 
-    const userMission = new UserMission();
-    userMission.user = user;
-    userMission.mission = mission;
-    userMission.participationDate = new Date();
+    //const userMission = new UserMission();
+    //userMission.user = user;
+    //userMission.mission = mission;
+    //userMission.participationDate = new Date();
 
-    await this.userMissionRepository.save(userMission);
+    //await this.userMissionRepository.save(userMission);
   }
+  */
 }

@@ -15,8 +15,8 @@ export class UpdateMissionDto {
   title: string;
 
   @IsNotEmpty()
-  @IsEnum(Category)
-  category: Category;
+  @IsString()
+  category: string;
 
   @IsNotEmpty()
   @IsDate()

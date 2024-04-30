@@ -14,6 +14,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { MissionService } from './mission.service';
 import { Mission } from './entities/mission.entity';
@@ -25,6 +26,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('mission')
 export class MissionController {
@@ -72,10 +74,12 @@ export class MissionController {
         throw new BadRequestException('미션 생성에 실패했습니다.');
       }
 
+      /*
       await this.missionService.addUserMission(
         createdMission.mission.missionId,
         user.user_id,
       );
+      */
 
       return { mission: createdMission };
     } catch (error) {
@@ -100,7 +104,10 @@ export class MissionController {
 
   @Get('/:missionId')
   @Render('mission-detail.ejs')
-  async findMissionById(@Param('missionId') missionId: number) {
+  async findMissionById(
+    @Param('missionId') missionId: number,
+    @UserInfo() user: User,
+  ) {
     try {
       if (missionId === null || isNaN(missionId)) {
         throw new BadRequestException('Invalid mission ID provided');
@@ -112,7 +119,9 @@ export class MissionController {
         throw new NotFoundException('Mission not found');
       }
 
-      return mission;
+      //      const currentUserId = user.user_id;
+
+      return { mission /*currentUserId*/ };
     } catch (error) {
       if (
         error instanceof BadRequestException ||
@@ -129,9 +138,22 @@ export class MissionController {
   async delete(@Param('missionId') missionId: number, @Req() req: any) {
     try {
       const userId = req.user_id;
-      return await this.missionService.remove(+missionId, userId);
+      const result = await this.missionService.remove(+missionId, userId);
+      if (result) {
+        return { message: '미션 삭제 완료', result };
+      }
     } catch (error) {
-      throw new InternalServerErrorException(`${error}`);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(
+          '삭제할 미션을 찾을 수 없습니다. 올바른 미션 ID를 입력해주세요.',
+        );
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('해당 미션을 삭제할 권한이 없습니다.');
+      } else {
+        throw new InternalServerErrorException(
+          `미션 삭제 중 오류가 발생했습니다: ${error.message}`,
+        );
+      }
     }
   }
 
@@ -174,12 +196,14 @@ export class MissionController {
     @Param('missionId') missionId: number,
     @Body() updateMissionDto: UpdateMissionDto,
     @Req() req: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     try {
       const updatedMission = await this.missionService.update(
         req.userId,
         +missionId,
         updateMissionDto,
+        file,
       );
 
       return {
