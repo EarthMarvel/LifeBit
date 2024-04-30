@@ -55,6 +55,6 @@ export class User {
   )
   certificatedImages: CertificatedImage[];
 
-  @OneToMany(() => UserMission, (userMission) => userMission.mission)
-  userMissions: UserMission[];
+  // @OneToMany(() => UserMission, (userMission) => userMission.mission)
+  // userMissions: UserMission[];
 }

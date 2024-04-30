@@ -49,7 +49,7 @@ export class BoardController {
   // 상세 페이지
   @UseGuards(AuthGuard('jwt'))
   @Get('/view/:boardId')
-  @Render('board-Detail.ejs')
+  @Render('board-Detail-like.ejs')
   async findOneBoards(
     @Param('boardId') boardId: number,
     @UserInfo() user: User,

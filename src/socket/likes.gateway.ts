@@ -9,23 +9,22 @@ import { Server } from 'socket.io';
 export class LikeGateway {
   @WebSocketServer() server: Server;
 
-  @SubscribeMessage('like')
-  LikeNotification(boardId: number, userId: number) {
-    console.log('좋아요 알림');
-    this.server.emit(
-      'like',
-      { boardId, userId },
-      { message: '좋아요 알림을 받았습니다!' },
-    );
+  sendLikeNotification(boardId, userId) {
+    this.server.emit('likeNotification', { boardId, userId });
   }
 }
 
-// like.gateway.ts
+// @WebSocketGateway()
+// export class LikeGateway {
+//   @WebSocketServer() server: Server;
 
 //   @SubscribeMessage('like')
-//   handleLikeEvent(@MessageBody() data: any): void {
-//     console.log(`좋아요 알림: ${data.message}`);
-//     // 모든 클라이언트에게 'like' 이벤트를 발생시킴
-//     this.server.emit('like', data);
+//   LikeNotification(boardId: number, userId: number) {
+//     console.log('좋아요 알림');
+//     this.server.emit(
+//       'like',
+//       { boardId, userId },
+//       { message: '좋아요 알림을 받았습니다!' },
+//     );
 //   }
 // }

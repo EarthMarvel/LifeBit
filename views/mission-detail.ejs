@@ -185,19 +185,19 @@
     >
       <div class="card w-100 max-w-4xl p-6 bg-white border rounded-md shadow">
         <header class="flex justify-content-between mb-12">
-          <img src="/LifeBit.png" alt="Life Bit" />
+          <img src="../src/public/LifeBit(320*64).png" alt="Life Bit" />
         </header>
         <section class="grid gap-6">
           <!-- 챌린지 설명 카드 -->
           <div class="p-6 border rounded-lg shadow card">
-            <h2 class="text-2xl font-bold mb-4"><%= title %></h2>
+            <h2 class="text-2xl font-bold mb-4"><%= mission.title %></h2>
 
             <div class="col-md-4">
               <div class="text-center">
                 <div id="imagebox">
                   <img
-                    alt="<%= thumbnail %>"
-                    src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= thumbnail %>"
+                    alt="<%= mission.thumbnail %>"
+                    src="https://life-bit.s3.ap-northeast-2.amazonaws.com/<%= mission.thumbnail %>"
                     width="200px"
                     height="200px"
                   />
@@ -207,16 +207,24 @@
 
             <div class="mb-4">
               <div class="mb-1">
-                <span class="font-medium">[카테고리] <%= category %></span>
+                <span> [미션 생성자] <%= mission.creatorId %> </span>
               </div>
               <div class="mb-1">
-                <span>[챌린지 기간] <%= startDate %> ~ <%= endDate %></span>
+                <span class="font-medium"
+                  >[카테고리] <%= mission.category %></span
+                >
               </div>
               <div class="mb-1">
-                <span>[정원] <%= numberPeople %>명</span>
+                <span
+                  >[미션 기간] <%= mission.startDate %> ~ <%= mission.endDate
+                  %></span
+                >
+              </div>
+              <div class="mb-1">
+                <span>[정원] <%= mission.numberPeople %>명</span>
               </div>
             </div>
-            <p><%= description %></p>
+            <p><%= mission.description %></p>
 
             <!-- 파일 선택 버튼 -->
             <input
@@ -320,8 +328,8 @@
           }
 
           // mission ID 및 category 값을 가져옵니다.
-          const missionId = '<%= missionId %>';
-          const category = '<%= category %>';
+          const missionId = '<%= mission.missionId %>';
+          const category = '<%= mission.category %>';
 
           // 필요한 데이터를 수집합니다.
           const formData = new FormData();
@@ -360,58 +368,95 @@
           window.location.href = '/mission/main';
         });
 
+        // 로그인 상태 확인 함수
+        function isUserLoggedIn() {
+          try {
+            const token = document.cookie.replace(
+              /(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/,
+              '$1',
+            );
+            return !!token;
+          } catch (error) {
+            console.error(
+              '쿠키에서 authorization 값을 가져오는 중 오류가 발생했습니다:',
+              error,
+            );
+            return false;
+          }
+        }
+
         // '미션 수정하기' 버튼을 찾습니다.
         const updateBtn = document.querySelector('#updateBtn');
 
         // '미션 수정하기' 버튼에 클릭 이벤트 리스너를 추가합니다.
         updateBtn.addEventListener('click', function () {
-          // 'mission-update' 페이지로 이동합니다.
-          window.location.href = '/mission/update/<%= missionId %>';
+          /*
+          if (!isUserLoggedIn()) {
+            alert('로그인한 사용자만 이용할 수 있는 기능입니다.');
+            window.location.href = '/user/sign-in';
+            return;
+          }
+          */
+          window.location.href = `/mission/update/<%= mission.missionId %>`;
         });
 
-        // '삭제하기' 버튼을 찾습니다.
-        const deleteBtn = document.querySelector('#deleteBtn');
+        // 토큰 체크
+        const tokenBtn = document.querySelector('#tokenBtn');
 
-        // '삭제하기' 버튼에 클릭 이벤트 리스너를 추가합니다.
-        deleteBtn.addEventListener('click', function (event) {
-          event.preventDefault(); // 기본 폼 제출을 방지합니다.
-
-          // 사용자에게 확인 메시지를 보여줍니다.
-          const confirmation = confirm(
-            '미션을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
-          );
-
-          // 사용자가 확인을 누르면 삭제 요청을 보냅니다.
-          if (confirmation) {
-            const missionId = '<%= missionId %>';
-
-            // DELETE 요청을 '/mission/{missionId}' 엔드포인트로 보냅니다.
-            fetch(`/mission/${missionId}`, {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/, '$1')}`,
-              },
-            })
-              .then((response) => {
-                // 응답이 성공적인지 확인합니다.
-                if (response.ok) {
-                  // 성공적으로 미션이 삭제된 경우
-                  alert('미션이 성공적으로 삭제되었습니다.');
-                  // 미션 목록 페이지로 리디렉션합니다.
-                  window.location.href = '/mission/main';
-                } else {
-                  // 오류가 있는 경우
-                  throw new Error('미션 삭제에 실패했습니다.');
-                }
-              })
-              .catch((error) => {
-                console.error('미션 삭제 중 오류가 발생했습니다:', error);
-                alert(
-                  '미션 삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-                );
-              });
+        tokenBtn.addEventListener('click', function (event) {
+          if (isUserLoggedIn()) {
+            alert('사용자 로그인됨!');
+          } else {
+            alert('사용자 로그인 안 됨!');
           }
         });
+      });
+
+      // '삭제하기' 버튼을 찾습니다.
+      const deleteBtn = document.querySelector('#deleteBtn');
+
+      // '삭제하기' 버튼에 클릭 이벤트 리스너를 추가합니다.
+      deleteBtn.addEventListener('click', function (event) {
+        event.preventDefault(); // 기본 폼 제출을 방지합니다.
+
+        // 사용자에게 확인 메시지를 보여줍니다.
+        const confirmation = confirm(
+          '미션을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+        );
+
+        // 사용자가 확인을 누르면 삭제 요청을 보냅니다.
+        if (confirmation) {
+          const missionId = '<%= mission.missionId %>';
+
+          // DELETE 요청을 '/mission/{missionId}' 엔드포인트로 보냅니다.
+          fetch(`/mission/${missionId}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)authorization\s*\=\s*([^;]*).*$)|^.*$/, '$1')}`,
+            },
+          })
+            .then((response) => {
+              // 응답이 성공적인지 확인합니다.
+              if (response.ok) {
+                alert('미션이 성공적으로 삭제되었습니다.');
+                // 미션 목록 페이지로 리디렉션합니다.
+                window.location.href = '/mission/main';
+              } else {
+                // 오류가 있는 경우 에러 메시지 처리
+                response.json().then((errorData) => {
+                  const errorMessage =
+                    errorData.message || '미션 삭제에 실패했습니다.';
+                  alert(`미션 삭제 중 오류가 발생했습니다: ${errorMessage}`);
+                });
+              }
+            })
+            .catch((error) => {
+              console.error('미션 삭제 중 오류가 발생했습니다:', error);
+              alert(
+                '미션 삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+              );
+            });
+        }
       });
     </script>
   </body>
