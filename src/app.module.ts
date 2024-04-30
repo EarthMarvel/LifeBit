@@ -27,6 +27,7 @@ import { CertificatedImage } from './vision/entity/certificatedImage.entity';
 import { Like } from './board/entities/likes.entity';
 import { UserMission } from './user-mission/entities/user-mission.entity';
 import { UserMissionModule } from './user-mission/user-mission.module';
+import { ChatGateway } from './socket/chat.gateway';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -90,6 +91,6 @@ const typeOrmModuleOptions = {
     UserMissionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
