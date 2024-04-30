@@ -10,6 +10,6 @@ jobs:
         runs-on: ubuntu-22.04 #서버와 동일한 버전
         steps: 
             - name: Checkout repository # 리포지토리에서 코드 가져오기
-              uses: actions/Checkout@v3 #오픈소스 패키지 사용하듯이 actions 도 마켓 플레이스가 있다. 액션을 지정한다.
+              uses: actions/checkout@v4 # 최신 버전으로 업데이트 #오픈소스 패키지 사용하듯이 actions 도 마켓 플레이스가 있다. 액션을 지정한다.
             - name: Build and test with Docker Compose
               run: docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit 
