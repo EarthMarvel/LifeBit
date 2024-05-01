@@ -1,7 +1,8 @@
 import Joi from 'joi';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +12,22 @@ import { MissionModule } from './mission/mission.module';
 import { BoardModule } from './board/board.module';
 import { PlannerModule } from './planner/planner.module';
 import { CommentModule } from './comment/comment.module';
+import { Boards } from './board/entities/board.entity';
+import { User } from './user/entities/user.entity';
+import { MainModule } from './main/main.module';
+import { Task } from './planner/entity/task.entity';
+import { Planner } from './planner/entity/planner.entity';
+import { Mission } from './mission/entities/mission.entity';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { SchedulerModule } from './utils/scheduler/scheduler.module';
+import { Point } from './point/entity/point.entity';
+import { VisionModule } from './vision/vision.module';
+import { CertificatedImage } from './vision/entity/certificatedImage.entity';
+import { Like } from './board/entities/likes.entity';
+import { ChatGateway } from './socket/chat.gateway';
+// import { UserMission } from './user-mission/entities/user-mission.entity';
+// import { UserMissionModule } from './user-mission/user-mission.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -23,7 +40,17 @@ const typeOrmModuleOptions = {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     database: configService.get('DB_NAME'),
-    entities: [],
+    entities: [
+      User,
+      Planner,
+      Task,
+      Point,
+      Boards,
+      Mission,
+      Like,
+      CertificatedImage,
+      //UserMission,
+    ],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -44,6 +71,12 @@ const typeOrmModuleOptions = {
         DB_SYNC: Joi.boolean().required(),
       }),
     }),
+    CacheModule.register({
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      isGlobal: true,
+    }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     AuthModule,
     UserModule,
@@ -52,8 +85,12 @@ const typeOrmModuleOptions = {
     BoardModule,
     PlannerModule,
     CommentModule,
+    MainModule,
+    SchedulerModule,
+    VisionModule,
+    //UserMissionModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}

@@ -1,0 +1,93 @@
+/* 04.setProfile.css */
+* {
+  padding: 0;
+  margin: 0;
+}
+/* 전체 카드 컨테이너 스타일 */
+.card {
+  max-width: 650px; /* 카드 최대 너비 */
+  width: 100%; /* 카드 너비 */
+  height: 550px;
+  margin: 150px auto; /* 중앙 정렬 */
+  padding: 24px; /* 카드 내부 패딩 */
+  border: 1px solid #e0e0e0; /* 카드 테두리 */
+  border-radius: 8px; /* 카드 모서리 둥글게 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 */
+  background-color: #ffffff; /* 카드 배경색 */
+}
+
+/* 프로필 이미지 컨테이너 스타일 */
+.profile-image-container {
+  position: relative; /* 상대적 위치 */
+  height: 150px; /* 프로필 이미지 컨테이너 높이 */
+  width: 150px; /* 프로필 이미지 컨테이너 너비 */
+  border-radius: 50%; /* 원형 컨테이너 */
+  overflow: hidden; /* 이미지 오버플로우 숨김 */
+  margin-bottom: 15px; /* 아래 간격 */
+}
+
+#image-upload,
+.whitespace-nowrap,
+.text-sm {
+  margin-bottom: 15px;
+}
+
+/* 프로필 이미지 스타일 */
+.profile-image {
+  height: 100%; /* 이미지 높이 */
+  width: 100%; /* 이미지 너비 */
+  object-fit: cover; /* 이미지 크기 맞추기 */
+}
+
+/* 프로필 이미지 변경 버튼 스타일 */
+.upload-button {
+  margin-bottom: 12px; /* 버튼 아래 간격 */
+  padding: 8px 16px; /* 내부 패딩 */
+  border-radius: 4px; /* 모서리 둥글게 */
+  border: none; /* 테두리 제거 */
+  background-color: #007bff; /* 배경색 */
+  color: #ffffff; /* 글자색 */
+  font-size: 14px; /* 글꼴 크기 */
+  cursor: pointer; /* 커서 */
+  transition: background-color 0.2s ease; /* 배경색 전환 */
+}
+
+/* 버튼 호버 시 스타일 */
+.upload-button:hover {
+  background-color: #0056b3; /* 호버 시 배경색 변경 */
+}
+
+/* 입력 필드 스타일 */
+.input-field {
+  width: 100%; /* 입력 필드 너비 */
+  padding: 8px; /* 입력 필드 내부 패딩 */
+  border: 1px solid #ccc; /* 입력 필드 테두리 */
+  border-radius: 4px; /* 입력 필드 모서리 둥글게 */
+  font-size: 14px; /* 입력 필드 글꼴 크기 */
+  margin-bottom: 12px; /* 입력 필드 아래 간격 */
+  transition: border-color 0.2s ease; /* 포커스 시 테두리 색상 전환 */
+}
+
+/* 입력 필드 포커스 시 스타일 */
+.input-field:focus {
+  border-color: #007bff; /* 포커스 시 테두리 색상 */
+  outline: none; /* 기본 포커스 테두리 제거 */
+}
+
+/* 제출 버튼 스타일 */
+.submit-button {
+  padding: 10px 16px; /* 내부 패딩 */
+  margin-top: 15px;
+  border-radius: 4px; /* 모서리 둥글게 */
+  border: none; /* 테두리 제거 */
+  background-color: #007bff; /* 배경색 */
+  color: #ffffff; /* 글자색 */
+  font-size: 14px; /* 글꼴 크기 */
+  cursor: pointer; /* 커서 */
+  transition: background-color 0.2s ease; /* 호버 시 배경색 전환 */
+}
+
+/* 제출 버튼 호버 시 스타일 */
+.submit-button:hover {
+  background-color: #0056b3; /* 호버 시 배경색 변경 */
+}

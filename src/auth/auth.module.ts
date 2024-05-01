@@ -1,8 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-
+import { UserModule } from 'src/user/user.module';
+import { AuthController } from './auth.controller';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { AuthService } from './auth.service';
+import { NaverStrategy } from './strategies/naver.strategy';
+import { KakaoStrategy } from './strategies/kakao.strategy';
+import { JwtAuthGuard } from './jwt.authGuard';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
@@ -14,7 +20,16 @@ import { JwtStrategy } from './jwt.strategy';
       }),
       inject: [ConfigService],
     }),
+    UserModule,
   ],
-  providers: [JwtStrategy],
+  controllers: [AuthController],
+  providers: [
+    JwtStrategy,
+    GoogleStrategy,
+    AuthService,
+    NaverStrategy,
+    KakaoStrategy,
+    JwtAuthGuard,
+  ],
 })
 export class AuthModule {}
