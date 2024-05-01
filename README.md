@@ -5,7 +5,7 @@
 😊 **배포 주소 :**  [LifeBit](https://lifebit-app.com/main)
 <br>
 
-🎉 **팀 프로셔 :** [LifeBit](https://www.notion.so/teamsparta/090ada5a49ea47569fd0091ddf49ada8?v=ffe985b3767049e1a3b5a9efe385b30b)
+🎉 **팀 프로셔 :** [LifeBit](https://www.notion.so/teamsparta/LifeBit-810413ca2a33443f94dec5d2196e125f)
 <br>
 
 
