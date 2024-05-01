@@ -46,4 +46,72 @@ export class VisionController {
 
     return { isCategoryMatched };
   }
+
+  // 로컬 이미지 파일의 라벨을 감지하고, 주어진 카테고리와 일치하는지 검증하는 엔드포인트
+  @Post('/get-label')
+  @UseGuards(JwtAuthGuard) // JWT AuthGuard를 활용하여 인증 적용
+  @UseInterceptors(FileInterceptor('file'))
+  async getLabel(
+    @UploadedFile() file: Express.Multer.File,
+    @Body(ValidationPipe)
+    certificateImageCategoryDto: CertificateImageCategoryDto,
+  ) {
+    if (!file) {
+      throw new BadRequestException('file must be provided');
+    }
+
+    const labels = await this.visionService.tempDetectLabels(file.buffer);
+
+    console.log(labels);
+
+    return { labels };
+  }
+
+  // 로컬 이미지 파일의 라벨을 감지하고, 주어진 카테고리와 일치하는지 검증하는 엔드포인트
+  @Post('/get-label-annotation')
+  @UseGuards(JwtAuthGuard) // JWT AuthGuard를 활용하여 인증 적용
+  @UseInterceptors(FileInterceptor('file'))
+  async getLabel2(
+    @UploadedFile() file: Express.Multer.File,
+    @Body(ValidationPipe)
+    certificateImageCategoryDto: CertificateImageCategoryDto,
+  ) {
+    if (!file) {
+      throw new BadRequestException('file must be provided');
+    }
+
+    const labels = await this.visionService.tempDectectLabelsAnnotation(
+      file.buffer,
+    );
+
+    console.log(labels);
+
+    return { labels };
+  }
+
+  // 새로운 이미지 인증 엔드포인트
+  // 이미지 인증 엔드포인트
+  @Post('/verify-image')
+  @UseGuards(JwtAuthGuard) // JWT 인증 적용
+  @UseInterceptors(FileInterceptor('file'))
+  async verifyImage(
+    @GetUser() user: User,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() certificateImageCategoryDto: CertificateImageCategoryDto,
+  ) {
+    if (!file) {
+      throw new BadRequestException('이미지를 업로드해야 합니다.');
+    }
+
+    const { category } = certificateImageCategoryDto;
+
+    // 이미지 인증 수행
+    const { isImageValid, message } = await this.visionService.verifyImage(
+      file.buffer,
+      category,
+    );
+
+    // 결과 반환
+    return { isImageValid, message };
+  }
 }
