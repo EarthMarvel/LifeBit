@@ -51,12 +51,13 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title"><%= mission.mission_title %></h5>
+                            <h5 class="card-title"><%= mission.mission_id %></h5>
                             <p class="card-text"><%= mission.mission_description %></p>
                             <p>
                                 <span class="card-text">#<%= mission.mission_category %></span>
                                 <span class="card-text">Number of People: <%= mission.mission_number_people %></span>
                             </p>
-                            <a href="#" class="btn btn-primary">Let's Start</a>
+                            <a href="/mission/<%= mission.mission_mission_id %>" class="btn btn-primary">Let's Start</a>
                         </div>
                     </div>
                 </div>

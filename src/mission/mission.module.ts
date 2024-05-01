@@ -9,8 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from 'src/user/user.module';
 import { CertificatedImage } from 'src/vision/entity/certificatedImage.entity';
 import { VisionModule } from 'src/vision/vision.module';
-import { UserMission } from 'src/user-mission/entities/user-mission.entity';
-import { UserMissionRepository } from 'src/user-mission/user-mission.repository';
+//import { UserMission } from 'src/user-mission/entities/user-mission.entity';
+//import { UserMissionRepository } from 'src/user-mission/user-mission.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOptionsFactory } from 'src/utils/multer.options.factory';
 import { S3Service } from 'src/user/s3.service';
@@ -20,8 +20,8 @@ import { S3Service } from 'src/user/s3.service';
     TypeOrmModule.forFeature([
       Mission,
       CertificatedImage,
-      UserMission,
-      UserMissionRepository,
+      //UserMission,
+      //UserMissionRepository,
     ]),
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({

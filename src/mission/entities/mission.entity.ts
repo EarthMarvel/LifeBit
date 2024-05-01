@@ -22,8 +22,8 @@ export class Mission {
   missionId: number;
 
   // category : ENUM
-  @Column({ type: 'enum', enum: Category, nullable: false })
-  category: Category;
+  @Column({ type: 'varchar', nullable: false })
+  category: string;
 
   // title
   @Column({ type: 'varchar', nullable: false })
@@ -69,8 +69,8 @@ export class Mission {
   @Column({ type: 'int', nullable: true })
   creatorId: number;
 
-  @OneToMany(() => UserMission, (userMission) => userMission.user)
-  userMissions: UserMission[];
+  // @OneToMany(() => UserMission, (userMission) => userMission.user)
+  // userMissions: UserMission[];
 
   @OneToMany(
     () => CertificatedImage,

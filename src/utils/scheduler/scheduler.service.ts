@@ -27,9 +27,9 @@ export class SchedulerService {
         const taskDate = new Date(dateString);
 
         const todoList = await this.taskRepository
-            .createQueryBuilder('task')
-            .where(':today between task.start_date and task.end_date', {today : dateString})
-            .getMany();
+        .createQueryBuilder('task')
+        .where('task.start_date = :today', { today: dateString })
+        .getMany();
 
         for (const task of todoList) {
             task.authYn = false;

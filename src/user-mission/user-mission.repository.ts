@@ -17,9 +17,9 @@ export class UserMissionRepository extends Repository<UserMission> {
   }
 
   // 여기에 커스텀 메서드를 정의할 수 있습니다.
-  async findByUserId(userId: number): Promise<UserMission[]> {
-    return await this.find({ where: { user: { user_id: userId } } });
-  }
+  //async findByUserId(userId: number): Promise<UserMission[]> {
+  //  return await this.find({ where: { user: { user_id: userId } } });
+  //}
 
   // 다른 메서드를 정의할 수 있습니다.
 }

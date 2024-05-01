@@ -14,13 +14,13 @@ export class UserMission {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.userMissions)
-  @JoinColumn({ name: 'userId' })
-  user: User;
+  //@ManyToOne(() => User, (user) => user.userMissions)
+  //@JoinColumn({ name: 'userId' })
+  //user: User;
 
-  @ManyToOne(() => Mission, (mission) => mission.userMissions)
-  @JoinColumn({ name: 'missionId' })
-  mission: Mission;
+  // @ManyToOne(() => Mission, (mission) => mission.userMissions)
+  // @JoinColumn({ name: 'missionId' })
+  // mission: Mission;
 
   @Column()
   participationDate: Date;
