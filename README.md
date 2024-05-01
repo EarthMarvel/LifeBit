@@ -1,73 +1,61 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+## 서비스 소개
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<img width="300" alt="이미지" src="https://github.com/EarthMarvel/LifeBit/assets/74234719/9db64cb0-2f29-4c04-9710-5828e8a6bf0e">
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+😊 **배포 주소 :**  [LifeBit](https://lifebit-app.com/main)
+<br>
 
-## Description
+🎉 **팀 프로셔 :** [LifeBit](https://www.notion.so/teamsparta/090ada5a49ea47569fd0091ddf49ada8?v=ffe985b3767049e1a3b5a9efe385b30b)
+<br>
+<br>
+<br>
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 기술 스택
 
-## Installation
+**Backend**  
+  ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+  ![NestJS](https://img.shields.io/badge/-NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)
+  ![TypeORM](https://img.shields.io/badge/-TypeORM-F37626?style=flat-square&logo=typeorm&logoColor=white)
+  ![Jest](https://img.shields.io/badge/-Jest-C21325?style=flat-square&logo=jest&logoColor=white)
+  ![GitHub Actions](https://img.shields.io/badge/-GitHub%20Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)
+<br>
+**DevOps**  
+![AWS ECS](https://img.shields.io/badge/-AWS%20ECS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
+![Route 53](https://img.shields.io/badge/-Route%2053-232F3E?style=flat-square&logo=amazon-route53&logoColor=white)
+<br>
+**Database**  
+![Redis](https://img.shields.io/badge/-Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
+![TypeORM](https://img.shields.io/badge/-TypeORM-F37626?style=flat-square&logo=typeorm&logoColor=white)
+<br>
+**Others**  
+![Socket.IO](https://img.shields.io/badge/-Socket.IO-010101?style=flat-square&logo=socket.io&logoColor=white)
+![AWS S3](https://img.shields.io/badge/-AWS%20S3-569A31?style=flat-square&logo=amazon-s3&logoColor=white)
+![Nodemailer](https://img.shields.io/badge/-Nodemailer-009CAB?style=flat-square&logo=nodemailer&logoColor=white)
+<br>
+<br>
+<br>
 
-```bash
-$ npm install
-```
 
-## Running the app
+## 아키텍처
+<img width="700" alt="이미지" src="https://github.com/EarthMarvel/LifeBit/assets/74234719/81b01882-90c7-44bc-ba34-d0281da3a85c">
+<br>
+<br>
+<br>
 
-```bash
-# development
-$ npm run start
+## ERD
+<img width="700" alt="이미지" src="https://github.com/EarthMarvel/LifeBit/assets/74234719/deab8e98-5a95-451e-b761-c46d8c0fb394">
+<br>
+<br>
+<br>
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
-```
+## 챌린지 기술 도전
 
-## Test
 
-```bash
-# unit tests
-$ npm run test
+## 트러블 슈팅
 
-# e2e tests
-$ npm run test:e2e
 
-# test coverage
-$ npm run test:cov
-```
+## 팀원 소개
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## 끝
