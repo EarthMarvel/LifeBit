@@ -2,7 +2,6 @@
     "containerDefinitions": [
         {
             "name": "lifebit",
-            "image": "120342520927.dkr.ecr.ap-northeast-2.amazonaws.com/lifebit:8",
             "cpu": 0,
             "portMappings": [
                 {
