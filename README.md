@@ -43,6 +43,10 @@
 <br>
 
 ## ERD
+<img width="700" alt="이미지" src="https://github.com/EarthMarvel/LifeBit/assets/74234719/deab8e98-5a95-451e-b761-c46d8c0fb394">
+<br>
+<br>
+<br>
 
 
 ## 챌린지 기술 도전
