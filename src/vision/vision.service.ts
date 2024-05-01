@@ -7,6 +7,9 @@ import { Mission } from 'src/mission/entities/mission.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Point } from 'src/point/entity/point.entity';
 import { PointService } from 'src/point/point.service';
+import { google } from '@google-cloud/vision/build/protos/protos';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class VisionService {
@@ -119,6 +122,80 @@ export class VisionService {
   private async detectLabels(fileBuffer: Buffer): Promise<string[]> {
     const [result] = await this.client.labelDetection(fileBuffer);
     return result.labelAnnotations.map((label) => label.description);
+  }
+
+  async tempDetectLabels(fileBuffer: Buffer): Promise<string[]> {
+    const [result] = await this.client.labelDetection(fileBuffer);
+    return result.labelAnnotations.map((label) => label.description);
+  }
+
+  async tempDectectLabelsAnnotation(fileBuffer: Buffer): Promise<
+    Array<{
+      confidence: number;
+      description: string;
+      locale: string;
+      mid: string;
+      score: number;
+      topicality: number;
+    }>
+  > {
+    const [result] = await this.client.labelDetection(fileBuffer);
+
+    return result.labelAnnotations.map((label) => ({
+      confidence: label.confidence,
+      description: label.description,
+      locale: label.locale,
+      mid: label.mid,
+      score: label.score,
+      topicality: label.topicality,
+    }));
+  }
+
+  async enhancedCertificateImageCategory(
+    fileBuffer: Buffer,
+    category: string,
+    missionId: number,
+    userId: number,
+  ): Promise<boolean> {
+    try {
+      // 사용자 및 미션 조회
+      const user = await this.getUser(userId);
+      const mission = await this.getMission(missionId);
+
+      // 이미지 라벨 감지
+      const labels = await this.tempDectectLabelsAnnotation(fileBuffer);
+
+      // 카테고리 관련 라벨 목록 조회
+      const relatedLabels = this.getRelatedLabelsByCategory(category);
+
+      // 인증 여부 판단
+      const isCategoryMatched = this.isCategoryMatched(
+        labels.map((label) => label.description),
+        relatedLabels,
+      );
+
+      // 인증 결과 저장
+      await this.saveCertificateImage(
+        isCategoryMatched,
+        user,
+        mission,
+        category,
+      );
+
+      // 인증 성공 시 사용자 포인트 업데이트
+      if (isCategoryMatched) {
+        await this.updateUserPoints(userId);
+      }
+
+      return isCategoryMatched;
+    } catch (error) {
+      this.logger.error(
+        `enhancedCertificateImageCategory 오류: ${error.message}`,
+      );
+      throw new Error(
+        `enhancedCertificateImageCategory 실패: ${error.message}`,
+      );
+    }
   }
 
   // 카테고리 관련 라벨 목록 조회
@@ -431,6 +508,66 @@ export class VisionService {
       ],
     };
     return categoryLabelMap[category] || [];
+  }
+
+  // 이미지 인증 함수
+  async verifyImage(
+    fileBuffer: Buffer,
+    category: string,
+  ): Promise<{ isImageValid: boolean; message: string }> {
+    try {
+      // JSON 파일 경로 설정
+      const jsonFilePath = path.join(
+        `/Users/_woo_s.j/Desktop/workspace/earth-marvel/src/vision/label_weights_json/yes/${category}.json`,
+      );
+
+      // JSON 파일 로드
+      const jsonFileContent = fs.readFileSync(jsonFilePath, 'utf-8');
+      const labelWeights = JSON.parse(jsonFileContent);
+
+      // 이미지 라벨 감지
+      const labels = await this.detectLabels(fileBuffer);
+
+      // 라벨 가중치 계산
+      let weightedScore = 0;
+      labels.forEach((label) => {
+        const weight = labelWeights.find(
+          (item) => item.label === label,
+        )?.weight;
+        if (weight !== undefined) {
+          weightedScore += weight;
+        }
+      });
+
+      // 인증 임계값 설정
+      const threshold = 3.5;
+
+      // 인증 결과 판단
+      //const isImageValid = weightedScore >= threshold;
+      //console.log('isImageValid : ' + isImageValid);
+      let isImageValid = false;
+      let message = '';
+
+      // 메시지 생성
+      const weightedScoreFormatted = weightedScore.toFixed(2); // 숫자 값을 반올림하여 메시지 생성
+      console.log('weightedScore : ' + weightedScore);
+      console.log('weightedScroeFormatted : ' + weightedScoreFormatted);
+
+      if (weightedScore >= threshold) {
+        isImageValid = true;
+        message = `인증 성공! (인증 신뢰도 값: ${weightedScoreFormatted})`;
+      } else {
+        isImageValid = false;
+        message = `인증 실패! (인증 신뢰도 값: ${weightedScoreFormatted})`;
+      }
+
+      // 결과 반환
+      return { isImageValid, message };
+    } catch (error) {
+      // 오류 처리
+      this.logger.error(`verifyImage 오류: ${error.message}`);
+      throw new Error(`verifyImage 실패: ${error.message}`);
+    }
   }
 
   // 인증 여부 확인

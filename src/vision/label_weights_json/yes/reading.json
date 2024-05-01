@@ -1,0 +1,438 @@
+[
+    {
+        "label": "Publication",
+        "weight": 1.0
+    },
+    {
+        "label": "Book",
+        "weight": 0.8666666666666667
+    },
+    {
+        "label": "Gesture",
+        "weight": 0.5333333333333333
+    },
+    {
+        "label": "Font",
+        "weight": 0.5333333333333333
+    },
+    {
+        "label": "Wood",
+        "weight": 0.4666666666666667
+    },
+    {
+        "label": "Happy",
+        "weight": 0.4666666666666667
+    },
+    {
+        "label": "Reading",
+        "weight": 0.3333333333333333
+    },
+    {
+        "label": "Art",
+        "weight": 0.26666666666666666
+    },
+    {
+        "label": "Table",
+        "weight": 0.26666666666666666
+    },
+    {
+        "label": "Comfort",
+        "weight": 0.2
+    },
+    {
+        "label": "Smile",
+        "weight": 0.2
+    },
+    {
+        "label": "People in nature",
+        "weight": 0.2
+    },
+    {
+        "label": "Desk",
+        "weight": 0.2
+    },
+    {
+        "label": "Finger",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Tints and shades",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Nail",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Human leg",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Bookcase",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Shelf",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Leisure",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Plant",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Grass",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Paper",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Hand",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Fun",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Sleeve",
+        "weight": 0.13333333333333333
+    },
+    {
+        "label": "Shelving",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Education",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Hairstyle",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Flash photography",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Sunlight",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Azure",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Head",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Eye",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Toddler",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Office supplies",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Sitting",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Paper product",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Tableware",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Drinkware",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Cup",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Human",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Eyewear",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Hair",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Sharing",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Writing",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Cartoon",
+        "weight": 0.06666666666666667
+    },
+    {
+        "label": "Bicycle",
+        "weight": 0.0
+    },
+    {
+        "label": "Wheel",
+        "weight": 0.0
+    },
+    {
+        "label": "Tire",
+        "weight": 0.0
+    },
+    {
+        "label": "Balloon",
+        "weight": 0.0
+    },
+    {
+        "label": "Paint",
+        "weight": 0.0
+    },
+    {
+        "label": "Nose",
+        "weight": 0.0
+    },
+    {
+        "label": "Eyebrow",
+        "weight": 0.0
+    },
+    {
+        "label": "Eyelash",
+        "weight": 0.0
+    },
+    {
+        "label": "Iris",
+        "weight": 0.0
+    },
+    {
+        "label": "Darkness",
+        "weight": 0.0
+    },
+    {
+        "label": "Leaf",
+        "weight": 0.0
+    },
+    {
+        "label": "Wall",
+        "weight": 0.0
+    },
+    {
+        "label": "Morning",
+        "weight": 0.0
+    },
+    {
+        "label": "Dishware",
+        "weight": 0.0
+    },
+    {
+        "label": "Coffee cup",
+        "weight": 0.0
+    },
+    {
+        "label": "Orange",
+        "weight": 0.0
+    },
+    {
+        "label": "Saucer",
+        "weight": 0.0
+    },
+    {
+        "label": "Glasses",
+        "weight": 0.0
+    },
+    {
+        "label": "Fashion",
+        "weight": 0.0
+    },
+    {
+        "label": "Vision care",
+        "weight": 0.0
+    },
+    {
+        "label": "White-collar worker",
+        "weight": 0.0
+    },
+    {
+        "label": "Youth",
+        "weight": 0.0
+    },
+    {
+        "label": "World",
+        "weight": 0.0
+    },
+    {
+        "label": "Thumb",
+        "weight": 0.0
+    },
+    {
+        "label": "Logo",
+        "weight": 0.0
+    },
+    {
+        "label": "Amber",
+        "weight": 0.0
+    },
+    {
+        "label": "Book cover",
+        "weight": 0.0
+    },
+    {
+        "label": "Textile",
+        "weight": 0.0
+    },
+    {
+        "label": "Furniture",
+        "weight": 0.0
+    },
+    {
+        "label": "Building",
+        "weight": 0.0
+    },
+    {
+        "label": "Retail",
+        "weight": 0.0
+    },
+    {
+        "label": "Shoe",
+        "weight": 0.0
+    },
+    {
+        "label": "Leg",
+        "weight": 0.0
+    },
+    {
+        "label": "Knee",
+        "weight": 0.0
+    },
+    {
+        "label": "Flooring",
+        "weight": 0.0
+    },
+    {
+        "label": "Thigh",
+        "weight": 0.0
+    },
+    {
+        "label": "Floor",
+        "weight": 0.0
+    },
+    {
+        "label": "Sneakers",
+        "weight": 0.0
+    },
+    {
+        "label": "Recipe",
+        "weight": 0.0
+    },
+    {
+        "label": "Natural foods",
+        "weight": 0.0
+    },
+    {
+        "label": "Outerwear",
+        "weight": 0.0
+    },
+    {
+        "label": "Blue",
+        "weight": 0.0
+    },
+    {
+        "label": "Standing",
+        "weight": 0.0
+    },
+    {
+        "label": "Headgear",
+        "weight": 0.0
+    },
+    {
+        "label": "Facial expression",
+        "weight": 0.0
+    },
+    {
+        "label": "Sky",
+        "weight": 0.0
+    },
+    {
+        "label": "Cloud",
+        "weight": 0.0
+    },
+    {
+        "label": "Natural landscape",
+        "weight": 0.0
+    },
+    {
+        "label": "Tree",
+        "weight": 0.0
+    },
+    {
+        "label": "Automotive design",
+        "weight": 0.0
+    },
+    {
+        "label": "Electric blue",
+        "weight": 0.0
+    },
+    {
+        "label": "Toy",
+        "weight": 0.0
+    },
+    {
+        "label": "Lego",
+        "weight": 0.0
+    },
+    {
+        "label": "Toy block",
+        "weight": 0.0
+    },
+    {
+        "label": "Rectangle",
+        "weight": 0.0
+    },
+    {
+        "label": "Illustration",
+        "weight": 0.0
+    },
+    {
+        "label": "Currency",
+        "weight": 0.0
+    },
+    {
+        "label": "Money",
+        "weight": 0.0
+    },
+    {
+        "label": "Money handling",
+        "weight": 0.0
+    },
+    {
+        "label": "Writing instrument accessory",
+        "weight": 0.0
+    },
+    {
+        "label": "Room",
+        "weight": 0.0
+    },
+    {
+        "label": "Collar",
+        "weight": 0.0
+    }
+]

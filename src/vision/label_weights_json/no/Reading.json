@@ -1,0 +1,340 @@
+[
+  {
+    "labels": [
+      "Book",
+      "Gesture",
+      "Publication",
+      "Finger",
+      "Comfort",
+      "Wood",
+      "Font",
+      "Tints and shades",
+      "Nail",
+      "Human leg"
+    ]
+  },
+  {
+    "labels": [
+      "Smile",
+      "Book",
+      "Bookcase",
+      "Shelf",
+      "Publication",
+      "Happy",
+      "Shelving",
+      "Reading",
+      "Leisure",
+      "Education"
+    ]
+  },
+  {
+    "labels": [
+      "Bicycle",
+      "Wheel",
+      "Hairstyle",
+      "Plant",
+      "People in nature",
+      "Happy",
+      "Tire",
+      "Flash photography",
+      "Grass",
+      "Sunlight"
+    ]
+  },
+  {
+    "labels": [
+      "Azure",
+      "Book",
+      "Art",
+      "Publication",
+      "Balloon",
+      "Wood",
+      "Paint",
+      "Happy",
+      "Desk",
+      "Font"
+    ]
+  },
+  {
+    "labels": [
+      "Nose",
+      "Head",
+      "Eyebrow",
+      "Eye",
+      "Flash photography",
+      "Eyelash",
+      "Iris",
+      "Happy",
+      "People in nature",
+      "Toddler"
+    ]
+  },
+  {
+    "labels": [
+      "Table",
+      "Book",
+      "Leisure",
+      "Publication",
+      "Desk",
+      "Office supplies",
+      "Reading",
+      "Education",
+      "Sitting",
+      "Happy"
+    ]
+  },
+  {
+    "labels": [
+      "Book",
+      "Publication",
+      "Tints and shades",
+      "Darkness",
+      "Human leg",
+      "Font",
+      "Reading",
+      "Paper",
+      "Paper product"
+    ]
+  },
+  {
+    "labels": [
+      "Plant",
+      "People in nature",
+      "Leaf",
+      "Wood",
+      "Book",
+      "Sunlight",
+      "Wall",
+      "Grass",
+      "Morning",
+      "Publication"
+    ]
+  },
+  {
+    "labels": [
+      "Tableware",
+      "Dishware",
+      "Drinkware",
+      "Table",
+      "Coffee cup",
+      "Cup",
+      "Wood",
+      "Orange",
+      "Saucer",
+      "Publication"
+    ]
+  },
+  {
+    "labels": [
+      "Glasses",
+      "Hand",
+      "Human",
+      "Fashion",
+      "Vision care",
+      "Table",
+      "Fun",
+      "Eyewear",
+      "White-collar worker",
+      "Youth"
+    ]
+  },
+  {
+    "labels": [
+      "Hair",
+      "Hand",
+      "Hairstyle",
+      "Sharing",
+      "Gesture",
+      "Happy",
+      "World",
+      "Font",
+      "Thumb",
+      "Logo"
+    ]
+  },
+  {
+    "labels": [
+      "Book",
+      "Publication",
+      "Wood",
+      "Amber",
+      "Font",
+      "Tints and shades",
+      "Art",
+      "Book cover",
+      "Paper",
+      "Paper product"
+    ]
+  },
+  {
+    "labels": [
+      "Hand",
+      "Drinkware",
+      "Cup",
+      "Book",
+      "Textile",
+      "Publication",
+      "Comfort",
+      "Gesture",
+      "Tableware",
+      "Sleeve"
+    ]
+  },
+  {
+    "labels": [
+      "Bookcase",
+      "Furniture",
+      "Shelf",
+      "Book",
+      "Publication",
+      "Human",
+      "Shelving",
+      "Building",
+      "Smile",
+      "Retail"
+    ]
+  },
+  {
+    "labels": [
+      "Shoe",
+      "Leg",
+      "Smile",
+      "Wood",
+      "Knee",
+      "Flooring",
+      "Thigh",
+      "Comfort",
+      "Floor",
+      "Sneakers"
+    ]
+  },
+  {
+    "labels": [
+      "Book",
+      "Publication",
+      "Gesture",
+      "Font",
+      "Recipe",
+      "Finger",
+      "Writing",
+      "Nail",
+      "Natural foods",
+      "Reading"
+    ]
+  },
+  {
+    "labels": []
+  },
+  {
+    "labels": [
+      "Hair",
+      "Outerwear",
+      "Cartoon",
+      "Blue",
+      "Azure",
+      "Sleeve",
+      "Standing",
+      "Art",
+      "Gesture",
+      "Headgear"
+    ]
+  },
+  {
+    "labels": [
+      "Smile",
+      "Head",
+      "Eye",
+      "Facial expression",
+      "Bookcase",
+      "Book",
+      "Shelf",
+      "Publication",
+      "Happy",
+      "Fun"
+    ]
+  },
+  {
+    "labels": [
+      "Sky",
+      "Cloud",
+      "Plant",
+      "People in nature",
+      "Gesture",
+      "Natural landscape",
+      "Tree",
+      "Grass",
+      "Happy",
+      "Wood"
+    ]
+  },
+  {
+    "labels": [
+      "Book",
+      "Gesture",
+      "Finger",
+      "Publication",
+      "Automotive design",
+      "Human leg",
+      "Nail",
+      "Reading",
+      "Comfort",
+      "Electric blue"
+    ]
+  },
+  {
+    "labels": [
+      "Toy",
+      "Cartoon",
+      "Gesture",
+      "Lego",
+      "Toy block",
+      "Art",
+      "Font",
+      "Sharing",
+      "Rectangle",
+      "Illustration"
+    ]
+  },
+  {
+    "labels": [
+      "Table",
+      "Publication",
+      "Wood",
+      "Office supplies",
+      "Art",
+      "Currency",
+      "Font",
+      "Desk",
+      "Money",
+      "Money handling"
+    ]
+  },
+  {
+    "labels": [
+      "Table",
+      "Book",
+      "Desk",
+      "Leisure",
+      "Publication",
+      "Toddler",
+      "Writing instrument accessory",
+      "Writing",
+      "Room",
+      "Fun"
+    ]
+  },
+  {
+    "labels": [
+      "Publication",
+      "Gesture",
+      "Book",
+      "Collar",
+      "Eyewear",
+      "Reading",
+      "Font",
+      "Sitting",
+      "Sleeve",
+      "Paper"
+    ]
+  }
+]
