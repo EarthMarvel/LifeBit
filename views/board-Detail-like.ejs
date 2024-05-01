@@ -136,13 +136,13 @@
         }
 
         $.ajax({
-          url: `http://localhost:3000/boards/${boardId}`,
+          url: `/boards/${boardId}`,
           method: 'DELETE',
           contentType: 'application/json',
           data: JSON.stringify(),
           success: (data) => {
             alert('게시물 삭제가 완료되었습니다.');
-            window.location.href = 'http://localhost:3000/boards';
+            window.location.href = '/boards';
           },
           error: (jqXHR, textStatus, errorThrown) => {
             const errorMessage = jqXHR.responseJSON
