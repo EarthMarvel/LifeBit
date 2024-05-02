@@ -27,7 +27,6 @@ export class PlannerService {
     private readonly taskRepository: Repository<Task>,
     @InjectRepository(Mission)
     private readonly missionRepository: Repository<Mission>,
-    private readonly dataSouce: DataSource, //커넥션 풀에서 커넥션(-> 트랜잭션) 가져오기
   ) {}
 
 

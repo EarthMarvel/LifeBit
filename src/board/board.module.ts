@@ -19,7 +19,7 @@ import { Like } from './entities/likes.entity';
       imports: [ConfigModule],
       useFactory: multerOptionsFactory,
       inject: [ConfigService],
-    }), // 멀터옵션 추가 안하면 path 말고 buffer..
+    }), // 멀터옵션 추가 안하면 path 말고 buffer
   ],
   providers: [BoardService],
   controllers: [BoardController],

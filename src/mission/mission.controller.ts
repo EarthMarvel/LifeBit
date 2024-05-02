@@ -17,16 +17,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { MissionService } from './mission.service';
-import { Mission } from './entities/mission.entity';
 import { CreateMissionDto } from './dto/create-mission.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
-import { MissionType } from './types/missionType';
 import { JwtAuthGuard } from 'src/auth/jwt.authGuard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('mission')
 export class MissionController {
@@ -74,13 +71,6 @@ export class MissionController {
         throw new BadRequestException('미션 생성에 실패했습니다.');
       }
 
-      /*
-      await this.missionService.addUserMission(
-        createdMission.mission.missionId,
-        user.user_id,
-      );
-      */
-
       return { mission: createdMission };
     } catch (error) {
       console.error(`Error in createMission method: ${error.message}`);
@@ -119,8 +109,6 @@ export class MissionController {
         throw new NotFoundException('Mission not found');
       }
 
-      //      const currentUserId = user.user_id;
-
       return { mission /*currentUserId*/ };
     } catch (error) {
       if (
@@ -156,17 +144,16 @@ export class MissionController {
   }
 
   // 미션 수정 페이지를 렌더링하고 미션 정보를 수정하는 엔드포인트
-  //@UseGuards(JwtAuthGuard)
   @Get('/update/:missionId')
   @Render('mission-update.ejs')
   async getMissionUpdatePage(
     @Param('missionId') missionId: number,
   ): Promise<any> {
     try {
-      // 미션 ID를 통해 미션 정보를 가져옵니다.
+      // 미션 ID를 통해 미션 정보
       const mission = await this.missionService.findOne(missionId);
 
-      // 미션 정보를 객체 형태로 구성하여 반환합니다.
+      // 미션 정보를 객체 형태로 구성하여 반환
       return {
         mission: {
           missionId: mission.missionId,
@@ -197,10 +184,10 @@ export class MissionController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
-      // 요청에서 userId를 추출합니다.
+      // 요청에서 userId를 추출
       const userId = req.userId;
 
-      // 서비스 레이어의 update 메서드를 사용하여 미션을 수정합니다.
+      // 서비스 레이어의 update 메서드를 사용하여 미션을 수정
       const updatedMission = await this.missionService.update(
         userId,
         +missionId,
@@ -208,16 +195,16 @@ export class MissionController {
         file,
       );
 
-      // 수정된 미션 정보를 JSON 응답으로 반환합니다.
+      // 수정된 미션 정보를 JSON 응답으로 반환
       return {
         message: '미션 수정 완료',
         mission: updatedMission,
       };
     } catch (error) {
-      // 오류 메시지를 로깅합니다.
+      // 오류 메시지를 로깅
       console.error(`Error updating mission: ${error.message}`);
 
-      // 오류 종류에 따라 예외를 처리합니다.
+      // 오류 종류에 따라 예외를 처리
       if (error instanceof BadRequestException) {
         throw new BadRequestException('잘못된 요청 데이터입니다.');
       } else if (error instanceof NotFoundException) {
@@ -225,7 +212,7 @@ export class MissionController {
       } else if (error instanceof UnauthorizedException) {
         throw new UnauthorizedException('권한이 부족합니다.');
       } else {
-        // 그 외의 예외는 내부 서버 오류로 간주합니다.
+        // 그 외의 예외는 내부 서버 오류로 간주
         throw new InternalServerErrorException(
           '미션 수정 중 오류가 발생했습니다.',
         );

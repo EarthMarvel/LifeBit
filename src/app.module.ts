@@ -47,8 +47,7 @@ const typeOrmModuleOptions = {
       Boards,
       Mission,
       Like,
-      CertificatedImage,
-      //UserMission,
+      CertificatedImage
     ],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
@@ -86,8 +85,7 @@ const typeOrmModuleOptions = {
     CommentModule,
     MainModule,
     SchedulerModule,
-    VisionModule,
-    //UserMissionModule,
+    VisionModule
   ],
   controllers: [AppController],
   providers: [AppService],
