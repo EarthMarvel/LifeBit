@@ -5,7 +5,7 @@ $('#loginForm').submit((event) => {
     email: $('#email').val(),
     password: $('#password').val(),
   };
-
+  
   $.ajax({
     url: '/user/log-in',
     method: 'POST',
