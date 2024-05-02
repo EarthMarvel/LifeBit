@@ -150,12 +150,6 @@ describe('PlannerService', () => {
     checkYn: false 
 };
 
-  // it('마이페이지 접근 - service', async () => {  
-  //   const result = await service.myPage(mockUser);
-
-  //   expect(result).toEqual({ month_tasks_list: [mockTask], today_task: [mockTask], planner_info: mockPlanner });
-  // });
-
   it('플래너 정보 수정 - service', async () => {
     const mockPlannerId = 1;
 

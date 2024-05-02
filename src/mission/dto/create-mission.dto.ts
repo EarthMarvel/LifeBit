@@ -37,5 +37,4 @@ export class CreateMissionDto {
   @IsString()
   description: string;
 
-  // DTO에는 participants 목록을 추가하지 않았습니다.
 }
